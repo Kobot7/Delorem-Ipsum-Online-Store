@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap');
+
+body {
+    background-color: #e8e8e8;
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+.form-control {
+    background-color: #f9f9f9;
+}
+
+.form-control:focus {
+    border-color: #93bbbf;
+}
+
+.navbar {
+  background-color: #4f5b5b !important;
+}
+
+.navbar a:hover, .navbar a:focus,
+.navbar button:hover,
+.navbar button:focus {
+  background-color: #4f5b5b !important;
+}
+
+.navbar .dropdown-menu {
+  border: none;
+  background-color: #3f4b4b;
+}
+
+.navbar .dropdown-menu .dropdown-item {
+  color: #AAAAAA;
+}
+
+.navbar .dropdown-menu .dropdown-item.active {
+  background-color: #3f4b4b;
+  color: #ffffff;
+}
+
+.navbar .dropdown-menu .dropdown-item:hover {
+  color: #ffffff;
+}
+
+.btn {
+    border-color: #85886D;
+    border-width: 3px;
+    color: #666666;
+    border-radius: 0;
+    vertical-align: middle;
+    text-align: center;
+    height: 40px;
+}
+
+.btn:hover {
+    background-color: #85886D;
+    color: #ffffff;
+}
+
+table {
+    overflow-x: scroll;
+}
+
+table thead {
+    background-color: #85886D;
+    color: white;
+}
+
+tbody {
+    background-color: #fafafa;
+}
+
+table tbody tr:hover {
+    background-color: #cccccc;
+}

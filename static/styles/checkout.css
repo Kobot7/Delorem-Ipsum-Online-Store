@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap');
+
+body{
+    padding: 0;
+    /*background-color: #f2f2f2;*/
+    background-color: #e8e8e8 !important;
+}
+header{
+    font-family: 'Josefin Sans', sans-serif;
+    text-align: center;
+}
+
+.box, #right-sticky{
+    background-color: white;
+}
+
+#content{
+    margin: 20px 15%;
+    font-family: 'Josefin Sans', sans-serif;
+    overflow: visible;
+    display: flex;
+    justify-content: space-between;
+}
+#left{
+    width: 65%;
+    box-sizing: border-box;
+    height: 900px;
+    /* background-color: blue; */
+}
+
+.box{
+    padding: 20px 20px;
+    margin-bottom: 1em;
+}
+#delivery-address div:last-child{
+    display: flex;
+    justify-content: space-between;
+}
+
+/* #delivery-option{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+} */
+
+#collection{
+    /* background-color: cadetblue;  */
+    display: flex;
+    justify-content: flex-start ;
+}
+#collection .delivery-details{
+    margin-left: 10%;
+}
+
+#home{
+    display: flex;
+    justify-content: flex-start ;
+    /* background-color: cadetblue; */
+}
+#home .delivery-details{
+    margin-left: 10%;
+}
+
+
+.buttons{
+    float: right;
+    /* background-color: aqua; */
+    margin-top: 3rem ;
+}
+
+.option{
+    padding-left: 300px;
+    /* background-color: blue; */
+
+}
+#section1{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.payment-row{
+justify-content: space-between;
+display:flex;
+
+margin: 10px 0;
+}
+
+.order button{
+
+margin-left: 88%;
+}
+
+a.mybutton, button{
+    background-color: white;
+    color: black;
+    border: 2px solid #e8e8e8;
+    padding: 10px ;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Josefin Sans', sans-serif;
+
+}
+
+button:hover{
+    background-color: #e7e7e7;
+}
+a.mybutton:hover{
+    background-color: #e7e7e7;
+    text-decoration: none;
+    color: black;
+}
+
+#right-sticky{
+    padding: 20px 20px;
+    width: 33%;
+    box-sizing: border-box;
+    height:55vh;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+}
+
+#right-sticky h3:first-child{
+    font-weight: bold;
+}
+#right-sticky a{
+    float: right;
+    color: black;
+}
+.details{
+    display: flex;
+}
+.details .right{
+    /* background-color: aqua; */
+    width: 50%;
+}
+.bold{
+    font-weight: bold;
+}
+img{
+    width: 100px;
+    height: 100px;
+}
+#sum div{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5em;
+}
+
+#CHECKOUT{
+    margin: auto;
+    width: 50%;
+    /* background-color: aqua; */
+}
+
+
+
+
+#items>div{
+    margin:5px 0;
+}
+/* #items>div div:last-child{
+    font-weight: bold;
+} */
+
+
+.clearfix{
+    overflow: auto;
+}
+
+

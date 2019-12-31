@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap');
+
+body{
+    padding: 0;
+    /*background-color: #f2f2f2;*/
+    background-color: #e8e8e8 !important;
+}
+
+#MyCart, #cost{
+    background-color: white;
+}
+
+#content{
+    margin: 20px 10%;
+    font-family: 'Josefin Sans', sans-serif;
+    overflow: visible;
+    display: flex;
+    justify-content: space-between;
+}
+#MyCart{
+    width: 65%;
+    padding: 20px 20px;
+
+    box-sizing: border-box;
+    height: 900px;
+}
+.details{
+    display: flex;
+}
+.details .right{
+    /* background-color: aqua; */
+    margin-right: 90px;
+    padding-left: 20px ;
+}
+img{
+    width: 100px;
+    height: 100px;
+}
+.buttons{
+    float: right;
+    /* background-color: aqua; */
+    margin-top: 3rem ;
+}
+/* button{
+    background-color: white;
+    color: black;
+    border: 2px solid #e8e8e8;
+    padding: 10px ;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Josefin Sans', sans-serif;
+
+} */
+a.mybutton, .mybutton{
+    background-color: white;
+    color: black;
+    border: 2px solid #e8e8e8 !important;
+    padding: 10px ;
+    text-align: center;
+    display: inline-block;
+    font-family: 'Josefin Sans', sans-serif !important;
+}
+
+a.mybutton:hover{
+    background-color: #e7e7e7 !important;
+    text-decoration: none !important;
+    color: black !important;
+}
+
+.mybutton:hover{
+    background-color: #e7e7e7;
+}
+
+#cost{
+    padding: 20px 20px;
+    width: 33%;
+    box-sizing: border-box;
+    height:55vh;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+}
+
+#CHECKOUT{
+    margin: auto;
+    width: 50%;
+    /* background-color: aqua; */
+}
+
+/* #sub-total {
+    background-color: aqua;
+
+} */
+
+#sub-total .price{
+  float: right;
+}
+
+#calculations>div{
+    margin:5px 0;
+}
+#calculations>div div:last-child{
+    font-weight: bold;
+}
+
+#delivery div:first-child{
+    float: right;
+}
+
+#discount div:first-child{
+    float: right;
+}
+/* #discount{
+    background-color: aqua;
+} */
+.clearfix{
+    overflow: auto;
+}
+
+#new-total{
+    font-weight: bold;
+}
+#new-total div:first-child{
+    float: right;
+}
+/* #hidden{
+    display: none;
+} */
+
+.modal-header>div{
+margin-left: 0 !important;
+}
+
+.modal-header div{
+margin-right: 0;
+}

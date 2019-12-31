@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}Cart{% endblock %}
+{% block style %}<link rel="stylesheet" href="/static/styles/cart.css">{% endblock %}
+{% block content %}
+<div id="content">
+
+    <div id="MyCart">
+        <div id="cart_header">
+            <h2>MY CART</h2>
+            <hr>
+        </div>
+        <div class="item">
+                <div class="buttons">
+                    <a href="/wishlist" class="mybutton" target="_blank">Move to wishlist</a>
+                    <button class="mybutton">x</button>
+                </div>
+                <div class="details ">
+                        <div class="image">
+                                <img src="/static/images/vitamin c pills.jpg" >
+                            </div>
+                    <div class="right">
+                        <p class="price">SGD $25</p>
+                        <p class="item_name">Vitamin C pills </p>
+                        <div class="qty">
+                            Qty <select name="qty">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <hr>
+
+            <div class="item">
+                    <div class="buttons">
+                        <a href="/wishlist" class="mybutton" target="_blank">Move to wishlist</a>
+                        <button class="mybutton">x</button>
+                    </div>
+                    <div class="details ">
+                            <div class="image">
+                                    <img src="/static/images/babypowder.jpg" >
+                                </div>
+                        <div class="right">
+                            <p class="price">SGD $5.80</p>
+                            <p class="item_name">Baby Powder </p>
+                            <div class="qty">
+                                Qty <select name="qty">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <hr>
+    </div>
+    <div id="cost" class="clearfix">
+            <div id="total_header">
+                <h2>TOTAL</h2>
+                <hr>
+            </div>
+            <div id="calculations">
+                <div id="sub-total">
+                    <div class="price">SGD $30.80</div>
+                    <div>Sub-total</div>
+                </div>
+                <div id="delivery">
+                    <div>
+                        <select>
+                            <option value="shop">Collect from shop</option>
+                            <option value="home">Home delivery</option>
+                        </select>
+                    </div>
+                    <div>Delivery</div>
+                </div>
+                <div id="discount" class="clearfix">
+                    <div>
+                        <button type="button" data-toggle="modal" data-target="#input-discount" class="mybutton">click to<br>add</button>
+                    </div>
+                    <div>Discount Code</div>
+                </div>
+                <div id= "discount-confirm">
+                    <div style="float: right;">- $9.15</div>
+                    <div>Discount</div>
+                </div>
+
+
+            </div>
+            <div id="hidden">
+                    <hr>
+            <div id="new-total">
+                <div>SGD $21.35</div>
+                <div>NEW TOTAL</div>
+            </div>
+            <div id="CHECKOUT">
+                <a href="/checkout" class="mybutton" target="_blank">CHECKOUT</a>
+            </div>
+            </div>
+        </div>
+</div>
+<!--Modal-->
+<div id="input-discount" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                <h4 class="modal-title">Discount Code</h4>
+                </div>
+                <div>
+                <button type="button" class="close close-button" data-dismiss="modal">&times;</button>
+                </div>
+                </div>
+            <div class="modal-body">
+                <div>Please enter your discount code</div>
+                <input type="text">
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

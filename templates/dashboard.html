@@ -1,0 +1,137 @@
+{% extends "admin_base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block style %}<link rel="stylesheet" href="/static/styles/dashboard.css">{% endblock %}
+
+{% block content %}
+{% from "includes/_formhelper.html" import render_field %}
+
+<div class="row justify-content-center mt-2">
+    <div class="col-lg-5 dashboard-block p-4 mx-2 my-2">
+        <h2 class="d-inline">Best-Sellers</h2>
+        <a class="btn d-inline float-right mt-1 mb-2" href="#">View All</a>
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>No. of Purchases</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Panadol Advance - 32 x 500mg Tablets</td>
+                    <td>103</td>
+                </tr>
+
+                <tr>
+                    <td>Ribena Mixed Berries Pastilles</td>
+                    <td>50</td>
+                </tr>
+
+                <tr>
+                    <td>KAL Kid’s MultiSaurus Vitamins & Minerals | Mixed Berry Flavor</td>
+                    <td>12</td>
+                </tr>
+
+                <tr>
+                    <td>NIVEA Deo (F) Spray Energy Fresh 150ml</td>
+                    <td>10</td>
+                </tr>
+
+                <tr>
+                    <td>Centrum for Men - 60 tablets</td>
+                    <td>4</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-lg-5 dashboard-block p-4 mx-2 my-2">
+        <h2 class="d-inline">Most-Viewed Items</h2>
+        <a class="btn d-inline float-right mt-1 mb-2" href="#">View All</a>
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>No. of Views</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Ribena Mixed Berries Pastilles</td>
+                    <td>20</td>
+                </tr>
+                <tr>
+                    <td>NIVEA Deo (F) Spray Energy Fresh 150ml</td>
+                    <td>14</td>
+                </tr>
+                <tr>
+                    <td>KAL Kid’s MultiSaurus Vitamins & Minerals | Mixed Berry Flavor</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>Centrum for Men - 60 tablets</td>
+                    <td>8</td>
+                </tr>
+                <tr>
+                    <td>Panadol Advance - 32 x 500mg Tablets</td>
+                    <td>6</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div> <!--Row 1-->
+
+<div class="row justify-content-center">
+    <div class="col-lg-10 dashboard-block p-4 mx-2 my-2">
+        <h2 class="d-inline">Orders</h2>
+        <a class="btn d-inline float-right mt-1 mb-2" href="#">View All</a>
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>No. of Items</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Tan Tok Seng</td>
+                    <td>100</td>
+                    <td>$300.00</td>
+                </tr>
+
+                <tr>
+                    <td>Jack Ho</td>
+                    <td>3</td>
+                    <td>$33.00</td>
+                </tr>
+                <tr>
+                    <td>Anna Koh</td>
+                    <td>2</td>
+                    <td>$9.90</td>
+                </tr>
+
+                <tr>
+                    <td>Lee Bin Bo</td>
+                    <td>50</td>
+                    <td>$90.00</td>
+                </tr>
+                <tr>
+                    <td>Patrick Star</td>
+                    <td>1</td>
+                    <td>$29.90</td>
+                </tr>
+                <tr>
+                    <td>Karen McKenzy</td>
+                    <td>5</td>
+                    <td>$30.50</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div> <!--Row 2-->
+
+{% endblock %}

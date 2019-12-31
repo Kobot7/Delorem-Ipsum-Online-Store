@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}Wishlist{% endblock %}
+{% block style %}<link rel="stylesheet" href="/static/styles/wishlist.css">{% endblock %}
+
+
+{%block content%}
+<div class="main-body">
+    <div id="filters">
+        <select name="filters">
+            <option value="" selected>Recently added</option>
+            <option value="">Expiring soonest</option>
+            <option value="">% discount</option>
+            <option value="">Price: high to low</option>
+            <option value="">Price: low to high</option>
+            <option value="">Brand A-Z</option>
+            <option value="">Brand Z-A</option>
+            <option value="">Stock level</option>
+        </select>
+    </div>
+        <div class="tertiary-body">
+            <div class="items-block">
+                <article class="item">
+                <a href="#" class="item-link">
+                    <div class="item-img">
+                        <img src="/static/images/vitamin c pills.jpg">
+                    </div>
+                    <div class="item-caption-box">
+                        <div class="item-caption">
+                            <div>
+                                <p class="item-description">Natures Aid Chewable Vitamin C 500 mg, Sugar Free, 100 Tablets</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="price-box">
+                        <span class="price">$6.99</span>
+                    </p>
+
+                </a>
+                    <button type="button" data-toggle="modal" data-target="#first-item" class="quick-view">Quick View</button>
+                    <a class="delete"><img src="/static/images/delete.png"></a>
+                    <!--<button class="delete">x</button>-->
+                    <div class="modal fade" id="first-item" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-dialogue-centered" role="document">
+                            <div class="modal-content">
+                                <div class="item-img">
+                                <img src="/static/images/vitamin c pills.jpg">
+                                </div>
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><strong>Natures Aid Chewable Vitamin C 500 mg, Sugar Free, Suitable for Vegans, 100 Tablets</strong></h5>
+                                </div>
+                                <div class="modal-body">
+                                    <h6>Product Description</h6>
+                                    <p>Natures Aid Chewable Vitamin C offers a great solution for people who struggle to swallow a large tablet.</p>
+                                    <p>Size: 100 Tablets</p>
+                                    <p class="price-box">
+                                        <span class="price">$6.99</span>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-success"><i class="icon-shopping-cart">   Buy Now</i></button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+
+
+
+                <article class="item">
+                <a href="#" class="item-link">
+                    <div class="item-img">
+                        <img src="/static/images/babypowder.jpg">
+                    </div>
+                    <div class="item-caption-box">
+                        <div class="item-caption">
+                            <div>
+                                <p class="item-description">Baby Powder</p>>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="price-box">
+                        <span class="price">$6.99</span>
+                    </p>
+                </a>
+                    <button type="button" data-toggle="modal" data-target="#second-item" class="quick-view">Quick View</button>
+                    <a class="delete"><img src="/static/images/delete.png"></a>
+                    <div class="modal fade" id="second-item" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-dialogue-centered" role="document">
+                            <div class="modal-content">
+                                <div class="item-img">
+                                <img src="/static/images/babypowder.jpg">
+                                </div>
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><strong>Baby Powder</strong></h5>
+                                </div>
+                                <div class="modal-body">
+                                    <h6>Product Description</h6>
+                                    <p>Natures Aid Chewable Vitamin C offers a great solution for people who struggle to swallow a large tablet.</p>
+                                    <p>Size: 100 Tablets</p>
+                                    <p class="price-box">
+                                        <span class="price">$6.99</span>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-success"><i class="icon-shopping-cart">   Buy Now</i></button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="item">
+                <a href="#" class="item-link">
+                    <div class="item-img">
+                        <img src="/static/images/shampoo.jpg">
+                    </div>
+                    <div class="item-caption-box">
+                        <div class="item-caption">
+                            <div>
+                                <p class="item-description">TRESemme Keratin Smooth Shampoo</p>>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="price-box">
+                        <span class="price">$6.99</span>
+                    </p>
+                </a>
+                    <button type="button" data-toggle="modal" data-target="#third-item" class="quick-view">Quick View</button>
+                    <a class="delete"><img src="/static/images/delete.png"></a>
+                    <div class="modal fade" id="third-item" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-dialogue-centered" role="document">
+                            <div class="modal-content">
+                                <div class="item-img">
+                                <img src="/static/images/babypowder.jpg">
+                                </div>
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><strong>Baby Powder</strong></h5>
+                                </div>
+                                <div class="modal-body">
+                                    <h6>Product Description</h6>
+                                    <p>Natures Aid Chewable Vitamin C offers a great solution for people who struggle to swallow a large tablet.</p>
+                                    <p>Size: 100 Tablets</p>
+                                    <p class="price-box">
+                                        <span class="price">$6.99</span>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-success"><i class="icon-shopping-cart">   Buy Now</i></button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+</div>
+
+{%endblock%}

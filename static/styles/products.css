@@ -1,0 +1,11 @@
+tbody tr td img {
+    width: 80px;
+}
+
+tbody tr td {
+    height: 100px;
+}
+
+tbody tr td {
+    vertical-align: middle !important;
+}

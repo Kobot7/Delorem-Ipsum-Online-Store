@@ -1,0 +1,7 @@
+.dashboard-block {
+  background-color: white;
+}
+
+table tbody tr:hover {
+  cursor: pointer;
+}
