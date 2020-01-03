@@ -1,14 +1,13 @@
-import random
 class Product:
-    def __init__(self, productName, brand, thumbnail, subCategory, price, activated, quantity):
-        self.set_product_name(productName)
-        self.set_brand(brand)
-        self.set_thumbnail(thumbnail)
-        self.set_sub_category(subCategory)
-        self.set_price(price)
-        self.set_activated(activated)
-        self.set_quantity(quantity)
-        self.__serial_no = random.randint(100000, 999999)
+    def __init__(self, productName, brand, thumbnail, subCategory, serialNo, price, activated, quantity):
+        self.__productName = productName
+        self.__brand = brand
+        self.__thumbnail = thumbnail
+        self.__subCategory = subCategory
+        self.__serialNo = serialNo
+        self.__price = price
+        self.__activated = activated
+        self.__quantity = quantity
 
     # Accessors
     def get_product_name(self):
@@ -24,7 +23,7 @@ class Product:
         return self.__subCategory
 
     def get_serial_no(self):
-        return self.__serial_no
+        return self.__serialNo
 
     def get_price(self):
         return self.__price
@@ -48,8 +47,8 @@ class Product:
     def set_sub_category(self, subCategory):
         self.__subCategory = subCategory
 
-    def set_serial_no(self, serial_no):
-        self.__serial_no = serial_no
+    def set_serial_no(self, serialNo):
+        self.__serialNo = serialNo
 
     def set_price(self, price):
         self.__price = price

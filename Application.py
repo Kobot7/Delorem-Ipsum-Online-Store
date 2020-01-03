@@ -74,15 +74,50 @@ def products():
 
     return render_template('products.html', productList=productList)
 
-@app.route('/productSettings', methods=['GET', 'POST'])
-def productSettings():
+@app.route('/productSettings/<serialNo>/', methods=['GET', 'POST'])
+def productSettings(serialNo):
     editProductForm = EditProductForm(request.form)
+
+    if request.method == 'POST' and editProductForm.validate():
+        productDict = {}
+        db = shelve.open('storage.db', 'w')
+        productDict = db['Products']
+
+        product = productDict.get(serialNo)
+        product.set_product_name(editProductForm.productName.data)
+        product.set_brand(editProductForm.brand.data)
+        product.set_thumbnail(editProductForm.thumbnail.data)
+        product.set_sub_category(editProductForm.subCategory.data)
+        product.set_price(editProductForm.price.data)
+        product.set_quantity(editProductForm.quantity.data)
+        product.set_activated(editProductForm.activated.data)
+
+        db['Products'] = productDict
+        db.close()
+        return redirect(url_for('products'))
+
+    else:
+        productDict = {}
+        db = shelve.open('storage.db', 'r')
+        productDict = db['Products']
+        db.close()
+
+        product = productDict.get(serialNo)
+        editProductForm.productName.data = product.get_product_name()
+        editProductForm.brand.data = product.get_brand()
+        # editProductForm.thumbnail.data = product.get_thumbnail()
+        editProductForm.subCategory.data = product.get_sub_category()
+        editProductForm.price.data = float(product.get_price())
+        editProductForm.quantity.data = int(product.get_quantity())
+        editProductForm.activated.data = product.get_activated()
+        editProductForm.serialNo.data = product.get_serial_no()
+
     return render_template('productSettings.html', form=editProductForm)
 
 @app.route('/addProduct', methods=['GET', 'POST'])
 def addProduct():
     createProductForm = CreateProductForm(request.form)
-    if request.method == 'POST' and createProductForm.validate():
+    if request.method=='POST' and createProductForm.validate():
         productDict = {}
         db = shelve.open('storage.db', 'c')
         try:
@@ -90,24 +125,15 @@ def addProduct():
         except:
             print('Error in retrieving Products from storage.db.')
 
-        # file = request.form['image']
-        # # if user does not select file, browser also
-        # # submit an empty part without filename
-        # if file.filename == '':
-        #     print("WHAT?")
-        # filename = createProductForm.thumbnail.data
-        # print("got data")
-        # filename = secure_filename(filename)
-        # print("made secure file name")
-        # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        # print("saved into path")
         product = Product(createProductForm.productName.data, createProductForm.brand.data, createProductForm.thumbnail.data, createProductForm.subCategory.data,
-                          createProductForm.price.data, createProductForm.activated.data, createProductForm.quantity.data)
+                          createProductForm.serialNo.data, createProductForm.price.data, createProductForm.activated.data, createProductForm.quantity.data)
         productDict[product.get_serial_no()] = product
         db['Products'] = productDict
 
         db.close()
+
         return redirect(url_for('products'))
+
     return render_template('addProduct.html', form=createProductForm)
 
 

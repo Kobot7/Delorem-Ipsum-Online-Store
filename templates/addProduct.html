@@ -8,7 +8,7 @@
     <div class="col-md-8">
         <h1 class="my-4">New Product</h1>
 
-        <form method="POST" action="">
+        <form method="POST" action="" onsubmit="submitForm()">
             <div class="form-group">
                 {{ render_field(form.productName, class="form-control") }}
             </div>
@@ -23,6 +23,10 @@
 
             <div class="form-group">
                 {{ render_field(form.subCategory, class="form-control") }}
+            </div>
+
+            <div class="form-group">
+                {{ render_field(form.serialNo, class="form-control") }}
             </div>
 
             <div class="form-group">
@@ -45,4 +49,12 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function submitForm() {
+            alert('Product successfully added!');
+        }
+    </script>
 {% endblock %}
