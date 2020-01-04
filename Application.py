@@ -3,6 +3,7 @@ import shelve
 from flask import Flask, render_template, request, redirect, url_for
 from Forms import *
 from StorageClass import *
+from Functions import *
 # from werkzeug.utils import secure_filename
 
 app = Flask(__name__, static_url_path='/static')
@@ -57,8 +58,8 @@ def checkout():
 def dashboard():
     return render_template('dashboard.html')
 
-@app.route('/products')
-def products():
+@app.route('/products/<category>/<order>/')
+def products(category, order):
     productDict = {}
     db = shelve.open('storage.db', 'r')
     try:
@@ -71,6 +72,7 @@ def products():
     for key in productDict:
         product = productDict.get(key)
         productList.append(product)
+        productList = sort_by(productList, category, order)
 
     return render_template('products.html', productList=productList)
 

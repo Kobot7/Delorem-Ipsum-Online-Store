@@ -5,7 +5,7 @@
 {% block content %}
 {% from "includes/_formhelper.html" import render_field %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-md-8 pb-4">
         <h1 class="my-4">Product Settings</h1>
 
         <form method="POST" action="">
@@ -44,6 +44,7 @@
             <div class="form-group">
                 {{ render_field(form.serialNo, class="form-control", readonly=True) }}
             </div>
+            <a href="/products/name/ascending" class="btn mr-2">Cancel</a>
             <input type="submit" value="Submit" class="btn"/>
         </form>
     </div>

@@ -14,89 +14,27 @@
       <thead>
         <tr>
           <th>Thumbnail</th>
-          <th>Name</th>
-          <th>Brand</th>
-          <th>Sub-Category</th>
-          <th>Serial No.</th>
-          <th>Price</th>
-          <th>Quantity</th>
-          <th>Show/Hide</th>
+          <th>Name <a href="/products/name/ascending">Up</a> <a href="/products/name/descending">Down</a></th>
+          <th>Brand <a href="/products/brand/ascending">Up</a> <a href="/products/brand/descending">Down</a></th>
+          <th>Sub-Category <a href="/products/sub-category/ascending">Up</a> <a href="/products/sub-category/descending">Down</a></th>
+          <th>Serial No. <a href="/products/serial-no/ascending">Up</a> <a href="/products/serial-no/descending">Down</a></th>
+          <th>Price <a href="/products/price/ascending">Up</a> <a href="/products/price/descending">Down</a></th>
+          <th>Quantity <a href="/products/quantity/ascending">Up</a> <a href="/products/quantity/descending">Down</a></th>
+          <th>Show/Hide <a href="/products/activated/ascending">Up</a> <a href="/products/activated/descending">Down</a></th>
           <th>Edit</th>
-          <th></th>
         </tr>
       </thead>
 
       <tbody>
-        <!--
-        <tr>
-          <td><img src="/static/images/dinosaur-vitamins.jpg"></td>
-          <td>KAL Kid’s MultiSaurus Vitamins & Minerals | Mixed Berry Flavor</td>
-          <td>KAL</td>
-          <td>Vitamins</td>
-          <td>1402838V</td>
-          <td>$14.99</td>
-          <td>100</td>
-          <td>Show</td>
-          <td><a href="productSettings">Edit</a></td>
-        </tr>
-
-        <tr>
-          <td><img src="/static/images/panadol-advance.jpg"></td>
-          <td>Panadol Advance - 32 x 500mg Tablets</td>
-          <td>Panadol</td>
-          <td>Over the Counter</td>
-          <td>1928471P</td>
-          <td>$19.99</td>
-          <td>150</td>
-          <td>Show</td>
-          <td><a href="productSettings">Edit</a></td>
-        </tr>
-
-        <tr>
-          <td><img src="/static/images/nivea-deodorant.jpg"></td>
-          <td>NIVEA Deo (F) Spray Energy Fresh 150ml</td>
-          <td>NIVEA</td>
-          <td>Bodycare</td>
-          <td>3467473S</td>
-          <td>$9.30</td>
-          <td>150</td>
-          <td>Show</td>
-          <td><a href="productSettings">Edit</a></td>
-        </tr>
-
-        <tr>
-          <td><img src="/static/images/ribena-1.jpg"></td>
-          <td>Ribena Mixed Berries Pastilles</td>
-          <td>Ribena</td>
-          <td>Supplements</td>
-          <td>4472873F</td>
-          <td>$2.20</td>
-          <td>200</td>
-          <td>Show</td>
-          <td><a href="productSettings">Edit</a></td>
-        </tr>
-
-        <tr>
-          <td><img src="/static/images/centrum-for-men-2.jpg"></td>
-           <td>Centrum for Men - 60 tablets</td>
-           <td>Centrum</td>
-           <td>Supplements</td>
-           <td>4482731G</td>
-           <td>$20</td>
-           <td>50</td>
-           <td>Show</td>
-           <td><a href="productSettings">Edit</a></td>
-          </tr>
-          -->
         {% for product in productList %}
           <tr>
-            <td><img src="{{ product.get_thumbnail() }}" alt="{{ product.get_product_name() }} thumbnail"></td>
+            <td><img src="/static/images/{{ product.get_thumbnail() }}" alt="{{ product.get_product_name() }} thumbnail"></td>
             <td>{{ product.get_product_name() }}</td>
             <td>{{ product.get_brand() }}</td>
             <td>{{ product.get_sub_category() }}</td>
             <td>{{ product.get_serial_no() }}</td>
             <td>${{ product.get_price() }}</td>
-            <td>{{ product.get_quantity() }}</td>
+            <td>{{ product.get_quantity() }}
 
             {% if product.get_activated()==True %}
             <td>Show</td>
@@ -104,12 +42,7 @@
             <td>Hide</td>
             {% endif %}
 
-            <td><a href="/editProduct/{{ product.get_serial_no() }}">Edit</a></td>
-            <td>
-              <form action="{{url_for('deleteProduct', id=product.get_serial_no())}}" method = "POST">
-                <input type="submit" value="Delete" class="btn" onclick="return confirm('Are you sure you want to delete this product?');">
-              </form>
-            </td>
+            <td><a href="/productSettings/{{ product.get_serial_no() }}">Edit</a></td>
           </tr>
         {% endfor %}
       </tbody>
