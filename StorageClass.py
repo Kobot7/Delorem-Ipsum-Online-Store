@@ -1,10 +1,10 @@
 class Product:
-    def __init__(self, productName, brand, thumbnail, subCategory, serialNo, price, activated, quantity):
+    def __init__(self, productName, brand, thumbnail, subCategory, price, activated, quantity):
         self.__productName = productName
         self.__brand = brand
         self.__thumbnail = thumbnail
         self.__subCategory = subCategory
-        self.__serialNo = serialNo
+        self.__serialNo = ''
         self.__price = price
         self.__activated = activated
         self.__quantity = quantity
