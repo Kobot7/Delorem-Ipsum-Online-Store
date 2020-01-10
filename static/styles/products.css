@@ -9,3 +9,11 @@ tbody tr td {
 tbody tr td {
     vertical-align: middle !important;
 }
+
+i.fa-caret-up, i.fa-caret-down {
+  color:#ffffff;
+}
+
+i.fa-caret-up:hover, i.fa-caret-down:hover {
+  color: #5a5c4a;
+}
