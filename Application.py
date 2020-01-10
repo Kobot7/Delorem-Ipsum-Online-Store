@@ -75,7 +75,7 @@ def supplements(subCategory):
     products = []
     for id in Products:
         product = Products[id]
-        if product.get_subCategory == subCategory:
+        if product.get_subCategory() == subCategory:
             products.append(product)
 
     return render_template('supplements.html', productList=products)
