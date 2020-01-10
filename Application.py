@@ -4,18 +4,13 @@ from flask import Flask, render_template, request, redirect, url_for
 from Forms import *
 from StorageClass import *
 from Functions import *
+from User import *
 
-# from werkzeug.utils import secure_filename
 
 app = Flask(__name__, static_url_path='/static')
-# ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-# UPLOAD_FOLDER= '/static/images'
-# def allowed_file(filename):
-#     return '.' in filename and \
-#            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Homepage
-@app.route('/')
+@app.route('/home')
 def home():
     return render_template("home.html")
 
@@ -24,15 +19,67 @@ def home():
 def login():
     loginForm = LoginForm(request.form)
     registrationForm = RegistrationForm(request.form)
+    if request.method == "POST" and registrationForm.validate():
+        db = shelve.open('storage.db', 'c')
+        namesDict = {}
+        usersDict = {}
+        try:
+            usersDict = db['Users']
+        except:
+            print('Error while retrieving usersDict')
+        try:
+            namesDict = db['Usernames']
+        except:
+            print("Error while retrieving namesDict")
+        U = User(registrationForm.username.data, registrationForm.password.data, registrationForm.email.data)
+        usersDict[U.get_user_id()] = U
+        namesDict[U.get_username()] = U.get_user_id()
+        db['Users'] = usersDict
+        db['Usernames'] = namesDict
+        db.close()
+        print("User created with name", U.get_username(), "id", U.get_user_id(),
+         "Password", U.get_password(), "and Email", U.get_email())
     if request.method =="POST" and loginForm.validate():
+        usersDict = {}
+        namesDict = {}
+        db = shelve.open('storage.db')
+        try:
+            usersDict = db["Users"]
+        except:
+            print("Error while retrieving usersDict")
+        try:
+            namesDict = db["Usernames"]
+        except:
+            print("Error while retrieving namesDict")
+        exist = namesDict.get(loginForm.username.data, "Nothing")
+        if exist!= "Nothing":
+            current_user = usersDict[exist]
+            db["Current User"] = current_user
+            db.close()
+            password = current_user.get_password()
+            if loginForm.password.data == password:
+                return redirect(url_for('home'))
+
         if loginForm.username.data == "admin" and loginForm.password.data == "admin":
             return render_template('dashboard.html')
+
     return render_template('login.html', form=loginForm, form2=registrationForm)
 
 # Supplements(one of the subsections)
-@app.route('/supplements')
-def supplements():
-    return render_template('supplements.html')
+@app.route('/subCategory/<subCategory>/')
+def supplements(subCategory):
+    db = shelve.open('storage.db', 'r')
+    try:
+        Products = db["Products"]
+    except:
+        print("Error in retrieving products from shelve")
+    products = []
+    for id in Products:
+        product = Products[id]
+        if product.get_subCategory == subCategory:
+            products.append(product)
+
+    return render_template('supplements.html', productList=products)
 
 # Ribena(one of the products)
 @app.route('/ribena')
@@ -40,9 +87,32 @@ def ribena():
     return render_template('ribena.html')
 
 # Wishlist
-@app.route('/wishlist')
-def wishlist():
-    return render_template('wishlist.html')
+@app.route('/wishlist/<filter>/')
+def wishlist(filter):
+    current_user = ""
+    db = shelve.open('storage.db', 'r')
+    try:
+        current_user = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    wishlist = current_user.get_wishlist()
+
+    filtered_list = []
+    for item in wishlist:
+        filtered_list.append(item)
+    filtered_list = filter(filtered_list, filter)
+        # db = shelve.open('storage.db', 'r')
+        # try:
+        #     productDict = db['Products']
+        # except:
+        #     print('Error in retrieving Products from storage.db.')
+        # productDict = db['Products']
+        # product = productDict.get(item)
+        # filtered_list.append(product)
+        # filtered_list = filter(filtered_list, filter)
+
+    return render_template('wishlist.html', filtered_list=filtered_list)
 
 # Shopping Cart
 @app.route('/cart')
@@ -170,4 +240,4 @@ def categories():
     return render_template('categories.html')
 
 if __name__=='__main__':
-    app.run()
+    app.run(debug=True)
