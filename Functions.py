@@ -7,6 +7,22 @@ def sort_by(list, category, order):
     list = sorted(list, key=keyDict[category], reverse=order)
     return list
 
+def filter(list, filter):
+    #if order == "recent":
+    #elif order =="expiring":
+    #elif order =="discount":
+    filtered_list=[]
+    if filter =="hightolow":
+        filtered_list = sorted(list, key=keyDict['price'], reverse=True)
+
+    elif filter =="lowtohigh":
+        filtered_list = sorted(list, key=keyDict['price'], reverse=False)
+    elif filter =="a-z":
+        filtered_list = sorted(list, key=keyDict['name'], reverse=False)
+    elif filter =="z-a":
+        filtered_list = sorted(list, key=keyDict['name'], reverse=False)
+    #elif order =="stock":
+    return filtered_list
 
 def name_key(item):
     return item.get_product_name()
