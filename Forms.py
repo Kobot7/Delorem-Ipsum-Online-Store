@@ -45,17 +45,17 @@ class EditProductForm(Form):
     brand = StringField('Brand', [validators.Length(min=1, max=150), validators.DataRequired()])
     subCategory = SelectField('Sub-Category', [validators.DataRequired()], choices=choicesList, default='')
     serialNo = StringField('Serial No.', [validators.Length(min=1, max=10), validators.DataRequired()])
-    price = DecimalField('Price', places=2)
-    quantity = IntegerField('Quantity')
+    price = DecimalField('Price', [validators.DataRequired()], places=2)
+    quantity = IntegerField('Quantity', [validators.DataRequired()])
 
 class CreateProductForm(Form):
     productName = StringField('Product Name', [validators.Length(min=1, max=150), validators.DataRequired()])
     brand = StringField('Brand', [validators.Length(min=1, max=150), validators.DataRequired()])
     thumbnail = FileField('Image', [validators.DataRequired()])
     subCategory = SelectField('Sub-Category', [validators.DataRequired()], choices=choicesList, default='')
-    price = StringField('Price', [validators.Length(min=1, max=6), validators.DataRequired()])
+    price = DecimalField('Price', [validators.DataRequired()], places=2)
     activated = BooleanField('')
-    quantity = IntegerField('Quantity')
+    quantity = IntegerField('Quantity', [validators.DataRequired()])
 
 class LoginForm(Form):
     username = StringField('Username', [validators.Length(min=1, max=25), validators.DataRequired()])

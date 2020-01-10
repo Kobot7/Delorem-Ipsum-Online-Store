@@ -6,7 +6,6 @@ from StorageClass import *
 from Functions import *
 from User import *
 
-
 app = Flask(__name__, static_url_path='/static')
 
 # Homepage
@@ -171,7 +170,7 @@ def productSettings(serialNo):
 
         db['Products'] = productDict
         db.close()
-        return redirect(url_for('products'))
+        return redirect('/products/name/ascending')
 
     else:
         productDict = {}
@@ -232,7 +231,7 @@ def deleteProduct(id):
     productDict.pop(id)
     db['Products'] = productDict
     db.close()
-    return redirect(url_for('products'))
+    return redirect('/products/name/ascending')
 
 
 @app.route('/categories')

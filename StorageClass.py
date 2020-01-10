@@ -5,7 +5,7 @@ class Product:
         self.__thumbnail = thumbnail
         self.__subCategory = subCategory
         self.__serialNo = ''
-        self.__price = price
+        self.__price = float(price)
         self.__activated = activated
         self.__quantity = quantity
 
