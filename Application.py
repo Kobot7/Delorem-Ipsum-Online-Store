@@ -1,4 +1,5 @@
-import shelve
+# import os.path
+import shelve, string, random
 from flask import Flask, render_template, request, redirect, url_for
 from Forms import *
 from StorageClass import *
@@ -131,7 +132,11 @@ def dashboard():
 @app.route('/products/<category>/<order>/')
 def products(category, order):
     productDict = {}
-    db = shelve.open('storage.db', 'r')
+    try:
+        db = shelve.open('storage.db', 'r')
+    except:
+        db = shelve.open('storage.db', 'c')
+
     try:
         productDict = db['Products']
         db.close()
@@ -199,12 +204,23 @@ def addProduct():
 
         product = Product(createProductForm.productName.data, createProductForm.brand.data, createProductForm.thumbnail.data, createProductForm.subCategory.data,
                           createProductForm.price.data, createProductForm.activated.data, createProductForm.quantity.data)
+
+        serialNo = ''
+        while True:
+            for x in range(6):
+                serialNo += random.choice(string.digits)
+            serialNo += random.choice(string.ascii_uppercase)
+
+            if serialNo not in productDict:
+                break
+
+        product.set_serial_no(serialNo)
         productDict[product.get_serial_no()] = product
         db['Products'] = productDict
 
         db.close()
 
-        return redirect(url_for('products'))
+        return redirect('/products/name/ascending')
 
     return render_template('addProduct.html', form=createProductForm)
 
