@@ -26,7 +26,7 @@ class Product:
         return self.__serialNo
 
     def get_price(self):
-        return self.__price
+        return '%.2f' %float(self.__price)
 
     def get_activated(self):
         return self.__activated

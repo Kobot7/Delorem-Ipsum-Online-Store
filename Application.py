@@ -128,7 +128,7 @@ def addProduct():
             print('Error in retrieving Products from storage.db.')
 
         product = Product(createProductForm.productName.data, createProductForm.brand.data, createProductForm.thumbnail.data, createProductForm.subCategory.data,
-                          createProductForm.serialNo.data, createProductForm.price.data, createProductForm.activated.data, createProductForm.quantity.data)
+                          createProductForm.price.data, createProductForm.activated.data, createProductForm.quantity.data)
         productDict[product.get_serial_no()] = product
         db['Products'] = productDict
 
