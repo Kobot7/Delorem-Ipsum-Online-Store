@@ -39,11 +39,6 @@ def ribena():
     return render_template('ribena.html')
 
 # Wishlist
-<<<<<<< Updated upstream
-@app.route('/wishlist')
-def wishlist():
-    return render_template('wishlist.html')
-=======
 @app.route('/wishlist/<filter>/')
 def wishlist(filter):
     current_user = ""
