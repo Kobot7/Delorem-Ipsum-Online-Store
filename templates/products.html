@@ -42,7 +42,7 @@
       <tbody>
         {% for product in productList %}
           <tr>
-            <td><img src="/static/images/{{ product.get_thumbnail() }}" alt="{{ product.get_product_name() }} thumbnail"></td>
+            <td><img src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
             <td>{{ product.get_product_name() }}</td>
             <td>{{ product.get_brand() }}</td>
             <td>{{ product.get_sub_category() }}</td>
