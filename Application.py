@@ -76,10 +76,10 @@ def supplements(subCategory):
     products = []
     for id in Products:
         product = Products[id]
-        if product.get_subCategory() == subCategory:
+        if product.get_sub_category() == subCategory:
             products.append(product)
 
-    return render_template('supplements.html', productList=products)
+    return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products))
 
 # Ribena(one of the products)
 @app.route('/ribena')
