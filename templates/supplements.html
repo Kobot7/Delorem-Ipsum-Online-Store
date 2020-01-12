@@ -10,7 +10,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
         <li class="breadcrumb-item"><a href="#">Health</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Supplements</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ subCategory }}</li>
       </ol>
     </nav>
     <h3 class="">Supplements</h3>
@@ -24,40 +24,41 @@
         </select>
     </form>
         <div class="tertiary-body">
-            <p class="results-number">4 results found</p>
+            <p class="results-number">{{ modalCount }} results found</p>
             <div class="items-block">
+              {% for product in productList %}
                 <article class="item">
                 <a href="#" class="item-link">
                     <div class="item-img">
-                        <img src="/static/images/vitamin c pills.jpg">
+                        <img src="/static/images/{{product.get_thumbnail()}}">
                     </div>
                     <div class="item-caption-box">
                         <div class="item-caption">
                             <div>
-                                <p class="item-description">Natures Aid Chewable Vitamin C 500 mg, Sugar Free, 100 Tablets</p>
+                                <p class="item-description">{{product.get_product_name()}}</p>
                             </div>
                         </div>
                     </div>
                     <p class="price-box">
-                        <span class="price">$6.99</span>
+                        <span class="price">${{product.get_price()}}</span>
                     </p>
                 </a>
-                    <button type="button" data-toggle="modal" data-target="#first-item" class="quick-view">Quick View</button>
-                    <div class="modal fade" id="first-item" tabindex="-1" role="dialog" aria-hidden="true">
+                    <button type="button" data-toggle="modal" data-target="#{{modalCount}}" class="quick-view">Quick View</button>
+                    <div class="modal fade" id="{{modalCount}}" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-dialogue-centered" role="document">
                             <div class="modal-content">
                                 <div class="item-img">
-                                <img src="/static/images/vitamin c pills.jpg">
+                                <img src="/static/images/{{product.get_thumbnail()}}">
                                 </div>
                                 <div class="modal-header">
-                                    <h5 class="modal-title"><strong>Natures Aid Chewable Vitamin C 500 mg, Sugar Free, Suitable for Vegans, 100 Tablets</strong></h5>
+                                    <h5 class="modal-title"><strong>{{product.get_product_name()}}</strong></h5>
                                 </div>
                                 <div class="modal-body">
                                     <h6>Product Description</h6>
                                     <p>Natures Aid Chewable Vitamin C offers a great solution for people who struggle to swallow a large tablet.</p>
                                     <p>Size: 100 Tablets</p>
                                     <p class="price-box">
-                                        <span class="price">$6.99</span>
+                                        <span class="price">${{product.get_price()}}</span>
                                     </p>
                                 </div>
                                 <div class="modal-footer">
@@ -68,131 +69,7 @@
                         </div>
                     </div>
                 </article>
-                <article class="item">
-                <a href="#" class="item-link">
-                    <div class="item-img">
-                        <img src="/static/images/dinosaur-vitamins.jpg">
-                    </div>
-                    <div class="item-caption-box">
-                        <div class="item-caption">
-                            <div>
-                                <p class="item-description">KAL Kid’s MultiSaurus Vitamins & Minerals | Mixed Berry Flavor</p>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="price-box">
-                        <span class="price">$14.99</span>
-                    </p>
-                </a>
-                    <button type="button" data-toggle="modal" data-target="#second-item" class="quick-view">Quick View</button>
-                    <div class="modal fade" id="second-item" tabindex="-1" role="dialog" aria-hidden="true">
-                        <div class="modal-dialog modal-dialogue-centered" role="document">
-                            <div class="modal-content">
-                                <div class="item-img">
-                                <img src="/static/images/dinosaur-vitamins.jpg">
-                                </div>
-                                <div class="modal-header">
-                                    <h5 class="modal-title"><strong>KAL Kid’s MultiSaurus Vitamins & Minerals | Mixed Berry Flavor</strong></h5>
-                                </div>
-                                <div class="modal-body">
-                                    <h6>Product Description</h6>
-                                    <p>Natures Aid Chewable Vitamin C offers a great solution for people who struggle to swallow a large tablet.</p>
-                                    <p>Size: 100 Tablets</p>
-                                    <p class="price-box">
-                                        <span class="price">$14.99</span>
-                                    </p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-success"><i class="icon-shopping-cart">   Buy Now</i></button>
-                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                <article class="item">
-                <a href="/ribena" class="item-link">
-                    <div class="item-img">
-                        <img src="/static/images/Ribena-1.jpg">
-                    </div>
-                    <div class="item-caption-box">
-                        <div class="item-caption">
-                            <div>
-                                <p class="item-description">Ribena Pastilles, Mixed Berries, 40g</p>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="price-box">
-                        <span class="price">$2.20</span>
-                    </p>
-                </a>
-                    <button type="button" data-toggle="modal" data-target="#third-item" class="quick-view">Quick View</button>
-                    <div class="modal fade" id="third-item" tabindex="-1" role="dialog" aria-hidden="true">
-                        <div class="modal-dialog modal-dialogue-centered" role="document">
-                            <div class="modal-content">
-                                <div class="item-img">
-                                <img src="/static/images/Ribena-1.jpg">
-                                </div>
-                                <div class="modal-header">
-                                    <h5 class="modal-title"><strong>Ribena Pastilles, Mixed Berries, 40g</strong></h5>
-                                </div>
-                                <div class="modal-body">
-                                    <h6>Product Description</h6>
-                                    <ul>
-                                        <li>100% Daily Vitamin C</li>
-                                        <li>No artificial colour, sweetener or flavour</li>
-                                        <li>Halal Certified</li>
-                                    </ul>
-                                    <p class="price-box">
-                                        <span class="price">$2.20</span>
-                                    </p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-success"><i class="icon-shopping-cart">   Buy Now</i></button>
-                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                <article class="item">
-                <a href="#" class="item-link">
-                    <div class="item-img">
-                        <img src="/static/images/centrum-for-men-2.jpg">
-                    </div>
-                    <div class="item-caption-box">
-                        <div class="item-caption">
-                            <div>
-                                <p class="item-description">Centrum for Men</p>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="price-box">
-                        <span class="price">$44.10</span>
-                    </p>
-                </a>
-                    <button type="button" data-toggle="modal" data-target="#fourth-item" class="quick-view">Quick View</button>
-                    <div class="modal fade" id="fourth-item" tabindex="-1" role="dialog" aria-hidden="true">
-                        <div class="modal-dialog modal-dialogue-centered" role="document">
-                            <div class="modal-content">
-                                <div class="item-img">
-                                <img src="/static/images/centrum-for-men-2.jpg">
-                                </div>
-                                <div class="modal-header">
-                                    <h5 class="modal-title"><strong>Centrum for Men</strong></h5>
-                                </div>
-                                <div class="modal-body">
-                                    <h6>Product Description</h6>
-                                    <p>Centrum® for Men multivitamins are specially formulated with key nutrients to help meet men's nutritional needs.</p>
-                                    <p>Size: 60 Tablets</p>
-                                    <p class="price-box">
-                                        <span class="price">$44.10</span>
-                                    </p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-success"><i class="icon-shopping-cart">   Buy Now</i></button>
-                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                                </div>
+              {% endfor %}              
                             </div>
                         </div>
                     </div>
