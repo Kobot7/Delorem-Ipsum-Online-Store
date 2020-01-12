@@ -39,6 +39,7 @@ def login():
         db.close()
         print("User created with name", U.get_username(), "id", U.get_user_id(),
          "Password", U.get_password(), "and Email", U.get_email())
+         
     if request.method =="POST" and loginForm.validate():
         usersDict = {}
         namesDict = {}

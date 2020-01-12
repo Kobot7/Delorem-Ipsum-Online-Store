@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, SelectField, validators, BooleanField, PasswordField, FileField, DecimalField, IntegerField
+from wtforms import Form, StringField, SelectField, validators, BooleanField, PasswordField, FileField, DecimalField, IntegerField, TextAreaField
 
 choicesList = [('', 'Select')
                 , ('Accessories', 'Baby - Accessories')
@@ -40,22 +40,48 @@ choicesList = [('', 'Select')
 
 class EditProductForm(Form):
     activated = BooleanField('')
-    thumbnail = FileField('Thumbnail')
-    productName = StringField('Product Name', [validators.Length(min=1, max=150), validators.DataRequired()])
-    brand = StringField('Brand', [validators.Length(min=1, max=150), validators.DataRequired()])
-    subCategory = SelectField('Sub-Category', [validators.DataRequired()], choices=choicesList, default='')
-    serialNo = StringField('Serial No.', [validators.Length(min=1, max=10), validators.DataRequired()])
-    price = DecimalField('Price', places=2)
-    quantity = IntegerField('Quantity')
+    # thumbnail = FileField('Image', [validators.DataRequired()])
+    thumbnail = FileField('Image', [validators.DataRequired(message='This is a required field.')
+                                 , validators.regexp('([^\s]+(\.(gif|jpg|tiff|png))$)', message='Please ensure file is in one of the following formats: jpg, png, gif, tiff')])
+
+    productName = StringField('Product Name', [validators.DataRequired(message='This is a required field.')
+                                            , validators.Length(min=1, max=100, message='Product name has to be less than 100 characters.')])
+
+    brand = StringField('Brand', [validators.DataRequired(message='This is a required field.')
+                               , validators.Length(min=1, max=50, message='Brand name is too long.')])
+
+    subCategory = SelectField('Sub-Category', [validators.DataRequired(message='This is a required field.')], choices=choicesList, default='')
+
+    price = DecimalField('Price', [validators.DataRequired(message='This is a required field.')
+                                , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
+
+    description = TextAreaField('Description', [validators.DataRequired(message='This is a required field.')])
+
+    quantity = IntegerField('Quantity', [validators.DataRequired(message='This is a required field.')
+                                      , validators.NumberRange(min=0, message='Value has to be more than 0')])
+
+    serialNo = StringField('Serial No.')
 
 class CreateProductForm(Form):
-    productName = StringField('Product Name', [validators.Length(min=1, max=150), validators.DataRequired()])
-    brand = StringField('Brand', [validators.Length(min=1, max=150), validators.DataRequired()])
-    thumbnail = FileField('Image', [validators.DataRequired()])
-    subCategory = SelectField('Sub-Category', [validators.DataRequired()], choices=choicesList, default='')
-    price = StringField('Price', [validators.Length(min=1, max=6), validators.DataRequired()])
+    productName = StringField('Product Name', [validators.DataRequired(message='This is a required field.')
+                                            , validators.Length(min=1, max=100, message='Product name has to be less than 100 characters.')])
+
+    brand = StringField('Brand', [validators.DataRequired(message='This is a required field.')
+                               , validators.Length(min=1, max=50, message='Brand name is too long.')])
+
+    thumbnail = FileField('Image', [validators.DataRequired(message='This is a required field.')
+                                 , validators.regexp('([^\s]+(\.(gif|jpg|tiff|png))$)', message='Please ensure file is in one of the following formats: jpg, png, gif, tiff')])
+
+    subCategory = SelectField('Sub-Category', [validators.DataRequired(message='This is a required field.')], choices=choicesList, default='')
+
+    price = DecimalField('Price', [validators.DataRequired(message='This is a required field.')
+                                , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
+
+    description = TextAreaField('Description', [validators.DataRequired(message='This is a required field.')])
+
+    quantity = IntegerField('Quantity', [validators.DataRequired(message='This is a required field.')])
+
     activated = BooleanField('')
-    quantity = IntegerField('Quantity')
 
 class LoginForm(Form):
     username = StringField('Username', [validators.Length(min=1, max=25), validators.DataRequired()])

@@ -1,13 +1,17 @@
 class Product:
-    def __init__(self, productName, brand, thumbnail, subCategory, price, activated, quantity):
+    def __init__(self, productName, brand, thumbnail, subCategory, price, description, activated, quantity):
         self.__productName = productName
         self.__brand = brand
         self.__thumbnail = thumbnail
         self.__subCategory = subCategory
         self.__serialNo = ''
-        self.__price = price
+        self.__price = float(price)
+        self.__description = description
         self.__activated = activated
         self.__quantity = quantity
+
+        self.__views = 0
+        self.__purchases = 0
 
     # Accessors
     def get_product_name(self):
@@ -28,11 +32,20 @@ class Product:
     def get_price(self):
         return '%.2f' %float(self.__price)
 
+    def get_description(self):
+        return self.__description
+
     def get_activated(self):
         return self.__activated
 
     def get_quantity(self):
         return self.__quantity
+
+    def get_views(self):
+        return self.__views
+
+    def get_purchases(self):
+        return self.__purchases
 
     # Mutators
     def set_product_name(self, productName):
@@ -53,8 +66,17 @@ class Product:
     def set_price(self, price):
         self.__price = price
 
+    def set_description(self, description):
+        self.__description = description
+
     def set_activated(self, activated):
         self.__activated = activated
 
     def set_quantity(self, quantity):
         self.__quantity = quantity
+
+    def set_views(self):
+        self.__views += 0
+
+    def set_purchases(self, amount):
+        self.__purchases += int(amount)
