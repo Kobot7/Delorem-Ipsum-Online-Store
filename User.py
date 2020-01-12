@@ -13,7 +13,7 @@ class User:
 
     def set_user_id(self):
         user_id = random.randint(0, 9999999999999999999999999)
-        db = shelve.open('storage.db')
+        db = shelve.open('storage.db', 'c')
         usersDict = {}
         try:
             usersDict = db['Users']
@@ -98,14 +98,13 @@ class User:
                 wishlist[serial_no] = item
         self.set_wishlist(wishlist)
 
-    def remove_from_wishlist(self, item):
+    def remove_from_wishlist(self, seriakNo):
         wishlist = self.get_wishlist()
-        serial_no = serial_no_key(item)
         del wishlist[serial_no]
         self.set_wishlist(wishlist)
 
     def default_wishlist(self):
-        db = shelve.open('storage.db')
+        db = shelve.open('storage.db', 'r')
         productsDict = {}
         try:
             productsDict = db['Products']

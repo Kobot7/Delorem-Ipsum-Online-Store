@@ -49,7 +49,7 @@ def wishlist(filter):
         print('Error in retrieving current user from storage.db.')
 
     wishlist = current_user.get_wishlist()
-    db.close
+    db.close()
 
     filtered_list = []
     # for item in wishlist:
@@ -74,7 +74,6 @@ def wishlist(filter):
         # filtered_list = filter(filtered_list, filter)
 
     return render_template('wishlist.html', filtered_list=filtered_list)
->>>>>>> Stashed changes
 
 @app.route('/deleteWishListItem/<serialNo>', methods=['POST'])
 def deleteWishListItem(serialNo):
@@ -228,3 +227,4 @@ def categories():
 
 if __name__=='__main__':
     app.run()
+    app.run(debug =True)
