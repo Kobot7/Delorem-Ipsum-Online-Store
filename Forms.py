@@ -1,13 +1,13 @@
 from wtforms import Form, StringField, SelectField, validators, BooleanField, PasswordField, FileField, DecimalField, IntegerField, TextAreaField
 
 choicesList = [('', 'Select')
-                , ('Accessories', 'Baby - Accessories')
+                , ('BabyAccessories', 'Baby - Accessories')
                 , ('BabyVitamins', 'Baby - Baby Vitamins')
                 , ('Diapers', 'Baby - Diapers')
                 , ('MilkPowder&Food', 'Baby - Milk Powder & Food')
                 , ('Toiletries', 'Baby - Toiletries')
 
-                , ('Accessories', 'Cosmetics - Accessories')
+                , ('CosmeticsAccessories', 'Cosmetics - Accessories')
                 , ('Eyes', 'Cosmetics - Eyes')
                 , ('Face', 'Cosmetics - Face')
                 , ('Lips', 'Cosmetics - Lips')
@@ -26,7 +26,7 @@ choicesList = [('', 'Select')
                 , ('Pain&Fever', 'Health - Pain & Fever')
                 , ('Supplements', 'Health - Supplements')
 
-                , ('Accessories', 'Skin Care - Accessories')
+                , ('SkinCareAccessories', 'Skin Care - Accessories')
                 , ('Anti-acne', 'Skin Care - Anti-acne')
                 , ('Facial', 'Skin Care - Facial')
                 , ('Hand&Body', 'Skin Care - Hand & Body')

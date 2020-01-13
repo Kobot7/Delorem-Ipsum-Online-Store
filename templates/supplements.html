@@ -9,7 +9,7 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item"><a href="#">Health</a></li>
+        <li class="breadcrumb-item"><a href="#">{{ mainCategory }}</a></li>
         <li class="breadcrumb-item active" aria-current="page">{{ subCategory }}</li>
       </ol>
     </nav>
@@ -28,7 +28,7 @@
             <div class="items-block">
               {% for product in productList %}
                 <article class="item">
-                <a href="#" class="item-link">
+                <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
                     <div class="item-img">
                         <img src="/static/images/{{product.get_thumbnail()}}">
                     </div>
@@ -69,7 +69,7 @@
                         </div>
                     </div>
                 </article>
-              {% endfor %}              
+              {% endfor %}
                             </div>
                         </div>
                     </div>
