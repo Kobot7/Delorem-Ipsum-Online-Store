@@ -119,7 +119,7 @@ def wishlist(filter):
 
     return render_template('wishlist.html', filtered_list=filtered_list)
 
-    @app.route('/deleteWishListItem/<serialNo>', methods=['POST'])
+@app.route('/deleteWishListItem/<serialNo>', methods=['POST'])
 def deleteWishListItem(serialNo):
 
     current_user = ""
@@ -280,6 +280,10 @@ def addProduct():
 @app.route('/categories')
 def categories():
     return render_template('categories.html')
+
+@app.route('/details')
+def details():
+    return render_template('details.html')
 
 if __name__=='__main__':
     app.run(debug=True)
