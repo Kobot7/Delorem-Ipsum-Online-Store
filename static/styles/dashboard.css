@@ -5,3 +5,8 @@
 table tbody tr:hover {
   cursor: pointer;
 }
+
+.thumbnail {
+  height: 60px;
+  padding: 5px;
+}

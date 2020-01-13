@@ -114,3 +114,20 @@ class User:
             wishlist[key] = product
         self.set_wishlist(wishlist)
         return self.__wishlist
+
+    def add_to_cart(self, item):
+        cart = self.get_shopping_cart()
+        serial_no = item.get_serial_no()
+        if not bool(cart):
+            cart[serial_no] = item
+        else:
+            for key in cart:
+                same = False
+                if key == serial_no:
+                    same = True
+                    break
+                else:
+                    same = False
+            if same == False:
+                cart[serial_no] = item
+        self.set_shopping_cart(cart)

@@ -35,7 +35,10 @@
       <p class="price-box">
           <span class="price">{{product.get_price()}}</span>
       </p>
-        <button type="button" class="btn btn-success"><i class="icon-shopping-cart"> Add to Cart</i></button>
+        <form  action="/addToCart/{{product.get_product_name()}}/" method="POST">
+           <input type="submit" class="remove" value="Add to cart" class="btn btn-danger">
+        </form>
+        <!-- <button type="button" class="btn btn-success"><i class="icon-shopping-cart"> Add to Cart</i></button> -->
         <button type="button" class="btn btn-danger"><i class="icon-heart"> Add to Wish List</i></button>
     </div>
 

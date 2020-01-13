@@ -6,23 +6,6 @@ def sort_by(list, category, order):
 
     list = sorted(list, key=keyDict[category], reverse=order)
     return list
-    
-def filter_function(list, filter):
-    #if order == "recent":
-    #elif order =="expiring":
-    #elif order =="discount":
-    filtered_list=[]
-    if filter =="hightolow":
-        filtered_list = sorted(list, key=keyDict['price'], reverse=True)
-
-    elif filter =="lowtohigh":
-        filtered_list = sorted(list, key=keyDict['price'], reverse=False)
-    elif filter =="a-z":
-        filtered_list = sorted(list, key=keyDict['name'], reverse=False)
-    elif filter =="z-a":
-        filtered_list = sorted(list, key=keyDict['name'], reverse=True)
-    #elif order =="stock":
-    return filtered_list
 
 def name_key(item):
     return item.get_product_name()
@@ -37,13 +20,19 @@ def serial_no_key(item):
     return item.get_serial_no()
 
 def price_key(item):
-    return item.get_price()
+    return float(item.get_price())
 
 def activated_key(item):
     return item.get_activated()
 
 def quantity_key(item):
     return item.get_quantity()
+
+def view_key(item):
+    return item.get_views()
+
+def purchase_key(item):
+    return item.get_purchases()
 
 keyDict = {}
 keyDict['name'] = name_key
@@ -53,6 +42,8 @@ keyDict['serial-no'] = serial_no_key
 keyDict['price'] = price_key
 keyDict['activated'] = activated_key
 keyDict['quantity'] = quantity_key
+keyDict['view'] = view_key
+keyDict['purchase'] = purchase_key
 
 def get_main_category(subCategory):
     if subCategory in ['Pain&Fever','FamilyPlanning','FirstAid&Surgical','Eye&EarCare','Supplements']:
@@ -74,3 +65,20 @@ def get_main_category(subCategory):
         mainCategory = 'Cosmetics'
 
     return mainCategory
+
+# For wish list
+def filter_function(list, filter):
+    #if order == "recent":
+    #elif order =="expiring":
+    #elif order =="discount":
+    filtered_list=[]
+    if filter =="hightolow":
+        filtered_list = sorted(list, key=keyDict['price'], reverse=True)
+    elif filter =="lowtohigh":
+        filtered_list = sorted(list, key=keyDict['price'], reverse=False)
+    elif filter =="a-z":
+        filtered_list = sorted(list, key=keyDict['name'], reverse=False)
+    elif filter =="z-a":
+        filtered_list = sorted(list, key=keyDict['name'], reverse=True)
+    #elif order =="stock":
+    return filtered_list

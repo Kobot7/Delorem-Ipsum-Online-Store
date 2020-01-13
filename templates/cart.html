@@ -9,69 +9,40 @@
             <h2>MY CART</h2>
             <hr>
         </div>
+
+        {% for product in cartList %}
         <div class="item">
-                <div class="buttons">
-                    <a href="/wishlist" class="mybutton" target="_blank">Move to wishlist</a>
-                    <button class="mybutton">x</button>
-                </div>
-                <div class="details ">
-                        <div class="image">
-                                <img src="/static/images/vitamin c pills.jpg" >
-                            </div>
-                    <div class="right">
-                        <p class="price">SGD $25</p>
-                        <p class="item_name">Vitamin C pills </p>
-                        <div class="qty">
-                            Qty <select name="qty">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                                <option value="6">6</option>
-                                <option value="7">7</option>
-                                <option value="8">8</option>
-                                <option value="9">9</option>
-                                <option value="10">10</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="buttons">
+                <a href="/wishlist" class="mybutton" target="_blank">Move to wishlist</a>
+                <button class="mybutton">x</button>
             </div>
-            <hr>
-
-            <div class="item">
-                    <div class="buttons">
-                        <a href="/wishlist" class="mybutton" target="_blank">Move to wishlist</a>
-                        <button class="mybutton">x</button>
+            <div class="details ">
+                    <div class="image">
+                        <img src="/static/images/{{product.get_thumbnail()}}">
                     </div>
-                    <div class="details ">
-                            <div class="image">
-                                    <img src="/static/images/babypowder.jpg" >
-                                </div>
-                        <div class="right">
-                            <p class="price">SGD $5.80</p>
-                            <p class="item_name">Baby Powder </p>
-                            <div class="qty">
-                                Qty <select name="qty">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option>
-                                </select>
-                            </div>
-                        </div>
+                <div class="right">
+                    <p class="price">SGD ${{product.get_price()}}</p>
+                    <p class="item_name">{{product.get_product_name()}}</p>
+                    <div class="qty">
+                        Qty <select name="qty">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
                     </div>
-
                 </div>
-                <hr>
+            </div>
+          </div>
+          <hr>
+        {% endfor %}
+
     </div>
     <div id="cost" class="clearfix">
             <div id="total_header">

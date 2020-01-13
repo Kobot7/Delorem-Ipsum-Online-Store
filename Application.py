@@ -171,7 +171,15 @@ def moveToCart(serialNo):
 # Shopping Cart
 @app.route('/cart')
 def cart():
-    return render_template('cart.html')
+    db = shelve.open('storage.db','r')
+    try:
+        user = db['Current User']
+    except:
+        print('Error reading Current User.')
+
+    cart = user.get_shopping_cart()
+
+    return render_template('cart.html', cart=cart)
 
 # Checkout
 @app.route('/checkout')
@@ -181,7 +189,22 @@ def checkout():
 # Admin Side
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    productDict = {}
+    db = shelve.open('storage.db', 'c')
+
+    try:
+        productDict = db['Products']
+        db.close()
+    except:
+        print('Error in retrieving Products from storage.db.')
+
+    productList = []
+    for key in productDict:
+        product = productDict.get(key)
+        productList.append(product)
+        viewList = sort_by(productList, 'view', 'ascending')[:5]
+        purchaseList = sort_by(productList, 'purchase', 'ascending')[:5]
+    return render_template('dashboard.html', viewList = viewList, purchaseList = purchaseList)
 
 @app.route('/products/<category>/<order>/')
 def products(category, order):
@@ -284,6 +307,39 @@ def categories():
 @app.route('/details')
 def details():
     return render_template('details.html')
+
+@app.route("/addToCart/<name>/", methods = ['POST'])
+def addToCart(name):
+    current_user = ""
+    productsDict= {}
+    db = shelve.open('storage.db', 'c')
+    try:
+        current_user = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    try:
+        productsDict = db["Products"]
+
+    except:
+        print('Error in retrieving current products from storage.db.')
+
+    for thing in productsDict:
+        product = ""
+        if productsDict[thing].get_product_name() == name:
+            product = productsDict[thing]
+            current_user.add_to_cart(product)
+            break
+
+    db['Current User'] = current_user
+    cart = current_user.get_shopping_cart()
+    cartList = []
+    for product in cart:
+        cartList.append(cart[product])
+    db.close()
+
+    # return redirect(url_for('wishlist'))
+    return render_template('cart.html', cartList=cartList)
 
 if __name__=='__main__':
     app.run(debug=True)

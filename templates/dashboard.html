@@ -12,36 +12,19 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Product</th>
+                    <th colspan="2">&nbsp;&nbsp;Product</th>
                     <th>No. of Purchases</th>
                 </tr>
             </thead>
 
             <tbody>
+              {% for product in purchaseList %}
                 <tr>
-                    <td>Panadol Advance - 32 x 500mg Tablets</td>
-                    <td>103</td>
+                  <td><img src="/static/images/{{ product.get_thumbnail() }}" class="thumbnail"></td>
+                  <td>{{ product.get_product_name() }}</td>
+                  <td>{{ product.get_purchases() }}</td>
                 </tr>
-
-                <tr>
-                    <td>Ribena Mixed Berries Pastilles</td>
-                    <td>50</td>
-                </tr>
-
-                <tr>
-                    <td>KAL Kid’s MultiSaurus Vitamins & Minerals | Mixed Berry Flavor</td>
-                    <td>12</td>
-                </tr>
-
-                <tr>
-                    <td>NIVEA Deo (F) Spray Energy Fresh 150ml</td>
-                    <td>10</td>
-                </tr>
-
-                <tr>
-                    <td>Centrum for Men - 60 tablets</td>
-                    <td>4</td>
-                </tr>
+              {% endfor %}
             </tbody>
         </table>
     </div>
@@ -52,32 +35,19 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Product</th>
+                    <th colspan="2">&nbsp;&nbsp;Product</th>
                     <th>No. of Views</th>
                 </tr>
             </thead>
 
             <tbody>
-                <tr>
-                    <td>Ribena Mixed Berries Pastilles</td>
-                    <td>20</td>
-                </tr>
-                <tr>
-                    <td>NIVEA Deo (F) Spray Energy Fresh 150ml</td>
-                    <td>14</td>
-                </tr>
-                <tr>
-                    <td>KAL Kid’s MultiSaurus Vitamins & Minerals | Mixed Berry Flavor</td>
-                    <td>10</td>
-                </tr>
-                <tr>
-                    <td>Centrum for Men - 60 tablets</td>
-                    <td>8</td>
-                </tr>
-                <tr>
-                    <td>Panadol Advance - 32 x 500mg Tablets</td>
-                    <td>6</td>
-                </tr>
+                {% for product in viewList %}
+                  <tr>
+                    <td><img src="/static/images/{{ product.get_thumbnail() }}" class="thumbnail"></td>
+                    <td>{{ product.get_product_name() }}</td>
+                    <td>{{ product.get_views() }}</td>
+                  </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
