@@ -1,5 +1,6 @@
 # import os.path
 import shelve, string, random
+import re
 from flask import Flask, render_template, request, redirect, url_for
 from Forms import *
 from StorageClass import *
@@ -41,7 +42,7 @@ def login():
     if request.method =="POST" and loginForm.validate():
         usersDict = {}
         namesDict = {}
-        db = shelve.open('storage.db')
+        db = shelve.open('storage.db', 'r')
         try:
             usersDict = db["Users"]
         except:
@@ -76,14 +77,25 @@ def supplements(subCategory):
     for id in Products:
         product = Products[id]
         if product.get_sub_category() == subCategory:
-            products.append(product)
+            if product.get_activated() == True:
+                products.append(product)
 
-    return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products))
+    mainCategory = get_main_category(subCategory)
+
+    return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory)
 
 # Ribena(one of the products)
-@app.route('/ribena')
-def ribena():
-    return render_template('ribena.html')
+@app.route('/IndItem/<serialNo>')
+def IndItem(serialNo):
+    db = shelve.open('storage.db','r')
+    try:
+        products = db['Products']
+    except:
+        print("Error while retrieving products from storage.")
+    IndItem = products[serialNo]
+    subCategory = IndItem.get_sub_category()
+    mainCategory = get_main_category(subCategory)
+    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory)
 
 # Wishlist
 @app.route('/wishlist/<filter>/')
@@ -97,21 +109,64 @@ def wishlist(filter):
 
     wishlist = current_user.get_wishlist()
 
+    db.close()
+
     filtered_list = []
-    for item in wishlist:
-        filtered_list.append(item)
-    filtered_list = filter(filtered_list, filter)
-        # db = shelve.open('storage.db', 'r')
-        # try:
-        #     productDict = db['Products']
-        # except:
-        #     print('Error in retrieving Products from storage.db.')
-        # productDict = db['Products']
-        # product = productDict.get(item)
-        # filtered_list.append(product)
-        # filtered_list = filter(filtered_list, filter)
+    for key in wishlist:
+        product = wishlist[key]
+        filtered_list.append(product)
+        filtered_list = filter_function(filtered_list, filter)
 
     return render_template('wishlist.html', filtered_list=filtered_list)
+
+    @app.route('/deleteWishListItem/<serialNo>', methods=['POST'])
+def deleteWishListItem(serialNo):
+
+    current_user = ""
+    productsDict = {}
+    db = shelve.open('storage.db', 'r')
+    try:
+        current_user = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    try:
+        productsDict = db['Products']
+    except:
+        print("Error retrieving products")
+
+    product = productsDict[serialNo]
+    current_user.remove_from_wishlist(product)
+    db["Current User"] =current_user
+    db.close()
+    print(product)
+    return redirect('/wishlist/a-z')
+
+@app.route('/moveToCart/<serialNo>', methods=['POST'])
+def moveToCart(serialNo):
+    current_user = ""
+    productsDict={}
+    db = shelve.open('storage.db', 'r')
+    try:
+        current_user = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    try:
+        productsDict = db["Products"]
+
+    except:
+        print('Error in retrieving current products from storage.db.')
+
+    cart = current_user.get_shopping_cart()
+
+    product = productsDict[serialNo]
+    cart[serialNo] = product
+    current_user.set_shopping_cart(cart)
+    current_user.remove_from_wishlist(product)
+    db["Current User"] = current_user
+    db.close()
+    return redirect('/wishlist/a-z')
 
 # Shopping Cart
 @app.route('/cart')
