@@ -75,6 +75,34 @@ def wishlist(filter):
 
     return render_template('wishlist.html', filtered_list=filtered_list)
 
+@app.route("/addToWishlist/<name>", methods = ['POST'])
+def addToWishlist(name):
+    current_user = ""
+    productsDict= {}
+    db = shelve.open('storage.db', 'c')
+    try:
+        current_user = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    try:
+        productsDict = db["Products"]
+
+    except:
+        print('Error in retrieving current products from storage.db.')
+
+    for thing in productsDict:
+        product = ""
+        if productsDict[thing].get_product_name() == name:
+            product = productsDict[thing]
+            current_user.add_to_wishlist(product)
+            break
+
+    db['Current User'] = current_user
+    db.close()
+
+    return redirect ('/wishlist/a-z')
+
 @app.route('/deleteWishListItem/<serialNo>', methods=['POST'])
 def deleteWishListItem(serialNo):
     current_user = ""

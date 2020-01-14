@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Drug Store - Item{% endblock %}
+{% block style %}<link rel="stylesheet" type = "text/css" href = "/static/styles/items.css">{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="#">{{ mainCategory }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page"><a href="supplements">{{product.get_sub_category()}}</a></li>
+  </ol>
+</nav>
+
+<!-- Page Content -->
+<div class="container">
+  <!-- Portfolio Item Row -->
+  <div class="row">
+
+    <div class="col-md-6">
+      <img class="d-block w-100" src="/static/images/{{product.get_thumbnail()}}" alt="First slide">
+    </div>
+
+    <div class="col-md-4">
+      <h3 class="my-3">{{product.get_product_name()}}</h3>
+       <ul>
+           <li>{{product.get_brand()}}</li>
+           <li>{{product.get_description()}}</li>
+       </ul>
+      <p class="price-box">
+          <span class="price">{{product.get_price()}}</span>
+      </p>
+        <form  action="{{url_for('addToCart', name = product.get_product_name())}}" method="POST">
+           <button class="btn btn-success" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
+        </form>
+        <button type="button" class="btn btn-danger"><i class="icon-heart"> Add to Wish List</i></button>
+    </div>
+
+  </div>
+  <!-- /.row -->
+
+  <!-- Related Projects Row -->
+  <h3 class="my-4">Related Products</h3>
+
+  <div class="row">
+
+    <div class="col-md-3 col-sm-6 mb-4">
+      <a href="#">
+            <img class="img-fluid" src="/static/images/Ribena-2.jpg" alt="">
+          </a>
+    </div>
+
+    <div class="col-md-3 col-sm-6 mb-4">
+      <a href="#">
+            <img class="img-fluid" src="/static/images/Ribena-3.jpg" alt="">
+          </a>
+    </div>
+
+    <div class="col-md-3 col-sm-6 mb-4">
+      <a href="#">
+            <img class="img-fluid" src="/static/images/Ribena-4.jpg" alt="">
+          </a>
+    </div>
+
+    <div class="col-md-3 col-sm-6 mb-4">
+      <a href="#">
+            <img class="img-fluid" src="/static/images/Ribena-1.jpg" alt="">
+          </a>
+    </div>
+
+  </div>
+  <!-- /.row -->
+
+</div>
+<!-- /.container -->
+{% endblock %}

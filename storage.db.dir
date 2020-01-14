@@ -1,8 +1,15 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 'Products', (1536, 1211)
 =======
 'Products', (512, 738)
 'Users', (16384, 4024)
 'Usernames', (2560, 232)
 'Current User', (20480, 954)
+>>>>>>> Stashed changes
+=======
+'Products', (13824, 1586)
+'Users', (56320, 10781)
+'Usernames', (3072, 321)
+'Current User', (68608, 1148)
 >>>>>>> Stashed changes

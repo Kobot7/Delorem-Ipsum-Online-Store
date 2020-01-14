@@ -8,8 +8,9 @@ class User:
         self.set_username(username)
         self.set_password(password)
         self.set_email(email)
-        self.__wishlist = self.default_wishlist()
+        # self.__wishlist = self.default_wishlist()
         self.__shopping_cart = {}
+        self.__wishlist = {}
 
     def set_user_id(self):
         user_id = random.randint(0, 9999999999999999999999999)
