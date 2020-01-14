@@ -1,4 +1,5 @@
 from wtforms import Form, StringField, SelectField, validators, BooleanField, PasswordField, FileField, DecimalField, IntegerField, TextAreaField
+import re
 
 choicesList = [('', 'Select')
                 , ('BabyAccessories', 'Baby - Accessories')
@@ -95,3 +96,15 @@ class RegistrationForm(Form):
         validators.EqualTo('confirm', message='Passwords must match')
     ])
     confirm = PasswordField('Repeat Password')
+
+# [validators.re.compile(u'^[^/\\\\]\.jpg$')]
+# [validators.Length(min=4, max=25)]
+# [validators.Length(min=8, max=10)]
+# [validators.Length(min=6, max=35)]
+
+class EditProfileForm(Form):
+    image = FileField('Image')
+    username = StringField('Username')
+    address = TextAreaField('Address')
+    phone = StringField('Contact Number')
+    email = StringField('Contact Email')
