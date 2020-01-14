@@ -9,7 +9,6 @@ class Product:
         self.__description = description
         self.__activated = activated
         self.__quantity = quantity
-
         self.__views = 0
         self.__purchases = 0
 

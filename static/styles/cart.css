@@ -18,6 +18,7 @@
 }
 .details{
     display: flex;
+    max-width: 500px;
 }
 .details .right{
     /* background-color: aqua; */
@@ -28,10 +29,14 @@ img{
     width: 100px;
     height: 100px;
 }
+
+.item{
+  display: flex;
+}
+
 .buttons{
-    float: right;
-    /* background-color: aqua; */
-    margin-top: 3rem ;
+  position: absolute;
+  left:600px;
 }
 /* button{
     background-color: white;
@@ -47,14 +52,29 @@ img{
 a.mybutton, .mybutton{
     background-color: white;
     color: black;
-    border: 2px solid #e8e8e8 !important;
+    border: 2px solid #e8e8e8;
     padding: 10px ;
     text-align: center;
     display: inline-block;
     font-family: 'Josefin Sans', sans-serif !important;
 }
 
-a.mybutton:hover{
+.icon-btn {
+  width: 50px;
+  height: 50px;
+  border: 1px solid #cdcdcd;
+  background: white;
+  border-radius: 25px;
+  overflow: hidden;
+  position: relative;
+  transition: width 0.2s ease-in-out;
+}
+
+.btn-txt {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+/* a.mybutton:hover{
     background-color: #e7e7e7 !important;
     text-decoration: none !important;
     color: black !important;
@@ -62,6 +82,89 @@ a.mybutton:hover{
 
 .mybutton:hover{
     background-color: #e7e7e7;
+} */
+
+.add-btn:hover {
+  width: 120px;
+}
+.add-btn::before,
+.add-btn::after {
+  transition: width 0.2s ease-in-out, border-radius 0.2s ease-in-out;
+  content: "";
+  position: absolute;
+  height: 4px;
+  width: 10px;
+  top: calc(50% - 2px);
+  background: red;
+}
+.add-btn::after {
+  right: 14px;
+  overflow: hidden;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+.add-btn::before {
+  left: 14px;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+
+.add-btn:hover::before,
+.add-btn:hover::after {
+  width: 4px;
+  border-radius: 2px;
+}
+.add-btn:hover .btn-txt {
+  opacity: 1;
+}
+.add-icon::after,
+.add-icon::before {
+  transition: all 0.2s ease-in-out;
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 2px;
+  top: calc(50% - 10px);
+  background: red;
+  overflow: hidden;
+}
+.add-icon::before {
+  left: 22px;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+.add-icon::after {
+  right: 22px;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+.add-btn:hover .add-icon::before {
+  left: 15px;
+  height: 4px;
+  top: calc(50% - 2px);
+}
+.add-btn:hover .add-icon::after {
+  right: 15px;
+  height: 4px;
+  top: calc(50% - 2px);
+}
+
+.remove{
+  text-align:center;
+}
+
+.move{
+  color: black;
+  transition: 0.25s;
+}
+.move:hover, .move:focus {
+  border-color: green;
+  color: white;
+}
+
+.up:hover,
+.up:focus {
+  box-shadow: inset 0 -4.25em 0 0 rgb(184, 15, 10);
 }
 
 #cost{

@@ -16,14 +16,7 @@
   <div class="row">
 
     <div class="col-md-6">
-      <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-  <ol class="carousel-indicators">
-    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-  </ol>
       <img class="d-block w-100" src="/static/images/{{product.get_thumbnail()}}" alt="First slide">
-</div>
     </div>
 
     <div class="col-md-4">
@@ -35,10 +28,9 @@
       <p class="price-box">
           <span class="price">{{product.get_price()}}</span>
       </p>
-        <form  action="/addToCart/{{product.get_product_name()}}/" method="POST">
-           <input type="submit" class="remove" value="Add to cart" class="btn btn-danger">
+        <form  action="{{url_for('addToCart', name = product.get_product_name())}}" method="POST">
+           <button class="btn btn-success" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
         </form>
-        <!-- <button type="button" class="btn btn-success"><i class="icon-shopping-cart"> Add to Cart</i></button> -->
         <button type="button" class="btn btn-danger"><i class="icon-heart"> Add to Wish List</i></button>
     </div>
 
