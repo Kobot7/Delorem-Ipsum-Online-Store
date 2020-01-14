@@ -9,10 +9,7 @@ class User:
         self.set_username(username)
         self.set_password(password)
         self.set_email(email)
-        self.set_profile_pic(r"..\static\images\default-profile-picture1.jpg")
-        self.__phone = ""
         self.__wishlist = self.default_wishlist()
-        self.__address = ""
         self.__shopping_cart = {}
 
     def set_user_id(self):
@@ -41,20 +38,14 @@ class User:
     def set_password(self, password):
         self.__password = password
 
-    def set_profile_pic(self, pic):
-        self.__profile_pic = pic
-
-    def set_phone(self, phone):
-        self.__phone = phone
-
     def set_wishlist(self, wishlist):
         self.__wishlist = wishlist
 
     def set_shopping_cart(self, shopping_cart):
         self.__shopping_cart = shopping_cart
 
-    def set_address(self, address):
-        self.__address = address
+    def set_addresses(self, addresses):
+        self.__addresses = addresses
 
     def set_email(self, email):
         self.__email = email
@@ -71,20 +62,14 @@ class User:
     def get_password(self):
         return self.__password
 
-    def get_profile_pic(self):
-        return self.__profile_pic
-
-    def get_phone(self):
-        return self.__phone
-
     def get_wishlist(self):
         return self.__wishlist
 
     def get_shopping_cart(self):
         return self.__shopping_cart
 
-    def get_address(self):
-        return self.__address
+    def get_addresses(self):
+        return self.__addresses
 
     def get_email(self):
         return self.__email

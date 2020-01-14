@@ -12,15 +12,9 @@
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav ml-auto bg-dark">
-        {% if current %}
-          <li class="nav-item username-username">
-            <a class="nav-link" href="/my-account/{{current}}"><i class="icon-user"></i>  {{current}}</a>
-          </li>
-        {% else %}
-          <li class="nav-item username-username">
-              <a class="nav-link" href="/login"><i class="icon-user"></i>   Login | Register</a>
-          </li>
-        {% endif %}
+        <li class="nav-item">
+            <a class="nav-link" href="/login"><i class="icon-user"></i>   Login | Register</a>
+        </li>
         <li class="nav-item">
             <a class="nav-link" href="cart"><i class="icon-shopping-cart"></i>   Cart</a>
         </li>
