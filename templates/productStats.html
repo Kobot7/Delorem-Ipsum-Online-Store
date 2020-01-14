@@ -1,0 +1,44 @@
+{% extends "admin_base.html" %}
+{% block title %}Products{% endblock %}
+{% block style %}<link rel="stylesheet" href="/static/styles/products.css">{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-11 mt-3">
+    <h1 class="d-inline">Product Statistics</h1>
+  </div>
+
+  <div class="col-md-11">
+    <table class="table mt-4">
+      <thead>
+        <tr>
+          <th>Thumbnail</th>
+          <th>Name <a href="/dashboard/productStats/name/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                   <a href="/dashboard/productStats/name/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+          </th>
+          <th>Serial No. <a href="/dashboard/productStats/serial-no/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                   <a href="/dashboard/productStats/serial-no/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+          </th>
+          <th>Purchases <a href="/dashboard/productStats/purchase/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                   <a href="/dashboard/productStats/purchase/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+          </th>
+          <th>Views <a href="/dashboard/productStats/view/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                   <a href="/dashboard/productStats/view/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+          </th>
+      </thead>
+
+      <tbody>
+        {% for product in productList %}
+          <tr>
+            <td><img src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+            <td>{{ product.get_product_name() }}</td>
+            <td>{{ product.get_serial_no() }}</td>
+            <td>{{ product.get_purchases() }}</td>
+            <td>{{ product.get_views() }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

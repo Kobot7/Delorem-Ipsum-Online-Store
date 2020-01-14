@@ -12,6 +12,7 @@ app = Flask(__name__, static_url_path='/static')
 def home():
     return render_template("home.html")
 
+
 # Login/Register
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -63,6 +64,7 @@ def login():
 
     return render_template('login.html', form=loginForm, form2=registrationForm)
 
+
 # Supplements(one of the subsections)
 @app.route('/subCategory/<subCategory>/')
 def supplements(subCategory):
@@ -82,18 +84,23 @@ def supplements(subCategory):
 
     return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory)
 
+
 # Ribena(one of the products)
 @app.route('/IndItem/<serialNo>')
 def IndItem(serialNo):
-    db = shelve.open('storage.db','r')
+    db = shelve.open('storage.db','w')
     try:
         products = db['Products']
     except:
         print("Error while retrieving products from storage.")
     IndItem = products[serialNo]
+    IndItem.increase_views()
+    db['Products'] = products
+    db.close()
     subCategory = IndItem.get_sub_category()
     mainCategory = get_main_category(subCategory)
     return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory)
+
 
 # Shopping Cart
 @app.route('/cart')
@@ -205,6 +212,7 @@ def moveToWishlist(serialNo):
     db.close()
     return redirect('/cart')
 
+
 # Wishlist
 @app.route('/wishlist/<filter>/')
 def wishlist(filter):
@@ -282,6 +290,7 @@ def moveToCart(serialNo):
 def checkout():
     return render_template('checkout.html')
 
+
 # Admin Side
 @app.route('/dashboard')
 def dashboard():
@@ -298,9 +307,28 @@ def dashboard():
     for key in productDict:
         product = productDict.get(key)
         productList.append(product)
-        viewList = sort_by(productList, 'view', 'ascending')[:5]
-        purchaseList = sort_by(productList, 'purchase', 'ascending')[:5]
+        viewList = sort_by(productList, 'view', 'descending')[:5]
+        purchaseList = sort_by(productList, 'purchase', 'descending')[:5]
     return render_template('dashboard.html', viewList = viewList, purchaseList = purchaseList)
+
+@app.route('/dashboard/productStats/<category>/<order>/')
+def viewAll(category, order):
+    productDict = {}
+    db = shelve.open('storage.db', 'w')
+
+    try:
+        productDict = db['Products']
+        db.close()
+    except:
+        print('Error in retrieving Products from storage.db.')
+
+    productList = []
+    for key in productDict:
+        product = productDict.get(key)
+        productList.append(product)
+        productList = sort_by(productList, category, order)
+
+    return render_template('productStats.html', productList=productList)
 
 @app.route('/products/<category>/<order>/')
 def products(category, order):
@@ -361,7 +389,7 @@ def productSettings(serialNo):
         editProductForm.activated.data = product.get_activated()
         editProductForm.serialNo.data = product.get_serial_no()
 
-    return render_template('productSettings.html', form=editProductForm)
+    return render_template('productSettings.html', form=editProductForm, thumbnail=product.get_thumbnail())
 
 @app.route('/addProduct', methods=['GET', 'POST'])
 def addProduct():
@@ -407,3 +435,16 @@ def details():
 
 if __name__=='__main__':
     app.run(debug=True)
+
+
+# For testing, to increase views/purchases for products
+def test():
+    productDict = {}
+    db = shelve.open('storage.db', 'w')
+    productDict = db['Products']
+    test = productDict['709283M']
+    test.increase_purchases(0)
+    for x in range(10):
+        test.increase_views()
+    db['Products'] = productDict
+    db.close()

@@ -7,16 +7,16 @@ width: calc(33.3333% - 8px);
 }
 
 .breadcrumb{
-background-color:#85886D;
+background-color:#84a220;
 border-radius: unset;
 }
 
 .breadcrumb-item>a{
-color:#D0B9AA;
+color:#ddd;
 }
 
 .breadcrumb-item:last-child{
-color:#E6BCA2;
+color:#fff;
 }
 
 .main-body{

@@ -74,8 +74,8 @@ class Product:
     def set_quantity(self, quantity):
         self.__quantity = quantity
 
-    def set_views(self):
-        self.__views += 0
+    def increase_views(self):
+        self.__views += 1
 
-    def set_purchases(self, amount):
+    def increase_purchases(self, amount):
         self.__purchases += int(amount)
