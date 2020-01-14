@@ -12,10 +12,6 @@
 
         {% for product in cartList %}
         <div class="item">
-            <div class="buttons">
-                <a href="/wishlist" class="mybutton" target="_blank">Move to wishlist</a>
-                <button class="mybutton">x</button>
-            </div>
             <div class="details ">
                     <div class="image">
                         <img src="/static/images/{{product.get_thumbnail()}}">
@@ -39,6 +35,18 @@
                     </div>
                 </div>
             </div>
+            <div class="buttons">
+              <form action="{{url_for('moveToWishlist', serialNo = product.get_serial_no())}}" method="post"
+              onsubmit="return confirm('Are you sure you want to move this item to your wishlist?')">
+                <button class="mybutton up move" ><i class="icon-heart"></i>    Move to wishlist</button>
+              </form>
+                <form action="{{url_for('deleteShoppingCartItem', serialNo = product.get_serial_no())}}" class="remove"
+                method="post" onsubmit="return confirm('Are you sure you want to remove this item from your cart?')">
+                  <button class="icon-btn add-btn">
+                    <div class="btn-txt">Remove</div>
+                  </button>
+                </form>
+            </div>
           </div>
           <hr>
         {% endfor %}
@@ -51,7 +59,7 @@
             </div>
             <div id="calculations">
                 <div id="sub-total">
-                    <div class="price">SGD $30.80</div>
+                    <div class="price">SGD ${{ totalCost }}</div>
                     <div>Sub-total</div>
                 </div>
                 <div id="delivery">

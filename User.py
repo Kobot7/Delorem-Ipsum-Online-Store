@@ -131,3 +131,9 @@ class User:
             if same == False:
                 cart[serial_no] = item
         self.set_shopping_cart(cart)
+
+    def remove_from_cart(self, item):
+        cart = self.get_shopping_cart()
+        serial_no = item.get_serial_no()
+        del cart[serial_no]
+        self.set_shopping_cart(cart)

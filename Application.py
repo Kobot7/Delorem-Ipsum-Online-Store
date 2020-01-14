@@ -1,6 +1,4 @@
-# import os.path
 import shelve, string, random
-import re
 from flask import Flask, render_template, request, redirect, url_for
 from Forms import *
 from StorageClass import *
@@ -97,6 +95,116 @@ def IndItem(serialNo):
     mainCategory = get_main_category(subCategory)
     return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory)
 
+# Shopping Cart
+@app.route('/cart')
+def cart():
+    db = shelve.open('storage.db','r')
+    try:
+        user = db['Current User']
+    except:
+        print('Error reading Current User.')
+
+    cart = user.get_shopping_cart()
+    db.close()
+    cartList = []
+    totalCost = 0
+    for product in cart:
+        totalCost += float(cart[product].get_price())
+        cartList.append(cart[product])
+    totalCost = '%.2f' %float(totalCost)
+
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost)
+
+@app.route("/addToCart/<name>", methods = ['POST'])
+def addToCart(name):
+    current_user = ""
+    productsDict= {}
+    db = shelve.open('storage.db', 'c')
+    try:
+        current_user = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    try:
+        productsDict = db["Products"]
+
+    except:
+        print('Error in retrieving current products from storage.db.')
+
+    for thing in productsDict:
+        product = ""
+        if productsDict[thing].get_product_name() == name:
+            product = productsDict[thing]
+            current_user.add_to_cart(product)
+            break
+
+    db['Current User'] = current_user
+    cart = current_user.get_shopping_cart()
+    db.close()
+    cartList = []
+    totalCost = 0
+    for product in cart:
+        totalCost += float(cart[product].get_price())
+        cartList.append(cart[product])
+    totalCost ='%.2f' %float(totalCost)
+
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost)
+
+@app.route('/deleteShoppingCartItem/<serialNo>', methods=['POST'])
+def deleteShoppingCartItem(serialNo):
+    current_user = ""
+    productsDict = {}
+    db = shelve.open('storage.db', 'c')
+    try:
+        current_user = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    try:
+        productsDict = db['Products']
+    except:
+        print("Error retrieving products")
+
+    product = productsDict[serialNo]
+    current_user.remove_from_cart(product)
+    db["Current User"] = current_user
+    cart = current_user.get_shopping_cart()
+    db.close()
+    cartList = []
+    totalCost = 0
+    for product in cart:
+        totalCost += float(cart[product].get_price())
+        cartList.append(cart[product])
+    totalCost ='%.2f' %float(totalCost)
+
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost)
+
+@app.route('/moveToWishlist/<serialNo>', methods=['POST'])
+def moveToWishlist(serialNo):
+    current_user = ""
+    productsDict={}
+    db = shelve.open('storage.db', 'c')
+    try:
+        current_user = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    try:
+        productsDict = db["Products"]
+
+    except:
+        print('Error in retrieving current products from storage.db.')
+
+    wishlist = current_user.get_wishlist()
+
+    product = productsDict[serialNo]
+    wishlist[serialNo] = product
+    current_user.set_wishlist(wishlist)
+    current_user.remove_from_cart(product)
+    db["Current User"] = current_user
+    db.close()
+    return redirect('/cart')
+
 # Wishlist
 @app.route('/wishlist/<filter>/')
 def wishlist(filter):
@@ -168,18 +276,6 @@ def moveToCart(serialNo):
     db.close()
     return redirect('/wishlist/a-z')
 
-# Shopping Cart
-@app.route('/cart')
-def cart():
-    db = shelve.open('storage.db','r')
-    try:
-        user = db['Current User']
-    except:
-        print('Error reading Current User.')
-
-    cart = user.get_shopping_cart()
-
-    return render_template('cart.html', cart=cart)
 
 # Checkout
 @app.route('/checkout')
@@ -308,38 +404,6 @@ def categories():
 def details():
     return render_template('details.html')
 
-@app.route("/addToCart/<name>/", methods = ['POST'])
-def addToCart(name):
-    current_user = ""
-    productsDict= {}
-    db = shelve.open('storage.db', 'c')
-    try:
-        current_user = db["Current User"]
-    except:
-        print('Error in retrieving current user from storage.db.')
-
-    try:
-        productsDict = db["Products"]
-
-    except:
-        print('Error in retrieving current products from storage.db.')
-
-    for thing in productsDict:
-        product = ""
-        if productsDict[thing].get_product_name() == name:
-            product = productsDict[thing]
-            current_user.add_to_cart(product)
-            break
-
-    db['Current User'] = current_user
-    cart = current_user.get_shopping_cart()
-    cartList = []
-    for product in cart:
-        cartList.append(cart[product])
-    db.close()
-
-    # return redirect(url_for('wishlist'))
-    return render_template('cart.html', cartList=cartList)
 
 if __name__=='__main__':
     app.run(debug=True)
