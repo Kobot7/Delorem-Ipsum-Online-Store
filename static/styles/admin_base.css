@@ -5,6 +5,7 @@ body {
     font-family: 'Josefin Sans', sans-serif;
 }
 
+/*--------------Form-------------- */
 .form-control {
     background-color: #f9f9f9;
 }
@@ -13,6 +14,7 @@ body {
     border-color: #93bbbf;
 }
 
+/*--------------Nav Bar--------------*/
 .navbar {
   background-color: #4f5b5b !important;
 }
@@ -41,6 +43,7 @@ body {
   color: #ffffff;
 }
 
+/*--------------Button--------------*/
 .btn {
     border-color: #85886D;
     border-width: 3px;

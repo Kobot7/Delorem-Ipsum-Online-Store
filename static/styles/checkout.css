@@ -1,10 +1,7 @@
-@import url('https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap');
-
 body{
     padding: 0;
-    /*background-color: #f2f2f2;*/
-    background-color: #e8e8e8 !important;
 }
+
 header{
     font-family: 'Josefin Sans', sans-serif;
     text-align: center;
@@ -170,5 +167,3 @@ img{
 .clearfix{
     overflow: auto;
 }
-
-

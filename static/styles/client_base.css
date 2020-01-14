@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap');
+
+body {
+    background-color: #e8e8e8;
+    font-family: 'Josefin Sans', sans-serif;
+}
+
 .search-bar-padding{
    padding-right: 3rem;
 }
@@ -6,7 +13,7 @@
     margin-top:10px;
     border-radius: 19px/50%;
     width: 300px;
-    padding-left: 15px;
+    padding-left: 1/5px;
 }
 
 .searchbar-container:focus {
@@ -51,14 +58,43 @@
   background-color: rgba(0,0,0,0.4);
 }
 
+/*--------------Nav Bar--------------*/
+.navbar {
+  background-color: #4f5b5b !important;
+}
+
+
+.navbar .dropdown-menu {
+  border: none;
+  background-color: #3f4b4b;
+}
+
+.navbar .dropdown-menu .dropdown-item {
+  color: #AAAAAA;
+}
+
+.navbar .dropdown-menu .dropdown-item.active {
+  background-color: #3f4b4b;
+  color: #ffffff;
+}
+
+.navbar .dropdown-menu .dropdown-item:hover {
+  color: #ffffff;
+}
+
+.navbar .nav-item {
+  background-color: #4f5b5b;
+}
+
+/*--------------Nav Bar dropdown--------------*/
 .dropbtn{
-border: none;
-background-color: #343a40;
+  border: none;
+  background-color: #4f5b5b;
 }
 
 .dropdown{
-position: relative;
-display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 .dropdown-content {
@@ -77,17 +113,12 @@ display: inline-block;
   display: block;
 }
 
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {
-background-color: #ddd;
-}
 
 /* Show the dropdown menu on hover */
 .dropdown:hover .dropdown-content {
-display: block;
+  display: block;
 }
 
-/* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropbtn {
-background-color: #3e8e41;
+.dropdown .dropdown-content a:hover {
+  background-color: #BBBBBB;
 }

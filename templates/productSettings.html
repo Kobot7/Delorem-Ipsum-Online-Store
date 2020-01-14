@@ -9,6 +9,40 @@
         <h1 class="my-4">Product Settings</h1>
 
         <form method="POST" action="">
+
+            <div class="form-group">
+                {{ render_field(form.productName, class="form-control") }}
+            </div>
+
+            <div class="form-group">
+                {{ render_field(form.thumbnail, class="") }}
+            </div>
+
+            <div class="row form-group">
+              <div class="col-md-4">
+                  {{ render_field(form.subCategory, class="form-control") }}
+              </div>
+              <div class="col-md-4">
+                  {{ render_field(form.brand, class="form-control") }}
+              </div>
+              <div class="col-md-4">
+                  {{ render_field(form.serialNo, class="form-control", readonly=True) }}
+              </div>
+            </div>
+
+            <div class="row form-group">
+              <div class="col-md-6">
+                  {{ render_field(form.price, class="form-control") }}
+              </div>
+              <div class="col-md-6">
+                  {{ render_field(form.quantity, class="form-control") }}
+              </div>
+            </div>
+
+            <div class="form-group">
+                {{ render_field(form.description, class="form-control") }}
+            </div>
+
             <div class="form-group">
                 Activate Product
                 <label class="switch">
@@ -17,37 +51,6 @@
                 </label>
             </div>
 
-            <div class="form-group">
-                {{ render_field(form.price, class="form-control") }}
-            </div>
-
-            <div class="form-group">
-                {{ render_field(form.quantity, class="form-control") }}
-            </div>
-
-            <div class="form-group">
-                {{ render_field(form.productName, class="form-control") }}
-            </div>
-
-            <div class="form-group">
-                {{ render_field(form.description, class="form-control") }}
-            </div>
-
-            <div class="form-group">
-                {{ render_field(form.thumbnail, class="") }}
-            </div>
-
-            <div class="form-group">
-                {{ render_field(form.brand, class="form-control") }}
-            </div>
-
-            <div class="form-group">
-                {{ render_field(form.subCategory, class="form-control") }}
-            </div>
-
-            <div class="form-group">
-                {{ render_field(form.serialNo, class="form-control", readonly=True) }}
-            </div>
             <a href="/products/name/ascending" class="btn mr-2">Cancel</a>
             <input type="submit" value="Submit" class="btn"/>
         </form>

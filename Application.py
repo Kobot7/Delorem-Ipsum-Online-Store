@@ -61,7 +61,7 @@ def login():
                 return redirect(url_for('home'))
 
         if loginForm.username.data == "admin" and loginForm.password.data == "admin":
-            return render_template('dashboard.html')
+            return redirect('/dashboard')
 
     return render_template('login.html', form=loginForm, form2=registrationForm)
 

@@ -1,9 +1,3 @@
-@import url('https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap');
-
-*{
-font-family: 'Josefin Sans', sans-serif;
-}
-
 .carousel-inner > .carousel-item{
     width: 100%;
     height: 400px;
