@@ -7,7 +7,7 @@ def sort_by(list, category, order):
     list = sorted(list, key=keyDict[category], reverse=order)
     return list
 
-def filter(list, filter):
+def filter_function(list, filter):
     #if order == "recent":
     #elif order =="expiring":
     #elif order =="discount":
@@ -20,7 +20,7 @@ def filter(list, filter):
     elif filter =="a-z":
         filtered_list = sorted(list, key=keyDict['name'], reverse=False)
     elif filter =="z-a":
-        filtered_list = sorted(list, key=keyDict['name'], reverse=False)
+        filtered_list = sorted(list, key=keyDict['name'], reverse=True)
     #elif order =="stock":
     return filtered_list
 

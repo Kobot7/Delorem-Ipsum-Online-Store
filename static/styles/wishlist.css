@@ -160,7 +160,7 @@ white-space: nowrap;
 
 .quick-view{
 position: absolute;
-bottom: 120px;
+bottom: 180px; /*120*/
 right: 105px;
 height: 36px;
 width: 108px;
