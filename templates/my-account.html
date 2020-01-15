@@ -1,0 +1,148 @@
+<div class="signup-w3ls">
+  <div class="signup-agile1">
+    <form action="#" method="post">
+
+      <div class="form-control">
+        <label class="header">Profile Photo:</label>
+        <img style="margin-left:25px;" src="{{pic}}" alt="default-profile-picture" width="200" height="200" />
+        <input id="image" style="margin-left:255px;" type="file" name="profile_photo" required="" capture>
+      </div>
+
+      <div class="form-control">
+        <label class="header">Username:</label>
+        <input type="text" id="username" name="username" placeholder="Username" title="Please enter your preferred username." required="">
+      </div>
+
+      <div class="form-control">
+        <label class="header">Default Shipping Address:</label>
+        <input type="text" id="shipping_address" name="shipping_address" placeholder="Default Shipping Address" title="Please enter your Shipping Address." required="">
+      </div>
+
+      <div class="form-control">
+        <label class="header">Contact Number:</label>
+        <input type="text" id="contact_number" name="contact_number" placeholder="Contact Number" required="">
+      </div>
+
+      <div class="form-control">
+        <label class="header">Contact Email:</label>
+        <input type="email" id="contact_email" name="contact_email" placeholder="Contact Email" required="">
+      </div>
+
+      <input type="submit" class="register" value="Update">
+
+    </form>
+
+  </div>
+</div>
+
+<style>
+  .signup-w3ls {
+    width: 50%;
+    margin: 70px 25% 80%;
+    padding: 0;
+    display: table;
+    position: relative;
+  }
+
+  .signup-agile1 {
+    width: 100%;
+    float: center;
+  }
+
+  .signup-w3ls .signup-agile1 .form-control {
+    margin-bottom: 20px;
+  }
+
+  label.header {
+    font-size: 16px;
+    font-weight: 500;
+    width: 215px;
+    color: grey;
+    margin-right: 10px;
+    text-align: justify;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: inline-block;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  input#username,
+  input#shipping_address,
+  input#contact_number,
+  input#contact_email {
+    padding: 0 40px;
+    width: 40%;
+    height: 55px;
+    border: 1px solid #dadada;
+    color: grey;
+    text-align: justify;
+    outline: none;
+    letter-spacing: 1px;
+    font-size: 16px;
+    font-weight: normal;
+    font-family: 'Muli', sans-serif;
+    border-radius: 30px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    -o-border-radius: 30px;
+    -ms-border-radius: 30px;
+  }
+
+  input#image:focus,
+  input#store_name:focus,
+  input#store_type:focus,
+  input#owner_type:focus,
+  input#website:focus,
+  input#contact_number:focus,
+  input#contact_email:focus {
+    background-color: #f5f8fa !important;
+    border: 1px solid #dadada;
+  }
+
+  input::-webkit-input-placeholder {
+    color: grey;
+  }
+
+  input:-moz-placeholder {
+    /* Firefox 18- */
+    color: grey;
+  }
+
+  input::-moz-placeholder {
+    /* Firefox 19+ */
+    color: grey;
+  }
+
+  input:-ms-input-placeholder {
+    color: grey;
+  }
+
+  .register {
+    background-color: lightgreen;
+    width: 52%;
+    height: 55px;
+    border: none;
+    margin-left: 233px;
+    cursor: pointer;
+    color: #fff;
+    outline: none;
+    font-size: 20px;
+    font-weight: normal;
+    text-transform: uppercase;
+    transition: all 0.5s ease-in-out;
+    -webkit-transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    border-radius: 30px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    -o-border-radius: 30px;
+    -ms-border-radius: 30px;
+    font-family: 'Muli', sans-serif;
+  }
+
+  .register:hover {
+    background-color: #36b051;
+    color: #fff;
+  }
+</style>
