@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, SelectField, validators, BooleanField, PasswordField, FileField, DecimalField, IntegerField, TextAreaField
+from wtforms import Form, StringField, SelectField, validators, BooleanField, PasswordField, FileField, DecimalField, IntegerField, TextAreaField, DateField, TimeField
 
 choicesList = [('', 'Select')
                 , ('BabyAccessories', 'Baby - Accessories')
@@ -95,3 +95,10 @@ class RegistrationForm(Form):
         validators.EqualTo('confirm', message='Passwords must match')
     ])
     confirm = PasswordField('Repeat Password')
+
+class DeliveryForm(Form):
+    Street_Name = StringField('Street Name',[validators.DataRequired()])
+    Postal_Code = DecimalField('Postal Code', [validators.NumberRange(min=10000, max=830000, message="Postal code is 6 digits")])
+    Unit_No = StringField('Unit No',[validators.Length(min=5,max=7),validators.DataRequired()])
+    Date = DateField('Date', [validators.DataRequired()])
+    Time = TimeField('Time',[validators.DataRequired()])

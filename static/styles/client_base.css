@@ -98,7 +98,6 @@ body {
 
 .dropbtn:hover,
 .dropbtn:focus {
-  border-color: #c4d69c;
-  box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
+  box-shadow: 0 0.5em 0.5em -0.4em #84a220;
   transform: translateY(-0.25em);
 }
