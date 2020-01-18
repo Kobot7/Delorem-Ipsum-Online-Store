@@ -302,7 +302,14 @@ def moveToCart(serialNo):
 # Checkout
 @app.route('/checkout')
 def checkout():
-    return render_template('checkout.html')
+    deliveryForm = DeliveryForm(request.form)
+    db = shelve.open('storage.db', 'r')
+    try:
+        current_user = db["Current User"]
+    except:
+        print("Error in retrieving current user for checkout")
+
+    return render_template('checkout.html',form=deliveryForm)
 
 
 # Admin Side
@@ -446,7 +453,9 @@ def categories():
 
 @app.route('/details')
 def details():
-    return render_template('details.html')
+    deliveryForm = DeliveryForm(request.form)
+
+    return render_template('details.html', form=deliveryForm)
 
 
 if __name__=='__main__':

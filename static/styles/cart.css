@@ -199,8 +199,8 @@ a.mybutton, .mybutton{
     font-weight: bold;
 }
 
-#delivery div:first-child{
-    float: right;
+#delivery{
+    text-align:center;
 }
 
 #discount div:first-child{
