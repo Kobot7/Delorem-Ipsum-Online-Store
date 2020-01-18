@@ -7,6 +7,20 @@ from User import *
 
 app = Flask(__name__, static_url_path='/static')
 
+
+def testing():
+    productDict = {}
+    db = shelve.open('storage.db', 'w')
+    productDict = db['Products']
+    del productDict['952571Z']
+
+    # test = productDict['709283M']
+    # test.increase_purchases(0)
+    # for x in range(10):
+    #     test.increase_views()
+    db['Products'] = productDict
+    db.close()
+
 # Homepage
 @app.route('/home')
 def home():
@@ -361,7 +375,10 @@ def productSettings(serialNo):
         product = productDict.get(serialNo)
         product.set_product_name(editProductForm.productName.data)
         product.set_brand(editProductForm.brand.data)
-        product.set_thumbnail(editProductForm.thumbnail.data)
+        if editProductForm.thumbnail.data!='':
+            product.set_thumbnail(editProductForm.thumbnail.data)
+        else:
+            print('thumbnail not changed')
         product.set_sub_category(editProductForm.subCategory.data)
         product.set_price(editProductForm.price.data)
         product.set_description(editProductForm.description.data)
@@ -381,7 +398,6 @@ def productSettings(serialNo):
         product = productDict.get(serialNo)
         editProductForm.productName.data = product.get_product_name()
         editProductForm.brand.data = product.get_brand()
-        editProductForm.thumbnail.data = product.get_thumbnail()
         editProductForm.subCategory.data = product.get_sub_category()
         editProductForm.price.data = float(product.get_price())
         editProductForm.quantity.data = int(product.get_quantity())
@@ -389,7 +405,7 @@ def productSettings(serialNo):
         editProductForm.activated.data = product.get_activated()
         editProductForm.serialNo.data = product.get_serial_no()
 
-    return render_template('productSettings.html', form=editProductForm, thumbnail=product.get_thumbnail())
+    return render_template('productSettings.html', form=editProductForm, label=product.get_thumbnail())
 
 @app.route('/addProduct', methods=['GET', 'POST'])
 def addProduct():
@@ -435,16 +451,3 @@ def details():
 
 if __name__=='__main__':
     app.run(debug=True)
-
-
-# For testing, to increase views/purchases for products
-def test():
-    productDict = {}
-    db = shelve.open('storage.db', 'w')
-    productDict = db['Products']
-    test = productDict['709283M']
-    test.increase_purchases(0)
-    for x in range(10):
-        test.increase_views()
-    db['Products'] = productDict
-    db.close()

@@ -40,10 +40,9 @@ choicesList = [('', 'Select')
 
 class EditProductForm(Form):
     activated = BooleanField('')
-    # thumbnail = FileField('Image', [validators.DataRequired()])
-    thumbnail = FileField('Image', [validators.DataRequired(message='This is a required field.')
-                                 , validators.regexp('([^\s]+(\.(gif|jpg|tiff|png))$)', message='Please ensure file is in one of the following formats: jpg, png, gif, tiff')])
 
+    thumbnail = FileField('Image')
+    
     productName = StringField('Product Name', [validators.DataRequired(message='This is a required field.')
                                             , validators.Length(min=1, max=100, message='Product name has to be less than 100 characters.')])
 
