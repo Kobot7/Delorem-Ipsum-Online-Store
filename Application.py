@@ -24,7 +24,42 @@ def testing():
 # Homepage
 @app.route('/home')
 def home():
-    return render_template("home.html")
+    db = shelve.open('storage.db', 'c')
+    try:
+        current = db["Current User"].get_username()
+    except:
+        print("Error while retrieving current user")
+        current = False
+    db.close()
+    return render_template("home.html", current=current)
+
+# Profile/Username
+@app.route('/my-account/<current>', methods=['GET', 'POST'])
+def view_profile(current):
+    db = shelve.open("storage.db", "c")
+    try:
+        usersDict = db["Users"]
+        current = db["Current User"]
+    except:
+        usersDict = {}
+        db["Users"] = usersDict
+        print("Error while retrieving usersDict")
+    editProfileForm = EditProfileForm(request.form)
+    if request.method == "POST" and editProfileForm.validate():
+        current_id = current.get_user_id()
+        current.set_profile_pic(editProfileForm.image.data)
+        current.set_username(editProfileForm.username.data)
+        current.set_address(editProfileForm.address.data)
+        current.set_phone(editProfileForm.phone.data)
+        current.set_email(editProfileForm.email.data)
+        usersDict[current_id] = current
+        db["Users"] = usersDict
+        db["Current User"] = current
+        db.close()
+        return render_template('my-account.html', pic=current.get_profile_pic())
+    else:
+        db.close()
+        return render_template("my-account.html", pic=current.get_profile_pic())
 
 
 # Login/Register

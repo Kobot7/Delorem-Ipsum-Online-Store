@@ -1,4 +1,5 @@
 from wtforms import Form, StringField, SelectField, validators, BooleanField, PasswordField, FileField, DecimalField, IntegerField, TextAreaField, DateField, TimeField
+import re
 
 choicesList = [('', 'Select')
                 , ('BabyAccessories', 'Baby - Accessories')
@@ -42,7 +43,7 @@ class EditProductForm(Form):
     activated = BooleanField('')
 
     thumbnail = FileField('Image')
-    
+
     productName = StringField('Product Name', [validators.DataRequired(message='This is a required field.')
                                             , validators.Length(min=1, max=100, message='Product name has to be less than 100 characters.')])
 
@@ -94,6 +95,13 @@ class RegistrationForm(Form):
         validators.EqualTo('confirm', message='Passwords must match')
     ])
     confirm = PasswordField('Repeat Password')
+
+class EditProfileForm(Form):
+    image = FileField('Image')
+    username = StringField('Username')
+    address = TextAreaField('Address')
+    phone = StringField('Contact Number')
+    email = StringField('Contact Email')
 
 class DeliveryForm(Form):
     Street_Name = StringField('Street Name',[validators.DataRequired()])
