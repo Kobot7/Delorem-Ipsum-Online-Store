@@ -45,7 +45,7 @@ def view_profile(current):
         db["Users"] = usersDict
         print("Error while retrieving usersDict")
     editProfileForm = EditProfileForm(request.form)
-    if request.method == "POST" and editProfileForm.validate():
+    if request.method == "POST":
         current_id = current.get_user_id()
         current.set_profile_pic(editProfileForm.image.data)
         current.set_username(editProfileForm.username.data)
@@ -56,10 +56,10 @@ def view_profile(current):
         db["Users"] = usersDict
         db["Current User"] = current
         db.close()
-        return render_template('my-account.html', pic=current.get_profile_pic())
+        return render_template('my-account.html', pic=current.get_profile_pic(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
     else:
         db.close()
-        return render_template("my-account.html", pic=current.get_profile_pic())
+        return render_template("my-account.html", pic=current.get_profile_pic(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
 
 
 # Login/Register
