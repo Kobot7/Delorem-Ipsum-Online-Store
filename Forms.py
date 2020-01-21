@@ -107,5 +107,5 @@ class DeliveryForm(Form):
     street_name = StringField('Street Name',[validators.DataRequired()])
     postal_code = DecimalField('Postal Code', [validators.NumberRange(min=10000, max=830000, message="Postal code is 6 digits")])
     unit_no = StringField('Unit No',[validators.Length(min=5,max=7),validators.DataRequired()])
-    date = DateField('Date', [validators.DataRequired()])
-    time = TimeField('Time',[validators.DataRequired()])
+    date = DateField('Date', [validators.DataRequired()], render_kw = {"placeholder": "yy-mm-dd"})
+    time = TimeField('Time',[validators.DataRequired()], render_kw = {"placeholder": "12:30"})

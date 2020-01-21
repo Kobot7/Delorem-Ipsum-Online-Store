@@ -4,6 +4,7 @@ from Forms import *
 from StorageClass import *
 from Functions import *
 from User import *
+from deliveryDetails import *
 
 app = Flask(__name__, static_url_path='/static')
 
@@ -335,19 +336,31 @@ def moveToCart(serialNo):
 
 
 # Checkout
-@app.route('/checkout')
+@app.route('/checkout', methods=["GET","POST"])
 def checkout():
     deliveryForm = DeliveryForm(request.form)
-    db = shelve.open('storage.db', 'r')
+    db = shelve.open('storage.db', 'c')
+    deliveryDetails = {}
+
     try:
         current_user = db["Current User"]
     except:
         print("Error in retrieving current user for checkout")
 
+    try:
+        deliveryDetails = db["deliveryDetails"]
+    except:
+        print("error in retrieving information")
+
+
     if request.method == "POST" and deliveryForm.validate():
         deliveryInfo = Delivery(deliveryForm.street_name.data, deliveryForm.postal_code.data,
                     deliveryForm.unit_no.data, deliveryForm.date.data, deliveryForm.time.data)
 
+        deliveryDetails[deliveryInfo.get_id()] = deliveryInfo
+        db["deliveryDetails"] = deliveryDetails
+        db.close()
+        return render_template('checkout.html', completedForm=deliveryInfo)
 
     return render_template('checkout.html',form=deliveryForm)
 
