@@ -3,10 +3,17 @@
 {% block style %}<link rel="stylesheet" href="/static/styles/products.css">{% endblock %}
 
 {% block content %}
+{% from "includes/_formhelper.html" import render_field %}
 <div class="row justify-content-center">
   <div class="col-md-11 mt-3">
     <h1 class="d-inline">Catalog</h1>
     <a class="btn d-inline float-right mt-1" href="/addProduct">+ Add Product</a>
+  </div>
+
+  <div class="col-md-11 mt-3">
+    <div class="col-md-2 col-sm-4 p-0">
+      {{ render_field(adminSearchForm.admin_search, class="form-control", onchange="changeForm()") }}
+    </div>
   </div>
 
   <div class="col-md-11">

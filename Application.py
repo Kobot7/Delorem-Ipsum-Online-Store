@@ -4,9 +4,14 @@ from Forms import *
 from StorageClass import *
 from Functions import *
 from User import *
-
+from werkzeug.utils import secure_filename
+import os
+from pathlib import Path
 
 app = Flask(__name__, static_url_path='/static')
+
+def searchBar():
+    return SearchBar(request.form)
 
 def testing():
     productDict = {}
@@ -31,7 +36,9 @@ def home():
         print("Error while retrieving current user")
         current = False
     db.close()
-    return render_template("home.html", current=current)
+
+    searchForm = searchBar()
+    return render_template("home.html", current=current, searchForm=searchForm)
 
 # Profile/Username
 @app.route('/my-account/<current>', methods=['GET', 'POST'])
@@ -113,7 +120,8 @@ def login():
         if loginForm.username.data == "admin" and loginForm.password.data == "admin":
             return redirect('/dashboard')
 
-    return render_template('login.html', form=loginForm, form2=registrationForm)
+    searchForm = searchBar()
+    return render_template('login.html', form=loginForm, form2=registrationForm, searchForm=searchForm)
 
 @app.route('/logout')
 # @login_required
@@ -140,8 +148,8 @@ def supplements(subCategory):
                 products.append(product)
 
     mainCategory = get_main_category(subCategory)
-
-    return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory)
+    searchForm = searchBar()
+    return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
 
 
 # Ribena(one of the products)
@@ -158,7 +166,8 @@ def IndItem(serialNo):
     db.close()
     subCategory = IndItem.get_sub_category()
     mainCategory = get_main_category(subCategory)
-    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory)
+    searchForm = searchBar()
+    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm)
 
 
 # Shopping Cart
@@ -179,7 +188,8 @@ def cart():
         cartList.append(cart[product])
     totalCost = '%.2f' %float(totalCost)
 
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost)
+    searchForm = searchBar()
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
 @app.route("/addToCart/<name>", methods = ['POST'])
 def addToCart(name):
@@ -214,7 +224,8 @@ def addToCart(name):
         cartList.append(cart[product])
     totalCost ='%.2f' %float(totalCost)
 
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost)
+    searchForm = searchBar()
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
 @app.route('/deleteShoppingCartItem/<serialNo>', methods=['POST'])
 def deleteShoppingCartItem(serialNo):
@@ -243,7 +254,8 @@ def deleteShoppingCartItem(serialNo):
         cartList.append(cart[product])
     totalCost ='%.2f' %float(totalCost)
 
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost)
+    searchForm = searchBar()
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
 @app.route('/moveToWishlist/<serialNo>', methods=['POST'])
 def moveToWishlist(serialNo):
@@ -292,7 +304,8 @@ def wishlist(filter):
         filtered_list.append(product)
         filtered_list = filter_function(filtered_list, filter)
 
-    return render_template('wishlist.html', filtered_list=filtered_list)
+    searchForm = searchBar()
+    return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm)
 
 @app.route('/deleteWishListItem/<serialNo>', methods=['POST'])
 def deleteWishListItem(serialNo):
@@ -354,7 +367,8 @@ def checkout():
     except:
         print("Error in retrieving current user for checkout")
 
-    return render_template('checkout.html',form=deliveryForm)
+    searchForm = searchBar()
+    return render_template('checkout.html', form=deliveryForm, searchForm=searchForm)
 
 
 # Admin Side
@@ -375,6 +389,7 @@ def dashboard():
         productList.append(product)
         viewList = sort_by(productList, 'view', 'descending')[:5]
         purchaseList = sort_by(productList, 'purchase', 'descending')[:5]
+
     return render_template('dashboard.html', viewList = viewList, purchaseList = purchaseList)
 
 @app.route('/dashboard/productStats/<category>/<order>/')
@@ -413,7 +428,10 @@ def products(category, order):
         productList.append(product)
         productList = sort_by(productList, category, order)
 
-    return render_template('products.html', productList=productList)
+    AdminSearch(request.form)
+    adminSearchForm = AdminSearch(request.form)
+
+    return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList)
 
 @app.route('/productSettings/<serialNo>/', methods=['GET', 'POST'])
 def productSettings(serialNo):
@@ -427,15 +445,25 @@ def productSettings(serialNo):
         product = productDict.get(serialNo)
         product.set_product_name(editProductForm.productName.data)
         product.set_brand(editProductForm.brand.data)
-        if editProductForm.thumbnail.data!='':
-            product.set_thumbnail(editProductForm.thumbnail.data)
-        else:
-            print('thumbnail not changed')
         product.set_sub_category(editProductForm.subCategory.data)
         product.set_price(editProductForm.price.data)
         product.set_description(editProductForm.description.data)
         product.set_quantity(editProductForm.quantity.data)
         product.set_activated(editProductForm.activated.data)
+
+        image = request.files["image"]
+        if image.filename!='':
+            product.set_thumbnail(image.filename)
+            this_folder = os.path.dirname(os.path.abspath(__file__))
+            image_to_copy = os.path.join(this_folder, image.filename)
+            image.save(image_to_copy)
+
+            try:
+                Path(image_to_copy).rename(this_folder + '/static/images/' + image.filename)
+                print("Image saved.")
+            except:
+                os.remove(image_to_copy)
+                print("Image already exists in database.")
 
         db['Products'] = productDict
         db.close()
@@ -470,7 +498,19 @@ def addProduct():
         except:
             print('Error in retrieving Products from storage.db.')
 
-        product = Product(createProductForm.productName.data, createProductForm.brand.data, createProductForm.thumbnail.data, createProductForm.subCategory.data,
+        image = request.files["image"]
+        product.set_thumbnail(image.filename)
+        this_folder = os.path.dirname(os.path.abspath(__file__))
+        image_to_copy = os.path.join(this_folder, image.filename)
+        image.save(image_to_copy)
+        try:
+            Path(image_to_copy).rename(this_folder + '/static/images/' + image.filename)
+            print("Image saved.")
+        except:
+            os.remove(image_to_copy)
+            print("Image already exists in database.")
+
+        product = Product(createProductForm.productName.data, createProductForm.brand.data, image.filename, createProductForm.subCategory.data,
                           createProductForm.price.data, createProductForm.description.data, createProductForm.activated.data, createProductForm.quantity.data)
 
         serialNo = ''
