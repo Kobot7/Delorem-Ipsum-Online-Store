@@ -5,8 +5,8 @@ from StorageClass import *
 from Functions import *
 from User import *
 
-app = Flask(__name__, static_url_path='/static')
 
+app = Flask(__name__, static_url_path='/static')
 
 def testing():
     productDict = {}
@@ -47,7 +47,7 @@ def view_profile(current):
     editProfileForm = EditProfileForm(request.form)
     if request.method == "POST":
         current_id = current.get_user_id()
-        current.set_profile_pic(editProfileForm.image.data)
+        # current.set_profile_pic(editProfileForm.image.data)
         current.set_username(editProfileForm.username.data)
         current.set_address(editProfileForm.address.data)
         current.set_phone(editProfileForm.phone.data)
@@ -56,10 +56,12 @@ def view_profile(current):
         db["Users"] = usersDict
         db["Current User"] = current
         db.close()
-        return render_template('my-account.html', pic=current.get_profile_pic(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+        # return render_template('my-account.html', pic=current.get_profile_pic(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+        return render_template('my-account.html', name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
     else:
         db.close()
-        return render_template("my-account.html", pic=current.get_profile_pic(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+        return render_template('my-account.html', name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+        # return render_template("my-account.html", pic=current.get_profile_pic(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
 
 
 # Login/Register
@@ -113,6 +115,14 @@ def login():
 
     return render_template('login.html', form=loginForm, form2=registrationForm)
 
+@app.route('/logout')
+# @login_required
+def logout():
+    db = shelve.open("storage.db", "c")
+    db["Current User"] = ""
+    print("User logged out successfully")
+    return redirect(url_for('home'))
+    # return render_template("home.html", current="", logged_out=True)
 
 # Supplements(one of the subsections)
 @app.route('/subCategory/<subCategory>/')

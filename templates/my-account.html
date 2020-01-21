@@ -1,37 +1,129 @@
 <title>My Account</title>
-  <div class="signup-w3ls">
+<div id="main">
+  <button class="openbtn" onclick="openNav()">☰</button>
+</div>
+<div class="signup-w3ls">
   <div class="signup-agile1">
     <form action="#" method="post">
 
-      <div class="form-control">
+      <!-- <div class="form-control">
         <label class="header">Profile Photo:</label>
         <img style="margin-left:25px;" src="{{pic}}" alt="default-profile-picture" width="200" height="200" />
-        <input id="image" style="margin-left:255px;" type="file" name="profile_photo" required="" capture>
-      </div>
+        <input id="image" style="margin-left:255px;" type="file" name="profile_photo" capture>
+      </div> -->
 
       <div class="form-control">
         <label class="header">Username:</label>
-        <input type="text" id="username" name="username" placeholder="{{name}}" title="Please enter your preferred username." required="">
+        <input type="text" id="username" name="username" value="{{name}}" title="Please enter your preferred username.">
       </div>
 
       <div class="form-control">
         <label class="header">Default Shipping Address:</label>
-        <input type="text" id="shipping_address" name="address" placeholder="{{address}}" title="Please enter your Shipping Address." required="">
+        <input type="text" id="shipping_address" name="address" value="{{address}}" title="Please enter your Shipping Address.">
       </div>
 
       <div class="form-control">
         <label class="header">Contact Number:</label>
-        <input type="text" id="contact_number" name="phone" placeholder="{{phone}}" required="">
+        <input type="text" id="contact_number" name="phone" value="{{phone}}">
       </div>
 
       <div class="form-control">
         <label class="header">Contact Email:</label>
-        <input type="email" id="contact_email" name="email" placeholder="{{email}}" required="">
+        <input type="email" id="contact_email" name="email" value="{{email}}">
       </div>
 
-      <input type="submit" class="register" value="Update">
+      <input type="submit" class="register" value="Update" onclick=alertchanges();>
 
     </form>
+    <div id="mySidebar" class="sidebar">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+      <a href="#">Check Current Deliveries</a>
+      <a href="#">Order History</a>
+      <a href="#">User Data</a>
+    </div>
+    <script>
+      function openNav() {
+        document.getElementById("mySidebar").style.width = "250px";
+        document.getElementById("main").style.marginLeft = "250px";
+      }
+
+      function closeNav() {
+        document.getElementById("mySidebar").style.width = "0";
+        document.getElementById("main").style.marginLeft = "0";
+      }
+      function alertchanges() {
+        alert("Changes added!");
+      }
+    </script>
+    <style>
+      body {
+        font-family: "Lato", sans-serif;
+      }
+
+      .sidebar {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #111;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+      }
+
+      .sidebar a {
+        padding: 8px 8px 8px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+      }
+
+      .sidebar a:hover {
+        color: #f1f1f1;
+      }
+
+      .sidebar .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+      }
+
+      .openbtn {
+        background-color: #84a220;
+        color: white;
+        border: #84a220;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 10px 15px;
+        border-radius: 5px;
+        margin: 16px;
+      }
+
+      .openbtn:hover {
+        background-color: #36b051;
+      }
+
+      #main {
+        transition: margin-left .5s;
+      }
+
+      /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+      @media screen and (max-height: 450px) {
+        .sidebar {
+          padding-top: 15px;
+        }
+
+        .sidebar a {
+          font-size: 18px;
+        }
+      }
+    </style>
 
   </div>
 </div>
@@ -58,7 +150,7 @@
     font-size: 16px;
     font-weight: 500;
     width: 215px;
-    color: grey;
+    color: #36b051;
     margin-right: 10px;
     text-align: justify;
     letter-spacing: 1px;
@@ -89,15 +181,13 @@
     -ms-border-radius: 30px;
   }
 
-  input#image:focus,
-  input#store_name:focus,
-  input#store_type:focus,
-  input#owner_type:focus,
-  input#website:focus,
+
+  input#username:focus,
+  input#shipping_address:focus,
   input#contact_number:focus,
   input#contact_email:focus {
     background-color: #f5f8fa !important;
-    border: 1px solid #dadada;
+    border: 1px solid #36b051;
   }
 
   input::-webkit-input-placeholder {
@@ -119,8 +209,8 @@
   }
 
   .register {
-    background-color: lightgreen;
-    width: 52%;
+    background-color: #84a220;
+    width: 40%;
     height: 55px;
     border: none;
     margin-left: 233px;

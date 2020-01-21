@@ -97,7 +97,7 @@ class RegistrationForm(Form):
     confirm = PasswordField('Repeat Password')
 
 class EditProfileForm(Form):
-    image = FileField('Image')
+    # image = FileField('Image')
     username = StringField('Username')
     address = TextAreaField('Address')
     phone = StringField('Contact Number')

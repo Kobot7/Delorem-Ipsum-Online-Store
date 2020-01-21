@@ -9,7 +9,7 @@ class User:
         self.set_username(username)
         self.set_password(password)
         self.set_email(email)
-        self.set_profile_pic(r"..\static\images\default-profile-picture1.jpg")
+        # self.set_profile_pic(r"..\static\images\default-profile-picture1.jpg")
         self.__phone = ""
         self.__wishlist = self.default_wishlist()
         self.__address = ""
@@ -41,8 +41,8 @@ class User:
     def set_password(self, password):
         self.__password = password
 
-    def set_profile_pic(self, pic):
-        self.__profile_pic = pic
+    # def set_profile_pic(self, pic):
+    #     self.__profile_pic = pic
 
     def set_phone(self, phone):
         self.__phone = phone
@@ -71,8 +71,8 @@ class User:
     def get_password(self):
         return self.__password
 
-    def get_profile_pic(self):
-        return self.__profile_pic
+    # def get_profile_pic(self):
+    #     return self.__profile_pic
 
     def get_phone(self):
         return self.__phone
