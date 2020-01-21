@@ -344,10 +344,15 @@ def checkout():
     except:
         print("Error in retrieving current user for checkout")
 
+    if request.method == "POST" and deliveryForm.validate():
+        deliveryInfo = Delivery(deliveryForm.street_name.data, deliveryForm.postal_code.data,
+                    deliveryForm.unit_no.data, deliveryForm.date.data, deliveryForm.time.data)
+
+
     return render_template('checkout.html',form=deliveryForm)
 
 
-# Admin Side
+# Admin Sides
 @app.route('/dashboard')
 def dashboard():
     productDict = {}
@@ -486,11 +491,6 @@ def addProduct():
 def categories():
     return render_template('categories.html')
 
-@app.route('/details')
-def details():
-    deliveryForm = DeliveryForm(request.form)
-
-    return render_template('details.html', form=deliveryForm)
 
 
 if __name__=='__main__':
