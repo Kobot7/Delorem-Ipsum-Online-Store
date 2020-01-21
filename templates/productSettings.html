@@ -1,6 +1,11 @@
 {% extends "admin_base.html" %}
 {% block title %}Edit Product{% endblock %}
 {% block style %}<link rel="stylesheet" href="/static/styles/productSettings.css">{% endblock %}
+{% block headScript %}
+<script type="text/javascript">
+
+</script>
+{% endblock %}
 
 {% block content %}
 {% from "includes/_formhelper.html" import render_field %}
@@ -8,15 +13,15 @@
     <div class="col-md-8 pb-4">
         <h1 class="my-4">Product Settings</h1>
 
-        <form method="POST" action="">
+        <form method="POST" action="" enctype="multipart/form-data" onsubmit="CheckImageSize();">
           <div class="form-group">
               {{ render_field(form.productName, class="form-control") }}
           </div>
 
-          <div class="form-group m-0">
+          <div class="form-group">
             <label>Thumbnail</label>
             <div class="custom-file">
-              {{ render_field(form.thumbnail, class="custom-file-input", id="image") }}
+              <input type="file" class="custom-file-input" name="image" id="image" accept=".jpg, .jpeg, .png" value="label">
               <label class="custom-file-label" for="image">{{ label }}</label>
             </div>
           </div>
