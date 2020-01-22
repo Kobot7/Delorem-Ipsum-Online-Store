@@ -10,7 +10,25 @@ from werkzeug.utils import secure_filename
 import os
 from pathlib import Path
 
+from flask_mail import Mail, Message
+import sys
+
 app = Flask(__name__, static_url_path='/static')
+app.config.update(
+    MAIL_SERVER= 'smtp.office365.com',
+    MAIL_PORT= 587,
+    MAIL_USE_TLS= True,
+    MAIL_USE_SSL= False,
+	MAIL_USERNAME = '191993Y@mymail.nyp.edu.sg',
+	MAIL_PASSWORD = '4mhzlkwjhfrA',
+	MAIL_DEBUG = True,
+	MAIL_SUPPRESS_SEND = False
+	)
+# MAIL_SUPPRESS_SEND = False
+# app.testing = False
+# MAIL_DEBUG = True
+
+mail = Mail(app)
 
 def searchBar():
     return SearchBar(request.form)
@@ -577,6 +595,30 @@ def addProduct():
 @app.route('/categories')
 def categories():
     return render_template('categories.html')
+
+@app.route('/deliveryInvoice')
+def deliveryInvoice():
+    print("hey!")
+    try:
+        msg = Message("Delorem Ipsum Pharmacy",
+        sender="191993Y@mymail.nyp.edu.sg",
+        recipients=["sarahpishposh@gmail.com"])
+
+        msg.body = "This ur e reciept"
+        msg.html = render_template('html_in_invoice.html')
+        print("testinggggggggggggggg")
+        mail.send(msg)
+        print("MAIL SENT")
+		#return 'Mail sent!'
+
+    except:
+		# return("gxyaishuxa")
+        print("Error:", sys.exc_info()[0])
+
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
+    return render_template('deliveryInvoice.html', searchForm=searchForm)
 
 if __name__=='__main__':
     app.run(debug=True)
