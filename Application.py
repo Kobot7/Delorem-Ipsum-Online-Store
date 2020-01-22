@@ -308,8 +308,16 @@ def checkout():
         current_user = db["Current User"]
     except:
         print("Error in retrieving current user for checkout")
+    cart = current_user.get_shopping_cart()
+    items = []
+    cost = 0
+    for serial_no in cart:
+        items.append(cart[serial_no])
+        cost += float(cart[serial_no].get_price())
+    no_of_item = len(items)
+    cost = '%.2f' %float(cost)
 
-    return render_template('checkout.html',form=deliveryForm)
+    return render_template('checkout.html',form=deliveryForm, cart=items, number=no_of_item, total=cost, user=current_user)
 
 
 # Admin Side
