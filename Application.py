@@ -382,6 +382,10 @@ def moveToCart(serialNo):
 # Checkout
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
+
     deliveryForm = DeliveryForm(request.form)
     db = shelve.open('storage.db', 'c')
     deliveryDetails = {}
@@ -404,13 +408,9 @@ def checkout():
         deliveryDetails[deliveryInfo.get_id()] = deliveryInfo
         db["deliveryDetails"] = deliveryDetails
         db.close()
-        return render_template('checkout.html', completedForm=deliveryInfo)
+        return render_template('checkout.html', user=current_user, completedForm=deliveryInfo, searchForm=searchForm)
 
-    searchForm = searchBar()
-    if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
-
-    return render_template('checkout.html', form=deliveryForm, searchForm=searchForm, user=current_user, completedForm='')
+    return render_template('checkout.html', form=deliveryForm, user=current_user, completedForm='', searchForm=searchForm)
 
 
 # Admin Sides
