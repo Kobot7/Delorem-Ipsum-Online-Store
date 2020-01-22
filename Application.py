@@ -390,9 +390,6 @@ def checkout():
         current_user = db["Current User"]
     except:
         print("Error in retrieving current user for checkout")
-    searchForm = searchBar()
-    if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
 
     try:
         deliveryDetails = db["deliveryDetails"]
@@ -409,7 +406,11 @@ def checkout():
         db.close()
         return render_template('checkout.html', completedForm=deliveryInfo)
 
-    return render_template('checkout.html',form=deliveryForm, searchForm=searchForm)
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
+
+    return render_template('checkout.html', form=deliveryForm, searchForm=searchForm, user=current_user, completedForm='')
 
 
 # Admin Sides
@@ -576,8 +577,6 @@ def addProduct():
 @app.route('/categories')
 def categories():
     return render_template('categories.html')
-
-
 
 if __name__=='__main__':
     app.run(debug=True)
