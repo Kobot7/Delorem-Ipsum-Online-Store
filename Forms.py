@@ -42,6 +42,8 @@ choicesList = [('', 'Select')
 class EditProductForm(Form):
     activated = BooleanField('')
 
+    thumbnail = FileField('Image')
+
     productName = StringField('Product Name', [validators.DataRequired(message='This is a required field.')
                                             , validators.Length(min=1, max=100, message='Product name has to be less than 100 characters.')])
 
@@ -66,6 +68,9 @@ class CreateProductForm(Form):
 
     brand = StringField('Brand', [validators.DataRequired(message='This is a required field.')
                                , validators.Length(min=1, max=50, message='Brand name is too long.')])
+
+    thumbnail = FileField('Image', [validators.DataRequired(message='This is a required field.')
+                                 , validators.regexp('([^\s]+(\.(gif|jpg|tiff|png))$)', message='Please ensure file is in one of the following formats: jpg, png, gif, tiff')])
 
     subCategory = SelectField('Sub-Category', [validators.DataRequired(message='This is a required field.')], choices=choicesList, default='')
 
@@ -92,7 +97,7 @@ class RegistrationForm(Form):
     confirm = PasswordField('Repeat Password')
 
 class EditProfileForm(Form):
-    image = FileField('Image')
+    # image = FileField('Image')
     username = StringField('Username')
     address = TextAreaField('Address')
     phone = StringField('Contact Number')
@@ -104,7 +109,6 @@ class DeliveryForm(Form):
     Unit_No = StringField('Unit No',[validators.Length(min=5,max=7),validators.DataRequired()])
     Date = DateField('Date', [validators.DataRequired()])
     Time = TimeField('Time',[validators.DataRequired()])
-
 
 search_byList = [('name', 'Product Name')
                 , ('brand', 'Brand')

@@ -1,8 +1,8 @@
 {% from "includes/_formhelper.html" import render_field %}
 
 <div class="sticky-top">
- <!-- Navigation -->
-<nav class="navbar navbar-expand-xl bg-light navbar-light">
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-xl bg-light navbar-light">
     <!-- Brand -->
     <a class="navbar-brand" href="/home">Dolorem Ipsum</a>
     <div class="search-bar-padding">
@@ -12,107 +12,157 @@
 
       </form>
     </div>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav ml-auto bg-light">
-      {% if current %}
-        <li class="nav-item username-username">
-          <a class="nav-link" href="/my-account/{{current}}"><i class="icon-user"></i>  {{current}}</a>
-        </li>
-      {% else %}
-        <li class="nav-item username-username">
-            <a class="nav-link" href="/login"><i class="icon-user"></i>   Login | Register</a>
-        </li>
-      {% endif %}
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto bg-light">
+        {% if current %}
         <li class="nav-item">
-            <a class="nav-link" href="/cart"><i class="icon-shopping-cart"></i>   Cart</a>
+          <div class="dropdown-user">
+            <!-- <button class="dropbtn">User</button> -->
+            <a class="nav-link dropbtn-user" href="/my-account/{{current}}"><i class="icon-user"></i> {{current}}</a>
+            <div class="dropdown-content-user">
+              <a href="/my-account/{{current}}">See My Profile</a>
+              <a href="#">Check Current Deliveries</a>
+              <a href="#">Helpdesk/FAQ</a>
+              <a href="/logout">Logout</a>
+            </div>
+          </div>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="/login"><i class="icon-user"></i> Login | Register</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="/cart"><i class="icon-shopping-cart"></i> Cart</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/wishlist/a-z"><i class="icon-heart"></i>   Wish List</a>
+          <a class="nav-link" href="/wishlist/a-z"><i class="icon-heart"></i> Wish List</a>
         </li>
-    </ul>
-  </div>
-</nav>
-<nav class="navbar navbar-expand-xl bg-light navbar-light" id="sub-navbar">
+      </ul>
+    </div>
+  </nav>
+  <nav class="navbar navbar-expand-xl bg-light navbar-light" id="sub-navbar">
     <ul class="navbar-nav container container-fluid">
-        <li class="nav-item">
-            <a class="nav-link" href="#">NEW</a>
-        </li>
-        <li class="nav-item">
-            <div class="dropdown">
-                <button class="dropbtn"><a class="nav-link" href="#">Health</a></button>
-                <div class="dropdown-content">
-                    <a href="/subCategory/Pain&Fever">Pain & Fever</a>
-                    <a href="/subCategory/FamilyPlanning">Family Planning</a>
-                    <a href="/subCategory/FirstAid&Surgical">First Aid & Surgical</a>
-                    <a href="/subCategory/Eye&EarCare">Eye & Ear Care</a>
-                    <a href="/subCategory/Supplements">Supplements</a>
-                </div>
-            </div>
-        </li>
-        <li class="nav-item">
-            <div class="dropdown">
-                <button class="dropbtn"><a class="nav-link" href="#">Hair Care</a></button>
-                <div class="dropdown-content">
-                    <a href="/subCategory/Shampoo">Shampoo</a>
-                    <a href="/subCategory/Conditioner">Conditioner</a>
-                    <a href="/subCategory/Treatment">Treatment</a>
-                    <a href="/subCategory/HairDye">Hair Dye</a>
-                    <a href="/subCategory/HairStyling">Hair Styling</a>
-                </div>
-            </div>
-        </li>
-        <li class="nav-item">
-          <div class="dropdown">
-            <button class="dropbtn"><a class="nav-link" href="#">Toiletries</a></button>
-            <div class="dropdown-content">
-              <a href="/subCategory/Bath&HandCleansing">Bath & Hand Cleansing</a>
-              <a href="/subCategory/OralCare">Oral Care</a>
-              <a href="/subCategory/SanitaryCare">Sanitary Care</a>
-              <a href="/subCategory/Tissues&Wipes">Tissues & Wipes</a>
-            </div>
-        </li>
-        <li class="nav-item">
-            <div class="dropdown">
-                <button class="dropbtn"><a class="nav-link" href="#"> Skin Care </a></button>
-                <div class="dropdown-content">
-                    <a href="/subCategory/SkinCareAccessories">Accessories</a>
-                    <a href="/subCategory/Anti-acne">Anti-acne</a>
-                    <a href="/subCategory/Facial">Facial</a>
-                    <a href="/subCategory/Hand&Body">Hand & Body</a>
-                    <a href="/subCategory/LipCare">Lip Care</a>
-                    <a href="/subCategory/SunCare">Sun Care</a>
-                </div>
-            </div>
-        </li>
-        <li class="nav-item">
-            <div class="dropdown">
-                <button class="dropbtn"><a class="nav-link" href="#">Baby</a></button>
-                <div class="dropdown-content">
-                    <a href="/subCategory/Toiletries">Toiletries</a>
-                    <a href="/subCategory/Diapers">Diapers</a>
-                    <a href="/subCategory/MilkPowder&Food">Milk Powder & Food</a>
-                    <a href="/subCategory/BabyVitamins">Baby Vitamins</a>
-                    <a href="/subCategory/BabyAccessories">Accessories</a>
-                </div>
-            </div>
-        </li>
-        <li class="nav-item">
-            <div class="dropdown">
-                <button class="dropbtn"><a class="nav-link" href="#">Cosmetics</a></button>
-                <div class="dropdown-content">
-                    <a href="/subCategory/Nails">Nails</a>
-                    <a href="/subCategory/Eyes">Eyes</a>
-                    <a href="/subCategory/Lips">Lips</a>
-                    <a href="/subCategory/Face">Face</a>
-                    <a href="/subCategory/MakeupRemover">Makeup Remover</a>
-                    <a href="/subCategory/CosmeticsAccessories">Accessories</a>
-                </div>
-            </div>
-        </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">NEW</a>
+      </li>
+      <li class="nav-item">
+        <div class="dropdown">
+          <button class="dropbtn"><a class="nav-link" href="#">Health</a></button>
+          <div class="dropdown-content">
+            <a href="/subCategory/Pain&Fever">Pain & Fever</a>
+            <a href="/subCategory/FamilyPlanning">Family Planning</a>
+            <a href="/subCategory/FirstAid&Surgical">First Aid & Surgical</a>
+            <a href="/subCategory/Eye&EarCare">Eye & Ear Care</a>
+            <a href="/subCategory/Supplements">Supplements</a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item">
+        <div class="dropdown">
+          <button class="dropbtn"><a class="nav-link" href="#">Hair Care</a></button>
+          <div class="dropdown-content">
+            <a href="/subCategory/Shampoo">Shampoo</a>
+            <a href="/subCategory/Conditioner">Conditioner</a>
+            <a href="/subCategory/Treatment">Treatment</a>
+            <a href="/subCategory/HairDye">Hair Dye</a>
+            <a href="/subCategory/HairStyling">Hair Styling</a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item">
+        <div class="dropdown">
+          <button class="dropbtn"><a class="nav-link" href="#">Toiletries</a></button>
+          <div class="dropdown-content">
+            <a href="/subCategory/Bath&HandCleansing">Bath & Hand Cleansing</a>
+            <a href="/subCategory/OralCare">Oral Care</a>
+            <a href="/subCategory/SanitaryCare">Sanitary Care</a>
+            <a href="/subCategory/Tissues&Wipes">Tissues & Wipes</a>
+          </div>
+      </li>
+      <li class="nav-item">
+        <div class="dropdown">
+          <button class="dropbtn"><a class="nav-link" href="#"> Skin Care </a></button>
+          <div class="dropdown-content">
+            <a href="/subCategory/SkinCareAccessories">Accessories</a>
+            <a href="/subCategory/Anti-acne">Anti-acne</a>
+            <a href="/subCategory/Facial">Facial</a>
+            <a href="/subCategory/Hand&Body">Hand & Body</a>
+            <a href="/subCategory/LipCare">Lip Care</a>
+            <a href="/subCategory/SunCare">Sun Care</a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item">
+        <div class="dropdown">
+          <button class="dropbtn"><a class="nav-link" href="#">Baby</a></button>
+          <div class="dropdown-content">
+            <a href="/subCategory/Toiletries">Toiletries</a>
+            <a href="/subCategory/Diapers">Diapers</a>
+            <a href="/subCategory/MilkPowder&Food">Milk Powder & Food</a>
+            <a href="/subCategory/BabyVitamins">Baby Vitamins</a>
+            <a href="/subCategory/BabyAccessories">Accessories</a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item">
+        <div class="dropdown">
+          <button class="dropbtn"><a class="nav-link" href="#">Cosmetics</a></button>
+          <div class="dropdown-content">
+            <a href="/subCategory/Nails">Nails</a>
+            <a href="/subCategory/Eyes">Eyes</a>
+            <a href="/subCategory/Lips">Lips</a>
+            <a href="/subCategory/Face">Face</a>
+            <a href="/subCategory/MakeupRemover">Makeup Remover</a>
+            <a href="/subCategory/CosmeticsAccessories">Accessories</a>
+          </div>
+        </div>
+      </li>
     </ul>
-</nav>
+  </nav>
 </div>
+
+<style>
+  .dropbtn-user {
+    color: white;
+    font-size: 16px;
+    border: none;
+  }
+
+  .dropdown-user {
+    position: relative;
+    display: inline-block;
+  }
+
+  .dropdown-content-user {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
+
+  .dropdown-content-user a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+
+  .dropdown-content-user a:hover {
+    background-color: #ddd;
+  }
+
+  .dropdown-user:hover .dropdown-content-user {
+    display: block;
+  }
+
+  .dropdown-user:hover .dropbtn-user {
+    background-color: #3e8e41;
+  }
+</style>

@@ -4,7 +4,6 @@ from Forms import *
 from StorageClass import *
 from Functions import *
 from User import *
-
 from werkzeug.utils import secure_filename
 import os
 from pathlib import Path
@@ -58,7 +57,7 @@ def view_profile(current):
     editProfileForm = EditProfileForm(request.form)
     if request.method == "POST":
         current_id = current.get_user_id()
-        current.set_profile_pic(editProfileForm.image.data)
+        # current.set_profile_pic(editProfileForm.image.data)
         current.set_username(editProfileForm.username.data)
         current.set_address(editProfileForm.address.data)
         current.set_phone(editProfileForm.phone.data)
@@ -67,10 +66,12 @@ def view_profile(current):
         db["Users"] = usersDict
         db["Current User"] = current
         db.close()
-        return render_template('my-account.html', pic=current.get_profile_pic(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+        # return render_template('my-account.html', pic=current.get_profile_pic(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+        return render_template('my-account.html', name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
     else:
         db.close()
-        return render_template("my-account.html", pic=current.get_profile_pic(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+        return render_template('my-account.html', name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+        # return render_template("my-account.html", pic=current.get_profile_pic(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
 
 
 # Login/Register
@@ -128,6 +129,14 @@ def login():
         print(searchForm.search_input.data)
     return render_template('login.html', form=loginForm, form2=registrationForm, searchForm=searchForm)
 
+@app.route('/logout')
+# @login_required
+def logout():
+    db = shelve.open("storage.db", "c")
+    db["Current User"] = ""
+    print("User logged out successfully")
+    return redirect(url_for('home'))
+    # return render_template("home.html", current="", logged_out=True)
 
 # Supplements(one of the subsections)
 @app.route('/subCategory/<subCategory>/', methods=['GET', 'POST'])
