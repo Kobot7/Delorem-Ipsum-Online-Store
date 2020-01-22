@@ -390,7 +390,17 @@ def checkout():
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         print(searchForm.search_input.data)
-    return render_template('checkout.html', form=deliveryForm, searchForm=searchForm)
+
+    cart = current_user.get_shopping_cart()
+    items = []
+    cost = 0
+    for serial_no in cart:
+        items.append(cart[serial_no])
+        cost += float(cart[serial_no].get_price())
+    no_of_item = len(items)
+    cost = '%.2f' %float(cost)
+
+    return render_template('checkout.html',form=deliveryForm, cart=items, number=no_of_item, total=cost, user=current_user, searchForm=searchForm)
 
 
 # Admin Side

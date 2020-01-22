@@ -13,9 +13,11 @@
         {% for product in cartList %}
         <div class="item">
             <div class="details ">
+              <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}">
                     <div class="image">
                         <img src="/static/images/{{product.get_thumbnail()}}">
                     </div>
+                  </a>
                 <div class="right">
                     <p class="price">SGD ${{product.get_price()}}</p>
                     <p class="item_name">{{product.get_product_name()}}</p>
@@ -82,9 +84,7 @@
                 <div>NEW TOTAL</div>
             </div>
             <div id="delivery">
-            <a href="/details">
-            <button type="button" class="mybutton">Home Delivery</button>
-          </a>
+            <input type="checkbox">Home Delivery</input>
         </div>
             <div id="CHECKOUT">
                 <a href="/checkout" class="mybutton" target="_blank">CHECKOUT</a>

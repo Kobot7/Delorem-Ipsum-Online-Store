@@ -11,17 +11,7 @@
                 <h4 class="bold">EMAIL ADDRESS</h4>
             </div>
             <div>
-                <span>sarahishposh@gmail.com</span>
-            </div>
-        </div>
-
-        <div id="delivery-address" class="box">
-            <div id="delivery-address_header">
-                <h4 class="bold">DELIVERY ADDRESS</h4>
-            </div>
-            <div>
-                <span>AMK street 61</span>
-                <button>Change</button>
+                <span>{{user.get_email()}}</span>
             </div>
         </div>
 
@@ -100,28 +90,32 @@
             <div class="inner-items">
               <section class="bag">
               <div class="bag-header">
-                <h2 id=item-number>2 items</h2>
-                <a id="edit" href="cart.html">Edit</a>
+                <h2 id=item-number>{{number}} items</h2>
+                <a id="edit" href="/cart">Edit</a>
             </div>
+            <hr id="header-line">
             <div class="item-list">
               <div class="item-wrapper">
                 <ul id="items">
+                  {% for product in cart %}
                     <li class="item">
-                      <img src="/static/images/vitamin c pills.jpg">
+                      <img src="/static/images/{{product.get_thumbnail()}}">
                         <div class="details ">
-                          <span class="item-price">SGD $25</span>
-                          <span class="item-name">Vitamin C pills</span>
+                          <span class="item-price">{{product.get_price()}}</span>
+                          <span class="item-name">{{product.get_product_name()}}</span>
                           <div class="item-options-wrapper">
-                            <span class="item-brand">Brand</span>
+                            <span class="item-brand">{{product.get_brand()}}</span>
                             <span class="item-quantity">Qty: <strong>1</strong></span>
                           </div>
                         </div>
-                    <hr>
                   </li>
+                  <hr>
+                  {% endfor %}
                 </ul>
                 </div>
               </div>
             </section>
+
               <div id="sum">
                   <hr>
                   <table>
@@ -131,7 +125,7 @@
                           <div>Total to pay</div>
                         </td>
                         <td class="l-rtc">
-                          <div>SGD $25</div>
+                          <div>{{total}}</div>
                         </td>
                       </tr>
                     </tfoot>
@@ -141,7 +135,7 @@
                           <div>Subtotal</div>
                         </td>
                         <td class="l-rtc">
-                          <div>$SGD 25</div>
+                          <div>{{total}}</div>
                         </td>
                       </tr>
                       <tr class="delivery">
