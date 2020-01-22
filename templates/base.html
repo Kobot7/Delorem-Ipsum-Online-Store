@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
     <!-- Bootstrap CSS 4.3.1 -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/bootstrap-4.3.1-dist/css/bootstrap.min.css">
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" type = "text/css" href = "/static/styles/client_base.css">
     <link rel="stylesheet" type = "text/css" href = "/static/styles/homepg.css">
-    
+
     <!-- jQuery 3.3.1 + Poppe.js 1.14.7 + Bootstrap JavaScript Plugins 4.3.1 -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="/static/bootstrap-4.3.1-dist/jquery-3.4.1.min.js"></script>
+    <script src="/static/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
     {% block style %} {% endblock %}
 </head>
 <body>
@@ -25,7 +25,12 @@
 
     <div id="backgroundDim" class="background-dim"></div>
     {% block scripts %}
-    <script  src = "/static/js/navbar.js"></script>
+      <script src="/static/js/navbar.js"></script>
+      <script>
+        document.getElementById('SearchBar').addEventListener("change", function() {
+          document.getElementById('searchForm').submit();
+        });
+      </script>
     {% endblock %}
 </body>
 </html>

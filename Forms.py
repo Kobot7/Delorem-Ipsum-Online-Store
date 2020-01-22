@@ -108,11 +108,11 @@ class DeliveryForm(Form):
 
 search_byList = [('name', 'Product Name')
                 , ('brand', 'Brand')
-                , ('sub-category', 'Sub-Category')
-                , ('price', 'Price')]
+                , ('sub-category', 'Sub-Category')]
 
 class SearchBar(Form):
     search_by = SelectField('', choices=search_byList, default='name')
+    search_input = StringField('')
 
 
 admin_searchList = [('name', 'Product Name')

@@ -28,7 +28,7 @@ def testing():
     db.close()
 
 # Homepage
-@app.route('/home')
+@app.route('/home', methods=['GET', 'POST'])
 def home():
     db = shelve.open('storage.db', 'c')
     try:
@@ -39,6 +39,9 @@ def home():
     db.close()
 
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
+
     return render_template("home.html", current=current, searchForm=searchForm)
 
 # Profile/Username
@@ -95,6 +98,7 @@ def login():
         db.close()
         print("User created with name", U.get_username(), "id", U.get_user_id(),
          "Password", U.get_password(), "and Email", U.get_email())
+
     if request.method =="POST" and loginForm.validate():
         usersDict = {}
         namesDict = {}
@@ -120,11 +124,13 @@ def login():
             return redirect('/dashboard')
 
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('login.html', form=loginForm, form2=registrationForm, searchForm=searchForm)
 
 
 # Supplements(one of the subsections)
-@app.route('/subCategory/<subCategory>/')
+@app.route('/subCategory/<subCategory>/', methods=['GET', 'POST'])
 def supplements(subCategory):
     db = shelve.open('storage.db', 'r')
     try:
@@ -139,12 +145,15 @@ def supplements(subCategory):
                 products.append(product)
 
     mainCategory = get_main_category(subCategory)
+
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
 
 
 # Ribena(one of the products)
-@app.route('/IndItem/<serialNo>')
+@app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
 def IndItem(serialNo):
     db = shelve.open('storage.db','w')
     try:
@@ -157,12 +166,15 @@ def IndItem(serialNo):
     db.close()
     subCategory = IndItem.get_sub_category()
     mainCategory = get_main_category(subCategory)
+
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm)
 
 
 # Shopping Cart
-@app.route('/cart')
+@app.route('/cart', methods=['GET', 'POST'])
 def cart():
     db = shelve.open('storage.db','r')
     try:
@@ -180,9 +192,11 @@ def cart():
     totalCost = '%.2f' %float(totalCost)
 
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
-@app.route("/addToCart/<name>", methods = ['POST'])
+@app.route("/addToCart/<name>", methods=['GET', 'POST'])
 def addToCart(name):
     current_user = ""
     productsDict= {}
@@ -216,9 +230,11 @@ def addToCart(name):
     totalCost ='%.2f' %float(totalCost)
 
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
-@app.route('/deleteShoppingCartItem/<serialNo>', methods=['POST'])
+@app.route('/deleteShoppingCartItem/<serialNo>', methods=['GET', 'POST'])
 def deleteShoppingCartItem(serialNo):
     current_user = ""
     productsDict = {}
@@ -246,9 +262,11 @@ def deleteShoppingCartItem(serialNo):
     totalCost ='%.2f' %float(totalCost)
 
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
-@app.route('/moveToWishlist/<serialNo>', methods=['POST'])
+@app.route('/moveToWishlist/<serialNo>', methods=['GET', 'POST'])
 def moveToWishlist(serialNo):
     current_user = ""
     productsDict={}
@@ -276,7 +294,7 @@ def moveToWishlist(serialNo):
 
 
 # Wishlist
-@app.route('/wishlist/<filter>/')
+@app.route('/wishlist/<filter>/', methods=['GET', 'POST'])
 def wishlist(filter):
     current_user = ""
     db = shelve.open('storage.db', 'r')
@@ -296,9 +314,11 @@ def wishlist(filter):
         filtered_list = filter_function(filtered_list, filter)
 
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm)
 
-@app.route('/deleteWishListItem/<serialNo>', methods=['POST'])
+@app.route('/deleteWishListItem/<serialNo>', methods=['GET', 'POST'])
 def deleteWishListItem(serialNo):
 
     current_user = ""
@@ -321,7 +341,7 @@ def deleteWishListItem(serialNo):
     print(product)
     return redirect('/wishlist/a-z')
 
-@app.route('/moveToCart/<serialNo>', methods=['POST'])
+@app.route('/moveToCart/<serialNo>', methods=['GET', 'POST'])
 def moveToCart(serialNo):
     current_user = ""
     productsDict={}
@@ -349,7 +369,7 @@ def moveToCart(serialNo):
 
 
 # Checkout
-@app.route('/checkout')
+@app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
     deliveryForm = DeliveryForm(request.form)
     db = shelve.open('storage.db', 'r')
@@ -359,6 +379,8 @@ def checkout():
         print("Error in retrieving current user for checkout")
 
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('checkout.html', form=deliveryForm, searchForm=searchForm)
 
 

@@ -10,14 +10,14 @@ body {
 }
 
 .searchbar-container{
-    margin-top:10px;
+    margin-top: 10px;
     border-radius: 19px/50%;
     width: 300px;
     padding-left: 1/5px;
 }
 
 .searchbar-container:focus {
-    box-shadow: inset 0 0 3px 1px #0770cf;
+    /* box-shadow: inset 0 0 3px 1px #0770cf; */
     border-radius: 19px/50%;
     /* **NOT IMPORTANT**
     width: 20rem;
