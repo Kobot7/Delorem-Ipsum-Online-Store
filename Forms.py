@@ -104,11 +104,11 @@ class EditProfileForm(Form):
     email = StringField('Contact Email')
 
 class DeliveryForm(Form):
-    Street_Name = StringField('Street Name',[validators.DataRequired()])
-    Postal_Code = DecimalField('Postal Code', [validators.NumberRange(min=10000, max=830000, message="Postal code is 6 digits")])
-    Unit_No = StringField('Unit No',[validators.Length(min=5,max=7),validators.DataRequired()])
-    Date = DateField('Date', [validators.DataRequired()])
-    Time = TimeField('Time',[validators.DataRequired()])
+    street_name = StringField('Street Name',[validators.DataRequired()])
+    postal_code = DecimalField('Postal Code', [validators.NumberRange(min=10000, max=830000, message="Postal code is 6 digits")])
+    unit_no = StringField('Unit No',[validators.Length(min=5,max=7),validators.DataRequired()])
+    date = DateField('Date', [validators.DataRequired()], render_kw = {"placeholder": "yy-mm-dd"})
+    time = TimeField('Time',[validators.DataRequired()], render_kw = {"placeholder": "12:30"})
 
 search_byList = [('name', 'Product Name')
                 , ('brand', 'Brand')

@@ -4,6 +4,8 @@ from Forms import *
 from StorageClass import *
 from Functions import *
 from User import *
+from deliveryDetails import *
+
 from werkzeug.utils import secure_filename
 import os
 from pathlib import Path
@@ -381,29 +383,36 @@ def moveToCart(serialNo):
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
     deliveryForm = DeliveryForm(request.form)
-    db = shelve.open('storage.db', 'r')
+    db = shelve.open('storage.db', 'c')
+    deliveryDetails = {}
+
     try:
         current_user = db["Current User"]
     except:
         print("Error in retrieving current user for checkout")
-
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         print(searchForm.search_input.data)
 
-    cart = current_user.get_shopping_cart()
-    items = []
-    cost = 0
-    for serial_no in cart:
-        items.append(cart[serial_no])
-        cost += float(cart[serial_no].get_price())
-    no_of_item = len(items)
-    cost = '%.2f' %float(cost)
-
-    return render_template('checkout.html',form=deliveryForm, cart=items, number=no_of_item, total=cost, user=current_user, searchForm=searchForm)
+    try:
+        deliveryDetails = db["deliveryDetails"]
+    except:
+        print("error in retrieving information")
 
 
-# Admin Side
+    if request.method == "POST" and deliveryForm.validate():
+        deliveryInfo = Delivery(deliveryForm.street_name.data, deliveryForm.postal_code.data,
+                    deliveryForm.unit_no.data, deliveryForm.date.data, deliveryForm.time.data)
+
+        deliveryDetails[deliveryInfo.get_id()] = deliveryInfo
+        db["deliveryDetails"] = deliveryDetails
+        db.close()
+        return render_template('checkout.html', completedForm=deliveryInfo)
+
+    return render_template('checkout.html',form=deliveryForm, searchForm=searchForm)
+
+
+# Admin Sides
 @app.route('/dashboard')
 def dashboard():
     productDict = {}
@@ -568,11 +577,6 @@ def addProduct():
 def categories():
     return render_template('categories.html')
 
-@app.route('/details')
-def details():
-    deliveryForm = DeliveryForm(request.form)
-
-    return render_template('details.html', form=deliveryForm)
 
 
 if __name__=='__main__':
