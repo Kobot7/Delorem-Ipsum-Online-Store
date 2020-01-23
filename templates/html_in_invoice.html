@@ -3,6 +3,15 @@
 <p>This is your e-receipt for your purchase made on
 <br>Thank you for shopping with us.</p>
 
+{% for product in cartList %}
+  <div class="ordered_item">
+    <img src="/static/images/{{product.get_thumbnail()}}" alt="">
+    <p>{{product.get_product_name()}}</p>
+    <p>{{product.get_price()}}</p>
+  </div>
+
+{% endfor %}
+
 
 
 

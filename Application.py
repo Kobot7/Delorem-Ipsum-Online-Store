@@ -596,16 +596,28 @@ def addProduct():
 def categories():
     return render_template('categories.html')
 
-@app.route('/deliveryInvoice')
+@app.route('/deliveryInvoice',  methods=['POST'])
 def deliveryInvoice():
     print("hey!")
+    current_user = ""
+    db = shelve.open('storage.db', 'r')
+    try:
+        current_user = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    cart = current_user.get_shopping_cart()
+    cartList = []
+    for product in cart:
+        cartList.append(cart[product])
+
     try:
         msg = Message("Delorem Ipsum Pharmacy",
         sender="191993Y@mymail.nyp.edu.sg",
         recipients=["sarahpishposh@gmail.com"])
 
         msg.body = "This ur e reciept"
-        msg.html = render_template('html_in_invoice.html')
+        msg.html = render_template('html_in_invoice.html',  cartList=cartList)
         print("testinggggggggggggggg")
         mail.send(msg)
         print("MAIL SENT")
@@ -613,12 +625,13 @@ def deliveryInvoice():
 
     except:
 		# return("gxyaishuxa")
-        print("Error:", sys.exc_info()[0])
+        # print("Error:", sys.exc_info()[0])
+        print("goes into except")
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         print(searchForm.search_input.data)
-    return render_template('deliveryInvoice.html', searchForm=searchForm)
+    return redirect('/home')
 
 if __name__=='__main__':
     app.run(debug=True)
