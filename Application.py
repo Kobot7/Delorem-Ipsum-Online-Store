@@ -4,6 +4,8 @@ from Forms import *
 from StorageClass import *
 from Functions import *
 from User import *
+from deliveryDetails import *
+
 from werkzeug.utils import secure_filename
 import os
 from pathlib import Path
@@ -27,7 +29,7 @@ def testing():
     db.close()
 
 # Homepage
-@app.route('/home')
+@app.route('/home', methods=['GET', 'POST'])
 def home():
     db = shelve.open('storage.db', 'c')
     try:
@@ -38,6 +40,9 @@ def home():
     db.close()
 
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
+
     return render_template("home.html", current=current, searchForm=searchForm)
 
 # Profile/Username
@@ -96,6 +101,7 @@ def login():
         db.close()
         print("User created with name", U.get_username(), "id", U.get_user_id(),
          "Password", U.get_password(), "and Email", U.get_email())
+
     if request.method =="POST" and loginForm.validate():
         usersDict = {}
         namesDict = {}
@@ -121,6 +127,8 @@ def login():
             return redirect('/dashboard')
 
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('login.html', form=loginForm, form2=registrationForm, searchForm=searchForm)
 
 @app.route('/logout')
@@ -133,7 +141,7 @@ def logout():
     # return render_template("home.html", current="", logged_out=True)
 
 # Supplements(one of the subsections)
-@app.route('/subCategory/<subCategory>/')
+@app.route('/subCategory/<subCategory>/', methods=['GET', 'POST'])
 def supplements(subCategory):
     db = shelve.open('storage.db', 'r')
     try:
@@ -148,12 +156,15 @@ def supplements(subCategory):
                 products.append(product)
 
     mainCategory = get_main_category(subCategory)
+
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
 
 
 # Ribena(one of the products)
-@app.route('/IndItem/<serialNo>')
+@app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
 def IndItem(serialNo):
     db = shelve.open('storage.db','w')
     try:
@@ -166,12 +177,15 @@ def IndItem(serialNo):
     db.close()
     subCategory = IndItem.get_sub_category()
     mainCategory = get_main_category(subCategory)
+
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm)
 
 
 # Shopping Cart
-@app.route('/cart')
+@app.route('/cart', methods=['GET', 'POST'])
 def cart():
     db = shelve.open('storage.db','r')
     try:
@@ -189,9 +203,11 @@ def cart():
     totalCost = '%.2f' %float(totalCost)
 
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
-@app.route("/addToCart/<name>", methods = ['POST'])
+@app.route("/addToCart/<name>", methods=['GET', 'POST'])
 def addToCart(name):
     current_user = ""
     productsDict= {}
@@ -225,9 +241,11 @@ def addToCart(name):
     totalCost ='%.2f' %float(totalCost)
 
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
-@app.route('/deleteShoppingCartItem/<serialNo>', methods=['POST'])
+@app.route('/deleteShoppingCartItem/<serialNo>', methods=['GET', 'POST'])
 def deleteShoppingCartItem(serialNo):
     current_user = ""
     productsDict = {}
@@ -255,9 +273,11 @@ def deleteShoppingCartItem(serialNo):
     totalCost ='%.2f' %float(totalCost)
 
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
-@app.route('/moveToWishlist/<serialNo>', methods=['POST'])
+@app.route('/moveToWishlist/<serialNo>', methods=['GET', 'POST'])
 def moveToWishlist(serialNo):
     current_user = ""
     productsDict={}
@@ -285,7 +305,7 @@ def moveToWishlist(serialNo):
 
 
 # Wishlist
-@app.route('/wishlist/<filter>/')
+@app.route('/wishlist/<filter>/', methods=['GET', 'POST'])
 def wishlist(filter):
     current_user = ""
     db = shelve.open('storage.db', 'r')
@@ -305,9 +325,11 @@ def wishlist(filter):
         filtered_list = filter_function(filtered_list, filter)
 
     searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
     return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm)
 
-@app.route('/deleteWishListItem/<serialNo>', methods=['POST'])
+@app.route('/deleteWishListItem/<serialNo>', methods=['GET', 'POST'])
 def deleteWishListItem(serialNo):
 
     current_user = ""
@@ -330,7 +352,7 @@ def deleteWishListItem(serialNo):
     print(product)
     return redirect('/wishlist/a-z')
 
-@app.route('/moveToCart/<serialNo>', methods=['POST'])
+@app.route('/moveToCart/<serialNo>', methods=['GET', 'POST'])
 def moveToCart(serialNo):
     current_user = ""
     productsDict={}
@@ -358,20 +380,40 @@ def moveToCart(serialNo):
 
 
 # Checkout
-@app.route('/checkout')
+@app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
+
     deliveryForm = DeliveryForm(request.form)
-    db = shelve.open('storage.db', 'r')
+    db = shelve.open('storage.db', 'c')
+    deliveryDetails = {}
+
     try:
         current_user = db["Current User"]
     except:
         print("Error in retrieving current user for checkout")
 
-    searchForm = searchBar()
-    return render_template('checkout.html', form=deliveryForm, searchForm=searchForm)
+    try:
+        deliveryDetails = db["deliveryDetails"]
+    except:
+        print("error in retrieving information")
 
 
-# Admin Side
+    if request.method == "POST" and deliveryForm.validate():
+        deliveryInfo = Delivery(deliveryForm.street_name.data, deliveryForm.postal_code.data,
+                    deliveryForm.unit_no.data, deliveryForm.date.data, deliveryForm.time.data)
+
+        deliveryDetails[deliveryInfo.get_id()] = deliveryInfo
+        db["deliveryDetails"] = deliveryDetails
+        db.close()
+        return render_template('checkout.html', user=current_user, completedForm=deliveryInfo, searchForm=searchForm)
+
+    return render_template('checkout.html', form=deliveryForm, user=current_user, completedForm='', searchForm=searchForm)
+
+
+# Admin Sides
 @app.route('/dashboard')
 def dashboard():
     productDict = {}
@@ -535,13 +577,6 @@ def addProduct():
 @app.route('/categories')
 def categories():
     return render_template('categories.html')
-
-@app.route('/details')
-def details():
-    deliveryForm = DeliveryForm(request.form)
-
-    return render_template('details.html', form=deliveryForm)
-
 
 if __name__=='__main__':
     app.run(debug=True)

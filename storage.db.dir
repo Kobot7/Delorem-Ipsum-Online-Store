@@ -1,4 +1,5 @@
 'Products', (13824, 1597)
 'Users', (36352, 9000)
 'Usernames', (3072, 225)
-'Current User', (20480, 1839)
+'Current User', (20480, 1172)
+'deliveryDetails', (47104, 1242)

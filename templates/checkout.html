@@ -11,17 +11,7 @@
                 <h4 class="bold">EMAIL ADDRESS</h4>
             </div>
             <div>
-                <span>sarahishposh@gmail.com</span>
-            </div>
-        </div>
-
-        <div id="delivery-address" class="box">
-            <div id="delivery-address_header">
-                <h4 class="bold">DELIVERY ADDRESS</h4>
-            </div>
-            <div>
-                <span>AMK street 61</span>
-                <button>Change</button>
+                <span>{{user.get_email()}}</span>
             </div>
         </div>
 
@@ -29,30 +19,61 @@
                 <div id="delivery-option_header">
                     <h4 class="bold">DELIVERY OPTIONS</h4>
                 </div>
-                <form class="delivery" method= "POST" >
-                       <div class="form-group">
-                              {{ render_field(form.Street_Name, class="form-control") }}
-                            </div>
-                            <div class="form-group">
-                                {{ render_field(form.Postal_Code, class="") }}
-                            </div>
-                            <div class="form-group">
-                                {{ render_field(form.Unit_No, class="form-control") }}
-                            </div>
-                       <div class="form-group">
-                           <div class="form-group">
-                            {{ render_field(form.Date, class="form-control") }}
-                           </div>
+                {% if completedForm != "" %}
+                <div class = 'displayDetails'>
+                  <div class="streetName">
+                    <h3>Street Name</h3>
+                      <p>{{completedForm.get_street_name()}}</p>
+                  </div>
 
-                           <div class="form-group">
-                            {{ render_field(form.Time, class="form-control") }}
-                            </div>
-                       </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary center-block">Submit</button>
-                        </div>
+                  <div class="postalCode">
+                    <h3>Postal Code</h3>
+                      <p>{{completedForm.get_postal_code()}}</p>
+                  </div>
+
+                  <div class="unitNo">
+                    <h3>Unit Number</h3>
+                      <p>{{completedForm.get_unit_no()}}</p>
+                  </div>
+
+                  <div class="date">
+                    <h3>Date</h3>
+                      <p>{{completedForm.get_date()}}</p>
+                  </div>
+
+                  <div class="time">
+                    <h3>Time</h3>
+                      <p>{{completedForm.get_time()}}</p>
+                  </div>
+                </div>
+
+                {% else %}
+                <form class="delivery" action = "{{url_for('checkout')}}" method= "POST" >
+                  <div class="form-group">
+                    {{ render_field(form.street_name, class="form-control") }}
+                  </div>
+                  <div class="form-group">
+                    {{ render_field(form.postal_code, class="") }}
+                  </div>
+                  <div class="form-group">
+                    {{ render_field(form.unit_no, class="form-control") }}
+                  </div>
+                  <div class="form-group">
+                    {{ render_field(form.date, class="form-control") }}
+                  </div>
+
+                  <div class="form-group">
+                    {{ render_field(form.time, class="form-control") }}
+                  </div>
+
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-primary center-block">Submit</button>
+                  </div>
                 </form>
+
+                {% endif %}
             </div>
+
             <div id="payment" class="box">
                     <div id="payment_header">
                         <h4 class="bold">PAYMENT</h4>
@@ -100,28 +121,32 @@
             <div class="inner-items">
               <section class="bag">
               <div class="bag-header">
-                <h2 id=item-number>2 items</h2>
-                <a id="edit" href="cart.html">Edit</a>
+                <h2 id=item-number>{{number}} items</h2>
+                <a id="edit" href="/cart">Edit</a>
             </div>
+            <hr id="header-line">
             <div class="item-list">
               <div class="item-wrapper">
                 <ul id="items">
+                  {% for product in cart %}
                     <li class="item">
-                      <img src="/static/images/vitamin c pills.jpg">
+                      <img src="/static/images/{{product.get_thumbnail()}}">
                         <div class="details ">
-                          <span class="item-price">SGD $25</span>
-                          <span class="item-name">Vitamin C pills</span>
+                          <span class="item-price">{{product.get_price()}}</span>
+                          <span class="item-name">{{product.get_product_name()}}</span>
                           <div class="item-options-wrapper">
-                            <span class="item-brand">Brand</span>
+                            <span class="item-brand">{{product.get_brand()}}</span>
                             <span class="item-quantity">Qty: <strong>1</strong></span>
                           </div>
                         </div>
-                    <hr>
                   </li>
+                  <hr>
+                  {% endfor %}
                 </ul>
                 </div>
               </div>
             </section>
+
               <div id="sum">
                   <hr>
                   <table>
@@ -131,7 +156,7 @@
                           <div>Total to pay</div>
                         </td>
                         <td class="l-rtc">
-                          <div>SGD $25</div>
+                          <div>{{total}}</div>
                         </td>
                       </tr>
                     </tfoot>
@@ -141,7 +166,7 @@
                           <div>Subtotal</div>
                         </td>
                         <td class="l-rtc">
-                          <div>$SGD 25</div>
+                          <div>{{total}}</div>
                         </td>
                       </tr>
                       <tr class="delivery">

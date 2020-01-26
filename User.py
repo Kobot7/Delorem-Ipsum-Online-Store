@@ -41,8 +41,8 @@ class User:
     def set_password(self, password):
         self.__password = password
 
-    # def set_profile_pic(self, pic):
-    #     self.__profile_pic = pic
+    def set_profile_pic(self, pic):
+        self.__profile_pic = pic
 
     def set_phone(self, phone):
         self.__phone = phone

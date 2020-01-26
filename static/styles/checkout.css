@@ -4,9 +4,16 @@ body{
     letter-spacing: 0.031rem
 }
 
+
 header{
     font-family: 'Josefin Sans', sans-serif;
     text-align: center;
+    margin-top: 15px;
+}
+
+h1{
+  font-size: 1.625rem;
+  font-weight: 700;
 }
 
 .box, #right-sticky{
@@ -14,17 +21,16 @@ header{
 }
 
 #content{
-    margin: 20px 15%;
+    margin: 0 auto;
     font-family: 'Josefin Sans', sans-serif;
     overflow: visible;
-    display: flex;
-    justify-content: space-between;
+    width: 940px;
 }
 #left{
-    width: 65%;
+    width: 570px;
     box-sizing: border-box;
     height: 900px;
-    /* background-color: blue; */
+    float: left;
 }
 
 .box{
@@ -113,10 +119,10 @@ a.mybutton:hover{
 }
 
 #right-sticky{
-    width: 33%;
+    width: 360px;
+    float: right;
     box-sizing: border-box;
-    height:80vh;
-    position: -webkit-sticky;
+    height:90vh;
     position: sticky;
     top: 0;
 }
@@ -145,7 +151,7 @@ img{
 
 section{
   display: block;
-  overflow: auto;
+  overflow: hidden;
 }
 
 #sum{
@@ -155,7 +161,7 @@ section{
 }
 
 #sum hr{
-  background-color: #e8e8e8;
+  background-color: black;
   border:none;
   height:1px;
   margin:.25rem 0 1.563rem
@@ -239,6 +245,9 @@ tbody .l-ltc{
   padding:0;
 }
 
+#items:first-child{
+  margin-top: 1rem;
+}
 
 .item{
   margin-top:0;
@@ -252,6 +261,7 @@ tbody .l-ltc{
 }
 
 .details{
+  display: inline-block;
   color: #666;
   flex-wrap:wrap;
   flex: 1 1 100%;
@@ -270,9 +280,9 @@ tbody .l-ltc{
 }
 
 .item-name{
-  display: -webkit-box;
+  display: inline-block;
   max-height: 3rem;
-  max-width: 100%;
+  max-width: 140px;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: .875rem;
@@ -281,6 +291,7 @@ tbody .l-ltc{
   font-weight: 400;
   line-height: 1.125rem;
   padding: 0 .625rem;
+  white-space: nowrap;
 }
 
 .item-options-wrapper{
@@ -348,12 +359,16 @@ tbody .l-ltc{
 }
 
 .item-list{
-  margin-top:1.875rem;
+  overflow: auto;
 }
 
 .item-wrapper{
   height: 16.25rem;
-  overflow: hidden;
   padding-left: 10px;
   padding-right:10px;
+}
+
+#header-line{
+  background-color: black;
+  margin:0;
 }
