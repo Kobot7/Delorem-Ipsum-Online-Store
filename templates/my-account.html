@@ -1,4 +1,7 @@
-<title>My Account</title>
+{% block title %} My Account {% endblock %}
+
+
+{% block content %}
 <div id="main">
   <button class="openbtn" onclick="openNav()">☰</button>
 </div>
@@ -51,6 +54,7 @@
         document.getElementById("mySidebar").style.width = "0";
         document.getElementById("main").style.marginLeft = "0";
       }
+
       function alertchanges() {
         alert("Changes added!");
       }
@@ -237,3 +241,5 @@
     color: #fff;
   }
 </style>
+
+{% endblock %}
