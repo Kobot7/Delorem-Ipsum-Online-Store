@@ -24,9 +24,6 @@
           <th>Name <a href="/products/name/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
                    <a href="/products/name/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
           </th>
-          <th>Brand <a href="/products/brand/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                    <a href="/products/brand/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-          </th>
           <th>Sub-Category <a href="/products/sub-category/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
                            <a href="/products/sub-category/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
           </th>
@@ -51,7 +48,6 @@
           <tr>
             <td><img src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
             <td>{{ product.get_product_name() }}</td>
-            <td>{{ product.get_brand() }}</td>
             <td>{{ product.get_sub_category() }}</td>
             <td>{{ product.get_serial_no() }}</td>
             <td>${{ product.get_price() }}</td>

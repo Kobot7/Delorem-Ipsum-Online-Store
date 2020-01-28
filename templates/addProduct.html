@@ -33,11 +33,14 @@
           </div>
 
           <div class="row form-group">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 {{ render_field(form.price, class="form-control") }}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 {{ render_field(form.quantity, class="form-control") }}
+            </div>
+            <div class="col-md-4">
+                {{ render_field(form.stockThreshold, class="form-control") }}
             </div>
           </div>
 

@@ -55,7 +55,10 @@ class EditProductForm(Form):
 
     description = TextAreaField('Description', [validators.DataRequired(message='This is a required field.')])
 
-    quantity = IntegerField('Quantity', [validators.DataRequired(message='This is a required field.')
+    quantity = IntegerField('In-Stock', [validators.DataRequired(message='This is a required field.')
+                                      , validators.NumberRange(min=0, message='Value has to be more than 0')])
+
+    stockThreshold = IntegerField('Alert if stock falls below', [validators.DataRequired(message='This is a required field.')
                                       , validators.NumberRange(min=0, message='Value has to be more than 0')])
 
     serialNo = StringField('Serial No.')
@@ -74,7 +77,10 @@ class CreateProductForm(Form):
 
     description = TextAreaField('Description', [validators.DataRequired(message='This is a required field.')])
 
-    quantity = IntegerField('Quantity', [validators.DataRequired(message='This is a required field.')])
+    quantity = IntegerField('In-Stock', [validators.DataRequired(message='This is a required field.')])
+
+    stockThreshold = IntegerField('Alert if stock falls below', [validators.DataRequired(message='This is a required field.')
+                                      , validators.NumberRange(min=0, message='Value has to be more than 0')])
 
     activated = BooleanField('')
 
@@ -105,12 +111,8 @@ class DeliveryForm(Form):
     date = DateField('Date', [validators.DataRequired()], render_kw = {"placeholder": "dd-mm-yy"}, format='%d-%m-%y')
     time = TimeField('Time',[validators.DataRequired()], render_kw = {"placeholder": "12:30"})
 
-search_byList = [('name', 'Product Name')
-                , ('brand', 'Brand')
-                , ('sub-category', 'Sub-Category')]
 
 class SearchBar(Form):
-    search_by = SelectField('', choices=search_byList, default='name')
     search_input = StringField('')
 
 
@@ -123,4 +125,5 @@ admin_searchList = [('name', 'Product Name')
                 ,('activated', 'Activated')]
 
 class AdminSearch(Form):
-    admin_search = SelectField('', choices=admin_searchList, default='name')
+    search_cat = SelectField('', choices=admin_searchList, default='name')
+    admin_search = StringField('')

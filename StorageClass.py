@@ -1,5 +1,5 @@
 class Product:
-    def __init__(self, productName, brand, thumbnail, subCategory, price, description, activated, quantity):
+    def __init__(self, productName, brand, thumbnail, subCategory, price, description, activated, quantity, stockThreshold):
         self.__productName = productName
         self.__brand = brand
         self.__thumbnail = thumbnail
@@ -9,6 +9,7 @@ class Product:
         self.__description = description
         self.__activated = activated
         self.__quantity = quantity
+        self.__stock_threshold = stockThreshold
         self.__views = 0
         self.__purchases = 0
 
@@ -39,6 +40,9 @@ class Product:
 
     def get_quantity(self):
         return self.__quantity
+
+    def get_stock_threshold(self):
+        return self.__stock_threshold
 
     def get_views(self):
         return self.__views
@@ -73,6 +77,9 @@ class Product:
 
     def set_quantity(self, quantity):
         self.__quantity = quantity
+
+    def set_stock_threshold(self, stockThreshold):
+        self.__stock_threshold = stockThreshold
 
     def increase_views(self):
         self.__views += 1

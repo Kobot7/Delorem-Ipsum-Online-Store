@@ -10,14 +10,39 @@ from werkzeug.utils import secure_filename
 import os
 from pathlib import Path
 
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
 app = Flask(__name__, static_url_path='/static')
 
 def searchBar():
     return SearchBar(request.form)
 
+@app.route('/search/<searchString>', methods=['GET', 'POST'])
+def search(searchString):
+    db = shelve.open('storage.db', 'r')
+    try:
+        Products = db["Products"]
+    except:
+        print("Error in retrieving products from shelve")
+
+    products = []
+    for id in Products:
+        product = Products[id]
+        if searchString in product.get_product_name().lower() or searchString in product.get_brand().lower():
+            if product.get_activated() == True:
+                products.append(product)
+
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        return redirect('/search/' + searchForm.search_input.data)
+    return render_template('search.html', productList=products, searchString=searchString, productCount=len(products), searchForm=searchForm)
+
+
 def testing():
     productDict = {}
-    db = shelve.open('storage.db', 'w')
+    db = shelve.open('storage.db', 'a')
     productDict = db['Products']
     del productDict['952571Z']
 
@@ -41,7 +66,7 @@ def home():
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data)
 
     return render_template("home.html", current=current, searchForm=searchForm)
 
@@ -105,7 +130,7 @@ def login():
     if request.method =="POST" and loginForm.validate():
         usersDict = {}
         namesDict = {}
-        db = shelve.open('storage.db', 'r')
+        db = shelve.open('storage.db', 'c')
         try:
             usersDict = db["Users"]
         except:
@@ -128,7 +153,7 @@ def login():
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data)
     return render_template('login.html', form=loginForm, form2=registrationForm, searchForm=searchForm)
 
 @app.route('/logout')
@@ -159,7 +184,7 @@ def supplements(subCategory):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data)
     return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
 
 
@@ -180,7 +205,7 @@ def IndItem(serialNo):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data)
     return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm)
 
 
@@ -204,7 +229,7 @@ def cart():
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data)
     return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
 @app.route("/addToCart/<name>", methods=['GET', 'POST'])
@@ -242,7 +267,7 @@ def addToCart(name):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data)
     return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
 @app.route('/deleteShoppingCartItem/<serialNo>', methods=['GET', 'POST'])
@@ -274,7 +299,7 @@ def deleteShoppingCartItem(serialNo):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data)
     return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
 @app.route('/moveToWishlist/<serialNo>', methods=['GET', 'POST'])
@@ -326,7 +351,7 @@ def wishlist(filter):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data)
     return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm)
 
 @app.route('/deleteWishListItem/<serialNo>', methods=['GET', 'POST'])
@@ -384,7 +409,7 @@ def moveToCart(serialNo):
 def checkout():
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data)
 
     deliveryForm = DeliveryForm(request.form)
     db = shelve.open('storage.db', 'c')
@@ -491,6 +516,7 @@ def productSettings(serialNo):
         product.set_price(editProductForm.price.data)
         product.set_description(editProductForm.description.data)
         product.set_quantity(editProductForm.quantity.data)
+        product.set_stock_threshold(editProductForm.stockThreshold.data)
         product.set_activated(editProductForm.activated.data)
 
         image = request.files["image"]
@@ -523,6 +549,7 @@ def productSettings(serialNo):
         editProductForm.subCategory.data = product.get_sub_category()
         editProductForm.price.data = float(product.get_price())
         editProductForm.quantity.data = int(product.get_quantity())
+        editProductForm.stockThreshold.data = int(product.get_stock_threshold())
         editProductForm.description.data = product.get_description()
         editProductForm.activated.data = product.get_activated()
         editProductForm.serialNo.data = product.get_serial_no()
@@ -541,7 +568,6 @@ def addProduct():
             print('Error in retrieving Products from storage.db.')
 
         image = request.files["image"]
-        product.set_thumbnail(image.filename)
         this_folder = os.path.dirname(os.path.abspath(__file__))
         image_to_copy = os.path.join(this_folder, image.filename)
         image.save(image_to_copy)
@@ -552,8 +578,9 @@ def addProduct():
             os.remove(image_to_copy)
             print("Image already exists in database.")
 
-        product = Product(createProductForm.productName.data, createProductForm.brand.data, image.filename, createProductForm.subCategory.data,
-                          createProductForm.price.data, createProductForm.description.data, createProductForm.activated.data, createProductForm.quantity.data)
+        product = Product(createProductForm.productName.data, createProductForm.brand.data, image.filename
+        , createProductForm.subCategory.data, createProductForm.price.data, createProductForm.description.data
+        , createProductForm.activated.data, createProductForm.quantity.data, createProductForm.stockThreshold.data)
 
         serialNo = ''
         while True:

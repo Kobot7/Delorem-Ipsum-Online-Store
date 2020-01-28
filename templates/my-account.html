@@ -1,7 +1,9 @@
-{% block title %} My Account {% endblock %}
-
+{% extends "base.html" %}
+{% block title %} Delorem Ipsum {% endblock %}
+{% block style %}{% endblock %}
 
 {% block content %}
+<title>My Account</title>
 <div id="main">
   <button class="openbtn" onclick="openNav()">☰</button>
 </div>
@@ -44,6 +46,8 @@
       <a href="#">Order History</a>
       <a href="#">User Data</a>
     </div>
+    {% endblock %}
+    {% block scripts %}
     <script>
       function openNav() {
         document.getElementById("mySidebar").style.width = "250px";
@@ -54,7 +58,6 @@
         document.getElementById("mySidebar").style.width = "0";
         document.getElementById("main").style.marginLeft = "0";
       }
-
       function alertchanges() {
         alert("Changes added!");
       }
@@ -241,5 +244,4 @@
     color: #fff;
   }
 </style>
-
 {% endblock %}
