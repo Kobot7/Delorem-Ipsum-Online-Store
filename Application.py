@@ -14,7 +14,25 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+from flask_mail import Mail, Message
+import sys
+import asyncio
+from threading import Thread
+
 app = Flask(__name__, static_url_path='/static')
+app.config.update(
+    MAIL_SERVER= 'smtp.office365.com',
+    MAIL_PORT= 587,
+    MAIL_USE_TLS= True,
+    MAIL_USE_SSL= False,
+	MAIL_USERNAME = '191993Y@mymail.nyp.edu.sg',
+	MAIL_PASSWORD = '4mhzlkwjhfrA',
+	MAIL_DEBUG = True,
+	MAIL_SUPPRESS_SEND = False,
+    MAIL_ASCII_ATTACHMENTS = True
+	)
+
+mail = Mail(app)
 
 def searchBar():
     return SearchBar(request.form)
@@ -430,8 +448,11 @@ def checkout():
         deliveryInfo = Delivery(deliveryForm.street_name.data, deliveryForm.postal_code.data,
                     deliveryForm.unit_no.data, deliveryForm.date.data, deliveryForm.time.data)
 
+        current_user.set_orders(deliveryInfo.get_id())
         deliveryDetails[deliveryInfo.get_id()] = deliveryInfo
         db["deliveryDetails"] = deliveryDetails
+        # current_user.set_orders(deliveryInfo.get_id())
+        db["Current User"] = current_user
         db.close()
         return render_template('checkout.html', user=current_user, completedForm=deliveryInfo, searchForm=searchForm)
 
@@ -604,6 +625,71 @@ def addProduct():
 @app.route('/categories')
 def categories():
     return render_template('categories.html')
+
+@app.route('/deliveryInvoice/<email>/',  methods=['POST'])
+def deliveryInvoice(email):
+    print("hey!")
+    current_user = ""
+    db = shelve.open('storage.db', 'r')
+    try:
+        current_user = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    cart = current_user.get_shopping_cart()
+    order_ID = current_user.get_orders()
+    cartList = []
+    images = []
+    for product in cart:
+        cartList.append(cart[product])
+        images.append(cart[product].get_thumbnail())
+
+    # try:
+    #     deliveryDetails = db["deliveryDetails"]
+    #
+    # except:
+    #         print("error in retrieving information")
+    #
+    # orders = current_user.get_orders()
+    # order_ID = orders[-1]
+    # deliveryInfo = deliveryDetails[order_ID]
+    # date = deliveryInfo.get_date()
+
+    try:
+        msg = Message("Delorem Ipsum Pharmacy",
+        sender="191993Y@mymail.nyp.edu.sg",
+        recipients=[email])
+
+        for image in images:
+            print("Goes into images")
+            this_folder = os.path.dirname(os.path.abspath(__file__))
+            print("This_folder")
+            source = this_folder + "/static/images/" + image
+            print(source)
+            with app.open_resource(source) as fp:
+                # msg.attach(source, "image/png" fp.read())
+                msg.attach(source, "image/jpg", fp.read())
+                print("attached")
+
+        msg.body = "This ur e reciept"
+        msg.html = render_template('html_in_invoice.html',  cartList=cartList, current_user=current_user ,order_ID= order_ID)
+        print("testinggggggggggggggg")
+        mail.send(msg)
+        print("MAIL SENT")
+		#return 'Mail sent!'
+
+    except Exception as e:
+		# return("gxyaishuxa")
+        print(e)
+        print("Error:", sys.exc_info()[0])
+        print("goes into except")
+
+    db.close()
+
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
+    return redirect('/home')
 
 if __name__=='__main__':
     app.run(debug=True)
