@@ -33,7 +33,7 @@ def testing():
 def home():
     db = shelve.open('storage.db', 'c')
     try:
-        current = db["Current User"].get_username()
+        current = db["Current User"]
     except:
         print("Error while retrieving current user")
         current = False
@@ -46,25 +46,27 @@ def home():
     return render_template("home.html", current=current, searchForm=searchForm)
 
 # Profile/Username
-@app.route('/my-account/<current>', methods=['GET', 'POST'])
-def view_profile(current):
+@app.route('/my-account/<username>', methods=['GET', 'POST'])
+def view_profile(username):
     db = shelve.open("storage.db", "c")
     try:
         usersDict = db["Users"]
+        namesDict = db["Usernames"]
         current = db["Current User"]
     except:
-        usersDict = {}
-        db["Users"] = usersDict
         print("Error while retrieving usersDict")
     editProfileForm = EditProfileForm(request.form)
     if request.method == "POST":
         current_id = current.get_user_id()
+        old_username = current.get_username()
         # current.set_profile_pic(editProfileForm.image.data)
         current.set_username(editProfileForm.username.data)
         current.set_address(editProfileForm.address.data)
         current.set_phone(editProfileForm.phone.data)
         current.set_email(editProfileForm.email.data)
         usersDict[current_id] = current
+        namesDict[current.get_username()] = current_id
+        namesDict.pop(old_username)
         db["Users"] = usersDict
         db["Current User"] = current
         db.close()
@@ -105,7 +107,7 @@ def login():
     if request.method =="POST" and loginForm.validate():
         usersDict = {}
         namesDict = {}
-        db = shelve.open('storage.db', 'r')
+        db = shelve.open('storage.db', 'c')
         try:
             usersDict = db["Users"]
         except:
@@ -400,7 +402,14 @@ def checkout():
     except:
         print("error in retrieving information")
 
-
+    cart = current_user.get_shopping_cart()
+    prodlist = []
+    total = 0
+    for key in cart:
+        prodlist.append(cart[key])
+        total += float(cart[key].get_price())
+    total = "%.2f" %float(total)
+    number = len(prodlist)
     if request.method == "POST" and deliveryForm.validate():
         deliveryInfo = Delivery(deliveryForm.street_name.data, deliveryForm.postal_code.data,
                     deliveryForm.unit_no.data, deliveryForm.date.data, deliveryForm.time.data)
@@ -408,9 +417,9 @@ def checkout():
         deliveryDetails[deliveryInfo.get_id()] = deliveryInfo
         db["deliveryDetails"] = deliveryDetails
         db.close()
-        return render_template('checkout.html', user=current_user, completedForm=deliveryInfo, searchForm=searchForm)
+        return render_template('checkout.html', user=current_user, completedForm=deliveryInfo, searchForm=searchForm, cart=prodlist, total=total, number=number)
 
-    return render_template('checkout.html', form=deliveryForm, user=current_user, completedForm='', searchForm=searchForm)
+    return render_template('checkout.html', form=deliveryForm, user=current_user, completedForm='', searchForm=searchForm, cart=prodlist, total=total, number=number)
 
 
 # Admin Sides

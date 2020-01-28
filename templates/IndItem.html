@@ -21,13 +21,13 @@
 
     <div class="col-md-4">
       <h3 class="my-3">{{product.get_product_name()}}</h3>
+      <p class="price-box">
+          <span class="price">{{product.get_price()}}</span>
+      </p>
        <ul>
            <li>{{product.get_brand()}}</li>
            <li>{{product.get_description()}}</li>
        </ul>
-      <p class="price-box">
-          <span class="price">{{product.get_price()}}</span>
-      </p>
         <form  action="{{url_for('addToCart', name = product.get_product_name())}}" method="POST">
            <button class="btn btn-success" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
         </form>
