@@ -10,9 +10,9 @@ from werkzeug.utils import secure_filename
 import os
 from pathlib import Path
 
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+# import pandas as pd
+# import numpy as np
+# import matplotlib.pyplot as plt
 
 from flask_mail import Mail, Message
 import sys
@@ -193,6 +193,10 @@ def supplements(subCategory):
         Products = db["Products"]
     except:
         print("Error in retrieving products from shelve")
+    try:
+        current = db["Current User"]
+    except:
+        print("Error in retrieving current user, subcat")
     products = []
     for id in Products:
         product = Products[id]
@@ -205,7 +209,7 @@ def supplements(subCategory):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
+    return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current)
 
 
 # Ribena(one of the products)
