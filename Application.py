@@ -10,9 +10,9 @@ from werkzeug.utils import secure_filename
 import os
 from pathlib import Path
 
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+# import pandas as pd
+# import numpy as np
+# import matplotlib.pyplot as plt
 
 from flask_mail import Mail, Message
 import sys
@@ -278,17 +278,11 @@ def addToCart(name):
     db['Current User'] = current_user
     cart = current_user.get_shopping_cart()
     db.close()
-    cartList = []
-    totalCost = 0
-    for product in cart:
-        totalCost += float(cart[product].get_price())
-        cartList.append(cart[product])
-    totalCost ='%.2f' %float(totalCost)
 
-    searchForm = searchBar()
-    if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data)
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
+    # searchForm = searchBar()
+    # if request.method == "POST" and searchForm.validate():
+    #     return redirect('/search/' + searchForm.search_input.data)
+    return redirect("/cart")
 
 @app.route('/deleteShoppingCartItem/<serialNo>', methods=['GET', 'POST'])
 def deleteShoppingCartItem(serialNo):
@@ -373,6 +367,36 @@ def wishlist(filter):
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
     return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm)
+
+@app.route("/addToWishlist/<name>", methods=['GET', 'POST'])
+def addToWishlist(name):
+    current_user = ""
+    productsDict= {}
+    db = shelve.open('storage.db', 'c')
+    try:
+        current_user = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    try:
+        productsDict = db["Products"]
+
+    except:
+        print('Error in retrieving current products from storage.db.')
+
+    for thing in productsDict:
+        product = ""
+        if productsDict[thing].get_product_name() == name:
+            product = productsDict[thing]
+            current_user.add_to_wishlist(product)
+            break
+
+    db['Current User'] = current_user
+    wishlist = current_user.get_wishlist()
+    db.close()
+    # if request.method == "POST" and searchForm.validate():
+    #     return redirect('/search/' + searchForm.search_input.data)
+    return redirect("/wishlist/a-z")
 
 @app.route('/deleteWishListItem/<serialNo>', methods=['GET', 'POST'])
 def deleteWishListItem(serialNo):
