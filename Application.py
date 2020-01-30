@@ -6,14 +6,20 @@ from Functions import *
 from User import *
 from deliveryDetails import *
 
+# Image download
 from werkzeug.utils import secure_filename
 import os
 from pathlib import Path
 
+# Graphing
+import json
+import plotly
+
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+import plotly.graph_objs as go
 
+# Flask mail
 from flask_mail import Mail, Message
 import sys
 import asyncio
@@ -428,8 +434,6 @@ def moveToCart(serialNo):
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
     searchForm = searchBar()
-    if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data)
 
     deliveryForm = DeliveryForm(request.form)
     db = shelve.open('storage.db', 'c')
@@ -464,6 +468,9 @@ def checkout():
         db["Current User"] = current_user
         db.close()
         return render_template('checkout.html', user=current_user, completedForm=deliveryInfo, searchForm=searchForm, cart=prodlist, total=total, number=number)
+
+    if request.method == "POST" and searchForm.validate():
+        return redirect('/search/' + searchForm.search_input.data)
 
     return render_template('checkout.html', form=deliveryForm, user=current_user, completedForm='', searchForm=searchForm, cart=prodlist, total=total, number=number)
 
@@ -506,9 +513,34 @@ def viewAll(category, order):
         productList.append(product)
         productList = sort_by(productList, category, order)
 
-    return render_template('productStats.html', productList=productList)
+    nameList = []
+    purchasesList = []
+    viewsList = []
+    count = 0
+    for product in productList:
+        if count<=5:
+            nameList.append(product.get_product_name())
+            purchasesList.append(product.get_purchases())
+            viewsList.append(product.get_views())
+        else:
+            break
 
-@app.route('/products/<category>/<order>/')
+        count += 1
+
+    nameList = nameList[:5]
+    purchasesList = purchasesList[:5]
+    viewsList = viewsList[:5]
+
+    data=[
+        go.Bar(name='Purchases', x=nameList, y=purchasesList),
+        go.Bar(name='Views', x=nameList, y=viewsList)
+    ]
+
+    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return render_template('productStats.html', productList=productList, graphJSON=graphJSON)
+
+@app.route('/products/<category>/<order>/', methods=['GET', 'POST'])
 def products(category, order):
     productDict = {}
     db = shelve.open('storage.db', 'c')
@@ -525,8 +557,48 @@ def products(category, order):
         productList.append(product)
         productList = sort_by(productList, category, order)
 
-    AdminSearch(request.form)
     adminSearchForm = AdminSearch(request.form)
+    if request.method == "POST" and adminSearchForm.validate():
+        return redirect('/products/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
+
+    return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList)
+
+@app.route('/products/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
+def adminSearch(searchCat, searchString):
+    productDict = {}
+    db = shelve.open('storage.db', 'c')
+
+    try:
+        productDict = db['Products']
+        db.close()
+    except:
+        print('Error in retrieving Products from storage.db.')
+
+    productList = []
+    for key in productDict:
+        product = productDict[key]
+        if searchCat=='name':
+            if searchString in product.get_product_name().lower():
+                productList.append(product)
+
+        elif searchCat=='brand':
+            if searchString in product.get_brand().lower():
+                productList.append(product)
+
+        elif searchCat=='sub-category':
+            if searchString in product.get_sub_category().lower():
+                productList.append(product)
+
+        elif searchCat=='serial-no':
+            if searchString in product.get_serial_no().lower():
+                productList.append(product)
+
+        else:
+            print('error')
+
+    adminSearchForm = AdminSearch(request.form)
+    if request.method == "POST" and adminSearchForm.validate():
+        return redirect('/products/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
 
     return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList)
 

@@ -3,7 +3,7 @@
 {% block style %}<link rel="stylesheet" href="/static/styles/products.css">{% endblock %}
 
 {% block content %}
-{% from "includes/_formhelper.html" import render_field %}
+{% from "includes/_admin_formHelper.html" import render_field %}
 <div class="row justify-content-center">
   <div class="col-md-11 mt-3">
     <h1 class="d-inline">Catalog</h1>
@@ -11,9 +11,20 @@
   </div>
 
   <div class="col-md-11 mt-3">
-    <div class="col-md-2 col-sm-4 p-0">
-      {{ render_field(adminSearchForm.admin_search, class="form-control", onchange="changeForm()") }}
-    </div>
+      <form method="POST" action="" id="searchform">
+        <div class="row form-group">
+          <div class="col-lg-2 col-md-3">
+              {{ render_field(adminSearchForm.search_cat, class="form-control", id="SearchCat") }}
+          </div>
+          <div class="col-lg-3 col-md-4">
+              {{ render_field(adminSearchForm.search_input, class="form-control", placeholder="Search...", id="SearchBar") }}
+          </div>
+          <div class="col">
+            <input type="submit" value="Search" class="btn mr-2">
+            <a href="/products/name/ascending" class="btn">Clear Filters</a>
+          </div>
+        </div>
+      </form>
   </div>
 
   <div class="col-md-11">
@@ -66,4 +77,8 @@
     </table>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/admin_search.js"></script>
 {% endblock %}

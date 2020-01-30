@@ -126,4 +126,4 @@ admin_searchList = [('name', 'Product Name')
 
 class AdminSearch(Form):
     search_cat = SelectField('', choices=admin_searchList, default='name')
-    admin_search = StringField('')
+    search_input = StringField('', [validators.DataRequired()])

@@ -17,3 +17,14 @@ i.fa-caret-up, i.fa-caret-down {
 i.fa-caret-up:hover, i.fa-caret-down:hover {
   color: #5a5c4a;
 }
+
+a[href='/products/name/ascending'] {
+  border-color: #AAAAAA;
+  border-width: 3px;
+  color: #888888;
+}
+
+a[href='/products/name/ascending']:hover {
+    background-color: #AAAAAA;
+    color: #ffffff;
+}

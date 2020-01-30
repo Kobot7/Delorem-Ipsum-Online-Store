@@ -1,44 +1,69 @@
 {% extends "admin_base.html" %}
 {% block title %}Products{% endblock %}
-{% block style %}<link rel="stylesheet" href="/static/styles/products.css">{% endblock %}
+{% block style %}<link rel="stylesheet" href="/static/styles/productStats.css">{% endblock %}
+
+{% block headScript %}
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-11 mt-3">
-    <h1 class="d-inline">Product Statistics</h1>
-  </div>
-
+<div class="row justify-content-center mt-4">
   <div class="col-md-11">
-    <table class="table mt-4">
-      <thead>
-        <tr>
-          <th>Thumbnail</th>
-          <th>Name <a href="/dashboard/productStats/name/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                   <a href="/dashboard/productStats/name/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-          </th>
-          <th>Serial No. <a href="/dashboard/productStats/serial-no/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                   <a href="/dashboard/productStats/serial-no/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-          </th>
-          <th>Purchases <a href="/dashboard/productStats/purchase/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                   <a href="/dashboard/productStats/purchase/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-          </th>
-          <th>Views <a href="/dashboard/productStats/view/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                   <a href="/dashboard/productStats/view/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-          </th>
-      </thead>
+    <h1 class="d-inline">Product Statistics</h1>
 
-      <tbody>
-        {% for product in productList %}
-          <tr>
-            <td><img src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
-            <td>{{ product.get_product_name() }}</td>
-            <td>{{ product.get_serial_no() }}</td>
-            <td>{{ product.get_purchases() }}</td>
-            <td>{{ product.get_views() }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <ul class="nav nav-tabs my-4">
+      <li class="nav-item active"><a class="nav-link active" href="#bargraph" data-toggle="tab">Graph</a></li>
+      <li class="nav-item"><a class="nav-link" href="#table" data-toggle="tab">Table</a></li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane active in" id="bargraph">
+        <script>
+          var graph = {{graphJSON | safe}};
+          Plotly.plot("bargraph", graph, {});
+        </script>
+      </div> <!--Tab Content-->
+
+      <div class="tab-pane fade" id="table">
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th>Thumbnail</th>
+              <th>Name <a href="/dashboard/productStats/name/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                       <a href="/dashboard/productStats/name/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+              </th>
+              <th>Serial No. <a href="/dashboard/productStats/serial-no/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                       <a href="/dashboard/productStats/serial-no/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+              </th>
+              <th>Purchases <a href="/dashboard/productStats/purchase/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                       <a href="/dashboard/productStats/purchase/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+              </th>
+              <th>Views <a href="/dashboard/productStats/view/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                       <a href="/dashboard/productStats/view/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+              </th>
+          </thead>
+
+          <tbody>
+            {% for product in productList %}
+              <tr>
+                <td><img src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+                <td>{{ product.get_product_name() }}</td>
+                <td>{{ product.get_serial_no() }}</td>
+                <td>{{ product.get_purchases() }}</td>
+                <td>{{ product.get_views() }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div> <!--Tab Content-->
+
+    </div> <!--Nav Tabs-->
   </div>
 </div>
+
+{% endblock %}
+
+{% block scripts %}
+
 {% endblock %}
