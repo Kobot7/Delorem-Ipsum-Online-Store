@@ -5,7 +5,7 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/">Home</a></li>
-    <li class="breadcrumb-item"><a href="#">{{ mainCategory }}</a></li>
+    <li class="breadcrumb-item"><a href="/subCategory/{{ product.get_sub_category() }}">{{ mainCategory }}</a></li>
     <li class="breadcrumb-item active" aria-current="page"><a href="supplements">{{product.get_sub_category()}}</a></li>
   </ol>
 </nav>
@@ -16,13 +16,13 @@
   <div class="row">
 
     <div class="col-md-6">
-      <img class="d-block w-100" src="/static/images/{{product.get_thumbnail()}}" alt="First slide">
+      <img class="d-block picture" src="/static/images/{{product.get_thumbnail()}}" alt="First slide">
     </div>
 
     <div class="col-md-4">
       <h3 class="my-3">{{product.get_product_name()}}</h3>
       <p class="price-box">
-          <span class="price">{{product.get_price()}}</span>
+          <span class="price">${{product.get_price()}}</span>
       </p>
        <ul>
            <li>{{product.get_brand()}}</li>

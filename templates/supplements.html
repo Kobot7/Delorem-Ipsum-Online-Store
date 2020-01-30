@@ -45,31 +45,6 @@
                           <span class="price">${{product.get_price()}}</span>
                       </p>
                   </a>
-                      <button type="button" data-toggle="modal" data-target="#{{modalCount}}" class="quick-view">Quick View</button>
-                      <div class="modal fade" id="{{modalCount}}" tabindex="-1" role="dialog" aria-hidden="true">
-                          <div class="modal-dialog modal-dialogue-centered" role="document">
-                              <div class="modal-content">
-                                  <div class="item-img">
-                                  <img src="/static/images/{{product.get_thumbnail()}}">
-                                  </div>
-                                  <div class="modal-header">
-                                      <h5 class="modal-title"><strong>{{product.get_product_name()}}</strong></h5>
-                                  </div>
-                                  <div class="modal-body">
-                                      <h6>Product Description</h6>
-                                      <p>Natures Aid Chewable Vitamin C offers a great solution for people who struggle to swallow a large tablet.</p>
-                                      <p>Size: 100 Tablets</p>
-                                      <p class="price-box">
-                                          <span class="price">${{product.get_price()}}</span>
-                                      </p>
-                                  </div>
-                                  <div class="modal-footer">
-                                      <button type="button" class="btn btn-success"><i class="icon-shopping-cart">   Buy Now</i></button>
-                                      <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
                   </article>
                 {% endfor %}
               </div> <!--Items block-->
