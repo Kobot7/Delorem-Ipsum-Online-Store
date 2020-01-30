@@ -112,7 +112,10 @@
                             </div>
                         </div>
                         <div class="order">
+                          <form action="{{url_for('deliveryInvoice', email=user.get_email())}}" method="post">
                             <button>Order</button>
+                          </form>
+
                         </div>
                     </div>
                 </div>

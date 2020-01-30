@@ -93,24 +93,26 @@ padding: 0;
 position: relative;
 text-align: center;
 margin: 15px;
-background-color: #eee;
+background-color: white;
 display: block;
+border: 1px solid #84A220;
 }
 
 .item-img img{
 height: 10rem;
 max-width: 10rem;
+margin-top: 5px;
+margin-bottom: 5px;
 }
 
 .item-caption-box{
-font-size 14px;
+font-size: 14px;
 letter-spacing: .5px;
 line-height: 20px;
 color: #2d2d2d;
 display: block;
 width: 100%;
 height: 40px;
-margin: 0 0 12px;
 }
 
 .item-caption{
@@ -143,6 +145,7 @@ font-weight: 900;
 letter-spacing: 2px;
 color: #666;
 white-space: nowrap;
+font-size:20px;
 }
 
 .quick-view{
@@ -158,4 +161,10 @@ opacity: 0.8;
 color: white;
 padding: 10px 8px 8px;
 outline: none;
+}
+
+.picture{
+  width:80%;
+  height: 80%;
+  margin: auto;
 }

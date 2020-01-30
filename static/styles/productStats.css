@@ -1,0 +1,41 @@
+ul.nav-tabs li.nav-item a {
+  color: #999999;
+  border-bottom: 2px solid #888888;
+}
+
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+  color: #495057;
+  background-color: #e8e8e8;
+  border: 2px solid #666666;
+  border-bottom: none;
+}
+
+.nav-tabs .nav-item .nav-link.active:hover {
+  border: 2px solid #666666;
+  border-bottom: none;
+}
+
+.nav-tabs .nav-item .nav-link:hover {
+  border: 2px solid #666666;
+}
+
+tbody tr td img {
+    width: 80px;
+}
+
+tbody tr td {
+    height: 100px;
+}
+
+tbody tr td {
+    vertical-align: middle !important;
+}
+
+i.fa-caret-up, i.fa-caret-down {
+  color:#ffffff;
+}
+
+i.fa-caret-up:hover, i.fa-caret-down:hover {
+  color: #5a5c4a;
+}

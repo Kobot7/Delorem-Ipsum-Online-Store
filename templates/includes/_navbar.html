@@ -6,8 +6,11 @@
     <!-- Brand -->
     <a class="navbar-brand" href="/home">Dolorem Ipsum</a>
     <div class="search-bar-padding">
-    <input class="searchbar-container" data-backdrop="true" type="text" placeholder="  Search..." id="SearchBar">
+      <form method="POST" action="" id="searchform">
+        {{ render_field(searchForm.search_input, class="searchbar-container", placeholder="  Search...", id="SearchBar") }}
+      </form>
     </div>
+
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -18,9 +21,9 @@
         <li class="nav-item">
           <div class="dropdown-user">
             <!-- <button class="dropbtn">User</button> -->
-            <a class="nav-link dropbtn-user" href="/my-account/{{current}}"><i class="icon-user"></i> {{current}}</a>
+            <a class="nav-link dropbtn-user" href="/my-account/{{current.get_username()}}"><i class="icon-user"></i> {{current.get_username()}}</a>
             <div class="dropdown-content-user">
-              <a href="/my-account/{{current}}">See My Profile</a>
+              <a href="/my-account/{{current.get_username()}}">See My Profile</a>
               <a href="#">Check Current Deliveries</a>
               <a href="#">Helpdesk/FAQ</a>
               <a href="/logout">Logout</a>
@@ -43,9 +46,6 @@
   </nav>
   <nav class="navbar navbar-expand-xl bg-light navbar-light" id="sub-navbar">
     <ul class="navbar-nav container container-fluid">
-      <li class="nav-item">
-        <a class="nav-link" href="#">NEW</a>
-      </li>
       <li class="nav-item">
         <div class="dropdown">
           <button class="dropbtn"><a class="nav-link" href="#">Health</a></button>

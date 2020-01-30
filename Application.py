@@ -6,18 +6,67 @@ from Functions import *
 from User import *
 from deliveryDetails import *
 
+# Image download
 from werkzeug.utils import secure_filename
 import os
 from pathlib import Path
 
+# Graphing
+import json
+import plotly
+
+import pandas as pd
+import numpy as np
+import plotly.graph_objs as go
+
+# Flask mail
+from flask_mail import Mail, Message
+import sys
+import asyncio
+from threading import Thread
+
 app = Flask(__name__, static_url_path='/static')
+app.config.update(
+    MAIL_SERVER= 'smtp.office365.com',
+    MAIL_PORT= 587,
+    MAIL_USE_TLS= True,
+    MAIL_USE_SSL= False,
+	MAIL_USERNAME = '191993Y@mymail.nyp.edu.sg',
+	MAIL_PASSWORD = '4mhzlkwjhfrA',
+	MAIL_DEBUG = True,
+	MAIL_SUPPRESS_SEND = False,
+    MAIL_ASCII_ATTACHMENTS = True
+	)
+
+mail = Mail(app)
 
 def searchBar():
     return SearchBar(request.form)
 
+@app.route('/search/<searchString>', methods=['GET', 'POST'])
+def search(searchString):
+    db = shelve.open('storage.db', 'r')
+    try:
+        Products = db["Products"]
+    except:
+        print("Error in retrieving products from shelve")
+
+    products = []
+    for id in Products:
+        product = Products[id]
+        if searchString in product.get_product_name().lower() or searchString in product.get_brand().lower():
+            if product.get_activated() == True:
+                products.append(product)
+
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        return redirect('/search/' + searchForm.search_input.data)
+    return render_template('search.html', productList=products, searchString=searchString, productCount=len(products), searchForm=searchForm)
+
+
 def testing():
     productDict = {}
-    db = shelve.open('storage.db', 'w')
+    db = shelve.open('storage.db', 'a')
     productDict = db['Products']
     del productDict['952571Z']
 
@@ -33,7 +82,7 @@ def testing():
 def home():
     db = shelve.open('storage.db', 'c')
     try:
-        current = db["Current User"].get_username()
+        current = db["Current User"]
     except:
         print("Error while retrieving current user: user not logged in")
         current = False
@@ -41,21 +90,19 @@ def home():
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data)
 
     return render_template("home.html", current=current, searchForm=searchForm)
 
 # Profile/Username
-@app.route('/my-account/<current>', methods=['GET', 'POST'])
-def view_profile(current):
+@app.route('/my-account/<username>', methods=['GET', 'POST'])
+def view_profile(username):
     db = shelve.open("storage.db", "c")
     try:
         usersDict = db["Users"]
         namesDict = db["Usernames"]
         current = db["Current User"]
     except:
-        usersDict = {}
-        db["Users"] = usersDict
         print("Error while retrieving usersDict")
         return redirect(url_for("home"))
     editProfileForm = EditProfileForm(request.form)
@@ -188,6 +235,10 @@ def supplements(subCategory):
         Products = db["Products"]
     except:
         print("Error in retrieving products from shelve")
+    try:
+        current = db["Current User"]
+    except:
+        print("Error in retrieving current user, subcat")
     products = []
     for id in Products:
         product = Products[id]
@@ -199,8 +250,8 @@ def supplements(subCategory):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
-    return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
+        return redirect('/search/' + searchForm.search_input.data)
+    return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current)
 
 # Ribena(one of the products)
 @app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
@@ -219,7 +270,7 @@ def IndItem(serialNo):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data)
     return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm)
 
 # Shopping Cart
@@ -242,7 +293,7 @@ def cart():
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data)
     return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
 @app.route("/addToCart/<name>", methods=['GET', 'POST'])
@@ -271,17 +322,11 @@ def addToCart(name):
     db['Current User'] = current_user
     cart = current_user.get_shopping_cart()
     db.close()
-    cartList = []
-    totalCost = 0
-    for product in cart:
-        totalCost += float(cart[product].get_price())
-        cartList.append(cart[product])
-    totalCost ='%.2f' %float(totalCost)
 
-    searchForm = searchBar()
-    if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
+    # searchForm = searchBar()
+    # if request.method == "POST" and searchForm.validate():
+    #     return redirect('/search/' + searchForm.search_input.data)
+    return redirect("/cart")
 
 @app.route('/deleteShoppingCartItem/<serialNo>', methods=['GET', 'POST'])
 def deleteShoppingCartItem(serialNo):
@@ -312,7 +357,7 @@ def deleteShoppingCartItem(serialNo):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data)
     return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
 @app.route('/moveToWishlist/<serialNo>', methods=['GET', 'POST'])
@@ -363,8 +408,38 @@ def wishlist(filter):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data)
     return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm)
+
+@app.route("/addToWishlist/<name>", methods=['GET', 'POST'])
+def addToWishlist(name):
+    current_user = ""
+    productsDict= {}
+    db = shelve.open('storage.db', 'c')
+    try:
+        current_user = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    try:
+        productsDict = db["Products"]
+
+    except:
+        print('Error in retrieving current products from storage.db.')
+
+    for thing in productsDict:
+        product = ""
+        if productsDict[thing].get_product_name() == name:
+            product = productsDict[thing]
+            current_user.add_to_wishlist(product)
+            break
+
+    db['Current User'] = current_user
+    wishlist = current_user.get_wishlist()
+    db.close()
+    # if request.method == "POST" and searchForm.validate():
+    #     return redirect('/search/' + searchForm.search_input.data)
+    return redirect("/wishlist/a-z")
 
 @app.route('/deleteWishListItem/<serialNo>', methods=['GET', 'POST'])
 def deleteWishListItem(serialNo):
@@ -419,8 +494,6 @@ def moveToCart(serialNo):
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
     searchForm = searchBar()
-    if request.method == "POST" and searchForm.validate():
-        print(searchForm.search_input.data)
 
     deliveryForm = DeliveryForm(request.form)
     db = shelve.open('storage.db', 'c')
@@ -436,17 +509,30 @@ def checkout():
     except:
         print("error in retrieving information")
 
-
+    cart = current_user.get_shopping_cart()
+    prodlist = []
+    total = 0
+    for key in cart:
+        prodlist.append(cart[key])
+        total += float(cart[key].get_price())
+    total = "%.2f" %float(total)
+    number = len(prodlist)
     if request.method == "POST" and deliveryForm.validate():
         deliveryInfo = Delivery(deliveryForm.street_name.data, deliveryForm.postal_code.data,
                     deliveryForm.unit_no.data, deliveryForm.date.data, deliveryForm.time.data)
 
+        current_user.set_orders(deliveryInfo.get_id())
         deliveryDetails[deliveryInfo.get_id()] = deliveryInfo
         db["deliveryDetails"] = deliveryDetails
+        # current_user.set_orders(deliveryInfo.get_id())
+        db["Current User"] = current_user
         db.close()
-        return render_template('checkout.html', user=current_user, completedForm=deliveryInfo, searchForm=searchForm)
+        return render_template('checkout.html', user=current_user, completedForm=deliveryInfo, searchForm=searchForm, cart=prodlist, total=total, number=number)
 
-    return render_template('checkout.html', form=deliveryForm, user=current_user, completedForm='', searchForm=searchForm)
+    if request.method == "POST" and searchForm.validate():
+        return redirect('/search/' + searchForm.search_input.data)
+
+    return render_template('checkout.html', form=deliveryForm, user=current_user, completedForm='', searchForm=searchForm, cart=prodlist, total=total, number=number)
 
 # Admin Sides
 @app.route('/dashboard')
@@ -486,9 +572,34 @@ def viewAll(category, order):
         productList.append(product)
         productList = sort_by(productList, category, order)
 
-    return render_template('productStats.html', productList=productList)
+    nameList = []
+    purchasesList = []
+    viewsList = []
+    count = 0
+    for product in productList:
+        if count<=5:
+            nameList.append(product.get_product_name())
+            purchasesList.append(product.get_purchases())
+            viewsList.append(product.get_views())
+        else:
+            break
 
-@app.route('/products/<category>/<order>/')
+        count += 1
+
+    nameList = nameList[:5]
+    purchasesList = purchasesList[:5]
+    viewsList = viewsList[:5]
+
+    data=[
+        go.Bar(name='Purchases', x=nameList, y=purchasesList),
+        go.Bar(name='Views', x=nameList, y=viewsList)
+    ]
+
+    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return render_template('productStats.html', productList=productList, graphJSON=graphJSON)
+
+@app.route('/products/<category>/<order>/', methods=['GET', 'POST'])
 def products(category, order):
     productDict = {}
     db = shelve.open('storage.db', 'c')
@@ -505,8 +616,48 @@ def products(category, order):
         productList.append(product)
         productList = sort_by(productList, category, order)
 
-    AdminSearch(request.form)
     adminSearchForm = AdminSearch(request.form)
+    if request.method == "POST" and adminSearchForm.validate():
+        return redirect('/products/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
+
+    return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList)
+
+@app.route('/products/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
+def adminSearch(searchCat, searchString):
+    productDict = {}
+    db = shelve.open('storage.db', 'c')
+
+    try:
+        productDict = db['Products']
+        db.close()
+    except:
+        print('Error in retrieving Products from storage.db.')
+
+    productList = []
+    for key in productDict:
+        product = productDict[key]
+        if searchCat=='name':
+            if searchString in product.get_product_name().lower():
+                productList.append(product)
+
+        elif searchCat=='brand':
+            if searchString in product.get_brand().lower():
+                productList.append(product)
+
+        elif searchCat=='sub-category':
+            if searchString in product.get_sub_category().lower():
+                productList.append(product)
+
+        elif searchCat=='serial-no':
+            if searchString in product.get_serial_no().lower():
+                productList.append(product)
+
+        else:
+            print('error')
+
+    adminSearchForm = AdminSearch(request.form)
+    if request.method == "POST" and adminSearchForm.validate():
+        return redirect('/products/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
 
     return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList)
 
@@ -526,6 +677,7 @@ def productSettings(serialNo):
         product.set_price(editProductForm.price.data)
         product.set_description(editProductForm.description.data)
         product.set_quantity(editProductForm.quantity.data)
+        product.set_stock_threshold(editProductForm.stockThreshold.data)
         product.set_activated(editProductForm.activated.data)
 
         image = request.files["image"]
@@ -558,6 +710,7 @@ def productSettings(serialNo):
         editProductForm.subCategory.data = product.get_sub_category()
         editProductForm.price.data = float(product.get_price())
         editProductForm.quantity.data = int(product.get_quantity())
+        editProductForm.stockThreshold.data = int(product.get_stock_threshold())
         editProductForm.description.data = product.get_description()
         editProductForm.activated.data = product.get_activated()
         editProductForm.serialNo.data = product.get_serial_no()
@@ -576,7 +729,6 @@ def addProduct():
             print('Error in retrieving Products from storage.db.')
 
         image = request.files["image"]
-        product.set_thumbnail(image.filename)
         this_folder = os.path.dirname(os.path.abspath(__file__))
         image_to_copy = os.path.join(this_folder, image.filename)
         image.save(image_to_copy)
@@ -587,8 +739,9 @@ def addProduct():
             os.remove(image_to_copy)
             print("Image already exists in database.")
 
-        product = Product(createProductForm.productName.data, createProductForm.brand.data, image.filename, createProductForm.subCategory.data,
-                          createProductForm.price.data, createProductForm.description.data, createProductForm.activated.data, createProductForm.quantity.data)
+        product = Product(createProductForm.productName.data, createProductForm.brand.data, image.filename
+        , createProductForm.subCategory.data, createProductForm.price.data, createProductForm.description.data
+        , createProductForm.activated.data, createProductForm.quantity.data, createProductForm.stockThreshold.data)
 
         serialNo = ''
         while True:
@@ -612,6 +765,71 @@ def addProduct():
 @app.route('/categories')
 def categories():
     return render_template('categories.html')
+
+@app.route('/deliveryInvoice/<email>/',  methods=['POST'])
+def deliveryInvoice(email):
+    print("hey!")
+    current_user = ""
+    db = shelve.open('storage.db', 'r')
+    try:
+        current_user = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    cart = current_user.get_shopping_cart()
+    order_ID = current_user.get_orders()
+    cartList = []
+    images = []
+    for product in cart:
+        cartList.append(cart[product])
+        images.append(cart[product].get_thumbnail())
+
+    # try:
+    #     deliveryDetails = db["deliveryDetails"]
+    #
+    # except:
+    #         print("error in retrieving information")
+    #
+    # orders = current_user.get_orders()
+    # order_ID = orders[-1]
+    # deliveryInfo = deliveryDetails[order_ID]
+    # date = deliveryInfo.get_date()
+
+    try:
+        msg = Message("Delorem Ipsum Pharmacy",
+        sender="191993Y@mymail.nyp.edu.sg",
+        recipients=[email])
+
+        for image in images:
+            print("Goes into images")
+            this_folder = os.path.dirname(os.path.abspath(__file__))
+            print("This_folder")
+            source = this_folder + "/static/images/" + image
+            print(source)
+            with app.open_resource(source) as fp:
+                # msg.attach(source, "image/png" fp.read())
+                msg.attach(source, "image/jpg", fp.read())
+                print("attached")
+
+        msg.body = "This ur e reciept"
+        msg.html = render_template('html_in_invoice.html',  cartList=cartList, current_user=current_user ,order_ID= order_ID)
+        print("testinggggggggggggggg")
+        mail.send(msg)
+        print("MAIL SENT")
+		#return 'Mail sent!'
+
+    except Exception as e:
+		# return("gxyaishuxa")
+        print(e)
+        print("Error:", sys.exc_info()[0])
+        print("goes into except")
+
+    db.close()
+
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
+    return redirect('/home')
 
 if __name__=='__main__':
     app.run(debug=True)
