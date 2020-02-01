@@ -13,19 +13,19 @@
     <h1 class="d-inline">Product Statistics</h1>
 
     <ul class="nav nav-tabs my-4">
-      <li class="nav-item active"><a class="nav-link active" href="#bargraph" data-toggle="tab">Graph</a></li>
-      <li class="nav-item"><a class="nav-link" href="#table" data-toggle="tab">Table</a></li>
+      <li class="nav-item"><a class="nav-link" href="#bargraph" data-toggle="tab">Graph</a></li>
+      <li class="nav-item active"><a class="nav-link active" href="#table" data-toggle="tab">Table</a></li>
     </ul>
 
     <div class="tab-content">
-      <div class="tab-pane active in" id="bargraph">
+      <div class="tab-pane fade" id="bargraph">
         <script>
           var graph = {{graphJSON | safe}};
           Plotly.plot("bargraph", graph, {});
         </script>
       </div> <!--Tab Content-->
 
-      <div class="tab-pane fade" id="table">
+      <div class="tab-pane active in" id="table">
         <table class="table mt-4">
           <thead>
             <tr>
