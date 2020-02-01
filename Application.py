@@ -279,8 +279,10 @@ def cart():
     db = shelve.open('storage.db','r')
     try:
         user = db['Current User']
+        current = db['Current User']
     except:
         print('Error reading Current User.')
+        current = False
 
     cart = user.get_shopping_cart()
     db.close()
@@ -294,7 +296,7 @@ def cart():
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current)
 
 @app.route("/addToCart/<name>", methods=['GET', 'POST'])
 def addToCart(name):
