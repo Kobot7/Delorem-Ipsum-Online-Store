@@ -39,7 +39,7 @@
         {% if productList|length==0 %}
           <p>&nbsp;&nbsp;No match found.</p>
         {% else %}
-          <table class="table mt-4">
+          <table class="table mt-4 products">
             <thead>
               <tr>
                 <th>Thumbnail</th>
@@ -68,7 +68,7 @@
             <tbody id="table-body">
             {% for product in productList %}
               <tr>
-                <td><img src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+                <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
                 <td class="name">{{ product.get_product_name() }}</td>
                 <td class="sub-category">{{ product.get_sub_category() }}</td>
                 <td class="serial-no">{{ product.get_serial_no() }}</td>

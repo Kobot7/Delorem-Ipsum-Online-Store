@@ -1,5 +1,5 @@
 {% extends "admin_base.html" %}
-{% block title %}Products{% endblock %}
+{% block title %}Product Statistics{% endblock %}
 {% block style %}<link rel="stylesheet" href="/static/styles/productStats.css">{% endblock %}
 
 {% block headScript %}
@@ -17,7 +17,7 @@
 
     <div class="tab-content">
       <div class="tab-pane active in" id="table">
-        <table class="table mt-4">
+        <table class="table mt-4 products">
           <thead>
             <tr>
               <th>Thumbnail</th>
@@ -38,7 +38,7 @@
           <tbody>
             {% for product in productList %}
               <tr>
-                <td><img src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+                <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
                 <td>{{ product.get_product_name() }}</td>
                 <td>{{ product.get_serial_no() }}</td>
                 <td>{{ product.get_purchases() }}</td>
@@ -49,11 +49,22 @@
         </table>
       </div> <!--Tab Content-->
 
-      <div class="tab-pane fade contanier-fluid" id="bargraph">
+      <div class="tab-pane fade pb-4" id="bargraph">
       </div> <!--Tab Content-->
         <script>
+          function getWidth() {
+            return Math.max(
+              document.body.scrollWidth,
+              document.documentElement.scrollWidth,
+              document.body.offsetWidth,
+              document.documentElement.offsetWidth,
+              document.documentElement.clientWidth
+            );
+          }
           var graph = {{graphJSON | safe}};
-          graph.layout = { yaxis: {automargin: true}};
+          var heightValue = {{ productList|length }}*50;
+          var widthValue = getWidth() - 200;
+          graph.layout = { yaxis: {automargin: true}, margin: {t:50, b:50}, height: heightValue, width: widthValue};
           var chart = Plotly.plot("bargraph", graph.data, graph.layout, {responsive: true});
         </script>
     </div> <!--Nav Tabs-->

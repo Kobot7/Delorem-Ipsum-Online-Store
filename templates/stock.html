@@ -1,0 +1,68 @@
+{% extends "admin_base.html" %}
+{% block title %}Stock{% endblock %}
+{% block style %}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-11 mt-4">
+    <h1 class="d-inline">Stock</h1>
+  </div>
+
+  <div class="col-md-11">
+    <table class="table mt-4 products">
+      <thead>
+        <tr>
+          <th>Thumbnail</th>
+          <th>Name <a href="/stock/name/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                   <a href="/stock/name/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+          </th>
+          <th>Serial No. <a href="/stock/serial-no/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                         <a href="/stock/serial-no/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+          </th>
+          <th>Quantity <a href="/stock/quantity/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                       <a href="/stock/quantity/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+          </th>
+          <th>Threshold <a href="/stock/activated/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                        <a href="/stock/activated/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody id="table-body">
+      {% for product in lowStockList %}
+        <tr class="lowStock">
+          <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+          <td class="name">{{ product.get_product_name() }}</td>
+          <td class="serial-no">{{ product.get_serial_no() }}</td>
+          <td class="quantity">{{ product.get_quantity() }}</td>
+          <td class="threshold">{{ product.get_stock_threshold() }}</td>
+        </tr>
+      {% endfor %}
+
+      {% for product in midStockList %}
+        <tr class="midStock">
+          <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+          <td class="name">{{ product.get_product_name() }}</td>
+          <td class="serial-no">{{ product.get_serial_no() }}</td>
+          <td class="quantity">{{ product.get_quantity() }}</td>
+          <td class="threshold">{{ product.get_stock_threshold() }}</td>
+        </tr>
+      {% endfor %}
+
+      {% for product in highStockList %}
+        <tr class="highStock">
+          <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+          <td class="name">{{ product.get_product_name() }}</td>
+          <td class="serial-no">{{ product.get_serial_no() }}</td>
+          <td class="quantity">{{ product.get_quantity() }}</td>
+          <td class="threshold">{{ product.get_stock_threshold() }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

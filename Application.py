@@ -48,12 +48,9 @@ def testing():
     db = shelve.open('storage.db', 'a')
     productDict = db['Products']
     for product in productDict:
-        productDict[product].increase_purchases(1)
-        break
-    # test = productDict['709283M']
-    # test.increase_purchases(0)
-    # for x in range(10):
-    #     test.increase_views()
+        productDict[product].increase_purchases(random.randint(1,50))
+        for x in range(random.randint(40,150)):
+            productDict[product].increase_views()
     db['Products'] = productDict
     db.close()
 
@@ -542,7 +539,8 @@ def checkout():
 
     return render_template('checkout.html', form=deliveryForm, user=current_user, completedForm='', searchForm=searchForm, cart=prodlist, total=total, number=number)
 
-# Admin Sides
+
+# Admin Side
 @app.route('/dashboard')
 def dashboard():
     productDict = {}
@@ -555,20 +553,35 @@ def dashboard():
         print('Error in retrieving Products from storage.db.')
 
     productList = []
+    lowStockList = []
+    midStockList = []
+
     for key in productDict:
-        product = productDict.get(key)
+        product = productDict[key]
         productList.append(product)
-        viewsList = sort_by(productList, 'view', 'descending')[:5]
-        purchasesList = sort_by(productList, 'purchase', 'descending')[:5]
+
+        if product.get_quantity()<product.get_stock_threshold():
+            lowStockList.append(product)
+
+        elif product.get_quantity()<(product.get_stock_threshold()*1.25):
+            midStockList.append(product)
+
+        else:
+            continue
+
+    viewsList = sort_by(productList, 'view', 'descending')[:5]
+    purchasesList = sort_by(productList, 'purchase', 'descending')[:5]
 
     purchasesName = []
+    purchasesSerial = []
     purchasesAmount = []
     for product in purchasesList:
         purchasesName.append(product.get_product_name())
+        purchasesSerial.append(product.get_serial_no())
         purchasesAmount.append(product.get_purchases())
 
     purchasesData = {
-            'data':  [go.Bar(name='Purchases', x=purchasesAmount, y=purchasesName, orientation='h', marker_color='#8FAFA2')],
+            'data':  [go.Bar(name='Purchases', x=purchasesAmount, y=purchasesSerial, text=purchasesName, textposition='auto', orientation='h', marker_color='#8FAFA2')],
 
             'layout': {}
             }
@@ -576,25 +589,27 @@ def dashboard():
     purchasesGraph = json.dumps(purchasesData, cls=plotly.utils.PlotlyJSONEncoder)
 
     viewsName = []
+    viewsSerial = []
     viewsAmount = []
     for product in viewsList:
         viewsName.append(product.get_product_name())
+        viewsSerial.append(product.get_serial_no())
         viewsAmount.append(product.get_views())
 
     viewsData = {
-            'data':  [go.Bar(name='Views', x=viewsAmount, y=viewsName, orientation='h', marker_color='#E9BA6C')],
+            'data':  [go.Bar(name='Views', x=viewsAmount, y=purchasesSerial, text=viewsName, textposition='auto', orientation='h', marker_color='#E9BA6C')],
 
             'layout': {}
             }
 
     viewsGraph = json.dumps(viewsData, cls=plotly.utils.PlotlyJSONEncoder)
 
-    return render_template('dashboard.html', viewsList = viewsList, purchasesGraph = purchasesGraph, viewsGraph = viewsGraph, currentPage='Dashboard')
+    return render_template('dashboard.html', currentPage='Dashboard', viewsList = viewsList, purchasesGraph = purchasesGraph, viewsGraph = viewsGraph, lowStockList=lowStockList, midStockList=midStockList)
 
 @app.route('/productStats/<category>/<order>/')
 def viewAll(category, order):
     productDict = {}
-    db = shelve.open('storage.db', 'w')
+    db = shelve.open('storage.db', 'r')
 
     try:
         productDict = db['Products']
@@ -611,20 +626,11 @@ def viewAll(category, order):
     nameList = []
     purchasesList = []
     viewsList = []
-    count = 0
     for product in productList:
-        if count<=5:
-            nameList.append(product.get_product_name())
-            purchasesList.append(product.get_purchases())
-            viewsList.append(product.get_views())
-        else:
-            break
+        nameList.append(product.get_product_name())
+        purchasesList.append(product.get_purchases())
+        viewsList.append(product.get_views())
 
-        count += 1
-
-    nameList = nameList[:10]
-    purchasesList = purchasesList[:10]
-    viewsList = viewsList[:10]
 
     graph = {}
     graph= {
@@ -797,6 +803,49 @@ def addProduct():
 
     return render_template('addProduct.html', form=createProductForm, currentPage='Catalog')
 
+@app.route('/stock')
+def stock():
+    db = shelve.open('storage.db', 'c')
+
+    try:
+        productDict = db['Products']
+        db.close()
+    except:
+        print('Error in retrieving Products from storage.db.')
+
+    lowStockList = []
+    midStockList = []
+    highStockList = []
+
+    for key in productDict:
+        product = productDict[key]
+        if product.get_quantity()<product.get_stock_threshold():
+            lowStockList.append(product)
+
+        elif product.get_quantity()<(product.get_stock_threshold()*1.25):
+            midStockList.append(product)
+
+        else:
+            highStockList.append(product)
+
+    return render_template('stock.html', currentPage='Stock', lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList)
+
+@app.route('/transactions')
+def transactions():
+    transactionsDict = {}
+
+    db = shelve.open('storage.db', 'c')
+
+    try:
+        productDict = db['Transactions']
+        db.close()
+    except:
+        print('Error in retrieving Transactions from storage.db.')
+
+    return render_template('transactions.html', currentPage='Transactions')
+
+
+# Other stuff
 @app.route('/categories')
 def categories():
     return render_template('categories.html')

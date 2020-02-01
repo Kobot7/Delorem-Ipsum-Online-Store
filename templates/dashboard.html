@@ -9,20 +9,34 @@
     <div class="col-lg-10 dashboard-block p-4 mx-2 my-2">
         <h2 class="d-inline">Low Stock</h2>
         <a class="btn d-inline float-right mt-1 mb-2" href="/stock">View All</a>
-        <table class="w-100">
+        <table class="w-100 products">
             <thead>
                 <tr>
                     <th colspan="2">&nbsp;&nbsp;Product</th>
                     <th>No. of Purchases</th>
+                    <th>Stock</th>
+                    <th>Threshold</th>
                 </tr>
             </thead>
 
             <tbody>
               {% for product in lowStockList %}
-                <tr>
-                  <td><img src="/static/images/{{ product.get_thumbnail() }}" class="thumbnail"></td>
-                  <td>{{ product.get_product_name() }}</td>
-                  <td>{{ product.get_stock() }}</td>
+                <tr class="lowStock">
+                  <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+                  <td class="name">{{ product.get_product_name() }}</td>
+                  <td class="serial-no">{{ product.get_serial_no() }}</td>
+                  <td class="quantity">{{ product.get_quantity() }}</td>
+                  <td class="threshold">{{ product.get_stock_threshold() }}</td>
+                </tr>
+              {% endfor %}
+
+              {% for product in midStockList %}
+                <tr class="midStock">
+                  <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+                  <td class="name">{{ product.get_product_name() }}</td>
+                  <td class="serial-no">{{ product.get_serial_no() }}</td>
+                  <td class="quantity">{{ product.get_quantity() }}</td>
+                  <td class="threshold">{{ product.get_stock_threshold() }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -37,8 +51,8 @@
         <div class="col mt-4" id="purchasesGraph"></div>
         <script>
           var purchasesData = {{purchasesGraph | safe}};
-          purchasesData.layout = { yaxis: {automargin: true}};
-          var chart = Plotly.newPlot("purchasesGraph", purchasesData.data, purchasesData.layout, {responsive: true});
+          purchasesData.layout = { yaxis: {automargin: true}, margin: {t:0, b:0}, height: 250};
+          var chart = Plotly.newPlot("purchasesGraph", purchasesData.data, purchasesData.layout, {responsive: true, displayModeBar:false});
         </script>
     </div>
 
@@ -48,8 +62,8 @@
         <div class="col mt-4" id="viewsGraph"></div>
         <script>
           var viewsData = {{viewsGraph | safe}};
-          viewsData.layout = { yaxis: {automargin: true}};
-          var chart = Plotly.newPlot("viewsGraph", viewsData.data, viewsData.layout, {responsive: true});
+          viewsData.layout = { yaxis: {automargin: true}, margin: {t:0, b:0}, height: 250};
+          var chart = Plotly.newPlot("viewsGraph", viewsData.data, viewsData.layout, {responsive: true, displayModeBar:false});
         </script>
     </div>
 </div> <!--Row 2, Stats-->
@@ -58,7 +72,7 @@
     <div class="col-lg-10 dashboard-block p-4 mx-2 my-2">
         <h2 class="d-inline">Orders</h2>
         <a class="btn d-inline float-right mt-1 mb-2" href="#">View All</a>
-        <table class="w-100">
+        <table class="w-100" id="transactions">
             <thead>
                 <tr>
                     <th>Customer</th>

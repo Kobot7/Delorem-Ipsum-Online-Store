@@ -1,3 +1,10 @@
+/*
+Dark Blue: #4f5b5b
+Brown: #85886d
+Green/Blue: #8fafa2
+Light Orange: #e9ba6c
+Orange: #ea522e
+*/
 @import url('https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap');
 
 body {
@@ -111,4 +118,44 @@ table tbody tr:hover {
 
 .dropdown .dropdown-content a:hover {
   color: #fff;
+}
+
+
+/*--------------Stock Table--------------*/
+tr.lowStock {
+  background-color: #EA725E;
+}
+
+tr.lowStock:hover {
+  background-color: #EA422E;
+}
+
+tr.midStock {
+  background-color: #E9BA6C;
+}
+
+tr.midStock:hover {
+  background-color: #E99A4C;
+}
+
+/*--------------Product Table--------------*/
+i.fa-caret-up, i.fa-caret-down {
+  color:#ffffff;
+}
+
+i.fa-caret-up:hover, i.fa-caret-down:hover {
+  color: #5a5c4a;
+}
+
+.thumbnail {
+  height: 80px;
+  padding: 5px;
+}
+
+table.products tbody tr td {
+    height: 100px;
+}
+
+table.products tbody tr td {
+    vertical-align: middle !important;
 }

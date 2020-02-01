@@ -2,11 +2,6 @@
   background-color: white;
 }
 
-table tbody tr:hover {
+table#transactions tbody tr:hover {
   cursor: pointer;
-}
-
-.thumbnail {
-  height: 60px;
-  padding: 5px;
 }
