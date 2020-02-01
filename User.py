@@ -11,9 +11,9 @@ class User:
         self.set_email(email)
         # self.set_profile_pic(r"..\static\images\default-profile-picture1.jpg")
         self.__phone = ""
-        self.__wishlist = self.default_wishlist()
         self.__address = ""
         self.__shopping_cart = {}
+        self.__wishlist = {}
         self.__transactions = []
 
     def set_user_id(self):
