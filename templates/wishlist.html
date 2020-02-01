@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Wishlist{% endblock %}
-{% block style %}<link rel="stylesheet" href="/static/styles/wishlist.css">{% endblock %}
+{% block style %}<link rel="stylesheet" href="/static/styles/items.css">{% endblock %}
 
 
 {% block content %}
@@ -32,7 +32,7 @@
                      </div>
                  </div>
                  <p class="price-box">
-                     <span class="price">${{ product.get_price() }}</span>
+                     <span class="price-small">${{ product.get_price() }}</span>
                  </p>
              <!-- </a> -->
                   <form  action="{{url_for('moveToCart', serialNo = product.get_serial_no() )}}" method="POST" onsubmit="return confirmMove()">

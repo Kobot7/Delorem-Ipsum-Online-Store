@@ -144,10 +144,6 @@ a.mybutton:hover{
 .bold{
     font-weight: bold;
 }
-img{
-    width: 100px;
-    height: 100px;
-}
 
 section{
   display: block;
@@ -255,8 +251,8 @@ tbody .l-ltc{
 }
 
 .item>img{
-  height: 110px;
-  width: 90px;
+  height: 100px;
+  width: 100px;
   flex: 0 0 85px;
 }
 

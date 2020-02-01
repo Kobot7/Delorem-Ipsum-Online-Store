@@ -12,12 +12,12 @@ import os
 from pathlib import Path
 
 # Graphing
-import json
-import plotly
+# import json
+# import plotly
 
-import pandas as pd
-import numpy as np
-import plotly.graph_objs as go
+# import pandas as pd
+# import numpy as np
+# import plotly.graph_objs as go
 
 # Flask mail
 from flask_mail import Mail, Message
@@ -222,12 +222,23 @@ def supplements(subCategory):
 @app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
 def IndItem(serialNo):
     db = shelve.open('storage.db','w')
+    current=""
     try:
         products = db['Products']
     except:
         print("Error while retrieving products from storage.")
+    try:
+        current = db['Current User']
+    except:
+        print("Unable to get the current dude!")
     IndItem = products[serialNo]
     IndItem.increase_views()
+    wishlist = current.get_wishlist()
+    taken = False
+    for serial_no in wishlist:
+        if serial_no == serialNo:
+            taken = True
+            break
     db['Products'] = products
     db.close()
     subCategory = IndItem.get_sub_category()
@@ -236,7 +247,7 @@ def IndItem(serialNo):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm)
+    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken)
 
 
 # Shopping Cart
@@ -464,18 +475,18 @@ def checkout():
     searchForm = searchBar()
 
     deliveryForm = DeliveryForm(request.form)
+    collectionForm = CollectionForm(request.form)
     db = shelve.open('storage.db', 'c')
-    deliveryDetails = {}
-
+    transactions = {}
     try:
         current_user = db["Current User"]
     except:
         print("Error in retrieving current user for checkout")
 
     try:
-        deliveryDetails = db["deliveryDetails"]
+        transactions = db["Transactions"]
     except:
-        print("error in retrieving information")
+        print("error in retrieving transaction information")
 
     cart = current_user.get_shopping_cart()
     prodlist = []
@@ -483,24 +494,24 @@ def checkout():
     for key in cart:
         prodlist.append(cart[key])
         total += float(cart[key].get_price())
-    total = "%.2f" %float(total)
     number = len(prodlist)
     if request.method == "POST" and deliveryForm.validate():
-        deliveryInfo = Delivery(deliveryForm.street_name.data, deliveryForm.postal_code.data,
-                    deliveryForm.unit_no.data, deliveryForm.date.data, deliveryForm.time.data)
+        deliveryInfo = Transaction(deliveryForm.name.data, deliveryForm.phone.data,
+                    current_user.get_email(),total, prodlist, deliveryForm.payment_mode.data,
+                     deliveryForm.credit_card_number.data, deliveryForm.credit_card_expiry.data, deliveryForm.credit_card_cvv.data)
+        # current_user.set_transactions(deliveryInfo.get_id())
+        # transactions[deliveryInfo.get_id()] = deliveryInfo
+        # db["Transactions"] = transactions
+    #     current_user.set_orders(deliveryInfo.get_id())
+    #     db["Current User"] = current_user
+    #     db.close()
+    #     return render_template('checkout.html', user=current_user, completedForm=deliveryInfo, searchForm=searchForm, cart=prodlist, total=total, number=number)
+        print(deliveryInfo.get_name())
+    total = "%.2f" %float(total)
+    # if request.method == "POST" and searchForm.validate():
+    #     return redirect('/search/' + searchForm.search_input.data)
 
-        current_user.set_orders(deliveryInfo.get_id())
-        deliveryDetails[deliveryInfo.get_id()] = deliveryInfo
-        db["deliveryDetails"] = deliveryDetails
-        # current_user.set_orders(deliveryInfo.get_id())
-        db["Current User"] = current_user
-        db.close()
-        return render_template('checkout.html', user=current_user, completedForm=deliveryInfo, searchForm=searchForm, cart=prodlist, total=total, number=number)
-
-    if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data)
-
-    return render_template('checkout.html', form=deliveryForm, user=current_user, completedForm='', searchForm=searchForm, cart=prodlist, total=total, number=number)
+    return render_template('checkout.html', deliveryform=deliveryForm, user=current_user, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number)
 
 
 # Admin Sides
@@ -524,49 +535,49 @@ def dashboard():
 
     return render_template('dashboard.html', viewList = viewList, purchaseList = purchaseList)
 
-@app.route('/dashboard/productStats/<category>/<order>/')
-def viewAll(category, order):
-    productDict = {}
-    db = shelve.open('storage.db', 'w')
-
-    try:
-        productDict = db['Products']
-        db.close()
-    except:
-        print('Error in retrieving Products from storage.db.')
-
-    productList = []
-    for key in productDict:
-        product = productDict.get(key)
-        productList.append(product)
-        productList = sort_by(productList, category, order)
-
-    nameList = []
-    purchasesList = []
-    viewsList = []
-    count = 0
-    for product in productList:
-        if count<=5:
-            nameList.append(product.get_product_name())
-            purchasesList.append(product.get_purchases())
-            viewsList.append(product.get_views())
-        else:
-            break
-
-        count += 1
-
-    nameList = nameList[:5]
-    purchasesList = purchasesList[:5]
-    viewsList = viewsList[:5]
-
-    data=[
-        go.Bar(name='Purchases', x=nameList, y=purchasesList),
-        go.Bar(name='Views', x=nameList, y=viewsList)
-    ]
-
-    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
-
-    return render_template('productStats.html', productList=productList, graphJSON=graphJSON)
+# @app.route('/dashboard/productStats/<category>/<order>/')
+# def viewAll(category, order):
+#     productDict = {}
+#     db = shelve.open('storage.db', 'w')
+#
+#     try:
+#         productDict = db['Products']
+#         db.close()
+#     except:
+#         print('Error in retrieving Products from storage.db.')
+#
+#     productList = []
+#     for key in productDict:
+#         product = productDict.get(key)
+#         productList.append(product)
+#         productList = sort_by(productList, category, order)
+#
+#     nameList = []
+#     purchasesList = []
+#     viewsList = []
+#     count = 0
+#     for product in productList:
+#         if count<=5:
+#             nameList.append(product.get_product_name())
+#             purchasesList.append(product.get_purchases())
+#             viewsList.append(product.get_views())
+#         else:
+#             break
+#
+#         count += 1
+#
+#     nameList = nameList[:5]
+#     purchasesList = purchasesList[:5]
+#     viewsList = viewsList[:5]
+#
+#     data=[
+#         go.Bar(name='Purchases', x=nameList, y=purchasesList),
+#         go.Bar(name='Views', x=nameList, y=viewsList)
+#     ]
+#
+#     graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
+#
+#     return render_template('productStats.html', productList=productList, graphJSON=graphJSON)
 
 @app.route('/products/<category>/<order>/', methods=['GET', 'POST'])
 def products(category, order):

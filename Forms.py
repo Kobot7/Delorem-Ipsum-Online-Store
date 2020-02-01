@@ -1,4 +1,7 @@
-from wtforms import Form, StringField, SelectField, validators, BooleanField, PasswordField, FileField, DecimalField, IntegerField, TextAreaField, DateField, TimeField
+from wtforms import Form, StringField, SelectField, validators, BooleanField, PasswordField, FileField, DecimalField, IntegerField, TextAreaField, RadioField
+from wtforms.fields.html5 import DateField
+from wtforms_components import TimeField, DateRange
+from datetime import datetime,date
 import re
 
 choicesList = [('', 'Select')
@@ -104,12 +107,30 @@ class EditProfileForm(Form):
     phone = StringField('Contact Number')
     email = StringField('Contact Email')
 
+cardlist = [('visa','Visa'),
+            ('mastercard', 'Master card')]
+
 class DeliveryForm(Form):
+    name = StringField('Cardholder Name',[validators.DataRequired()])
+    phone = IntegerField('Phone Number',[validators.NumberRange(min=30000000, max=99999999, message="Please enter a valid phone number")])
+    payment_mode = RadioField('Payment Mode',choices=cardlist, default='')
+    credit_card_number = IntegerField('Credit Card Number', [validators.NumberRange(min=3000000000000, max=9999999999999999,message="Please enter a valid Credit Card Number")])
+    credit_card_expiry = DateField('Credit Card Expiry Date', validators=[DateRange(min=date.today(), format='%Y-%m-%d', message="Please choose a valid date")])
+    credit_card_cvv = IntegerField('CVV', [validators.NumberRange(min=100, max = 999, message="Please enter a valid CVV")])
     street_name = StringField('Street Name',[validators.DataRequired()])
     postal_code = DecimalField('Postal Code', [validators.NumberRange(min=10000, max=830000, message="Postal code is 6 digits")])
+    unit_no = StringField('Unit No',[validators.Length(min=5,max=7,message="Please enter a valid unit number"),validators.DataRequired()])
+
+class CollectionForm(Form):
+    name = StringField('Cardholder Name',[validators.DataRequired()])
+    phone = IntegerField('Phone Number',[validators.DataRequired(), validators.NumberRange(min=30000000, max=99999999, message="Please enter a valid phone number")])
+    payment_mode = RadioField('Payment Mode',choices=cardlist, default='')
+    credit_card_number = IntegerField('Credit Card Number', [validators.DataRequired(), validators.NumberRange(min=3000000000000, max=9999999999999999,message="Please enter a valid Credit Card Number")])
+    credit_card_expiry = DateField('Credit Card Expiry Date', format = "%Y-%m-%d")
+    credit_card_cvv = IntegerField('CVV', [validators.DataRequired(), validators.NumberRange(min=100, max = 999)])
+    date = DateField('Date',[validators.DataRequired()])
+    time = IntegerField('Postal Code', [validators.NumberRange(min=10000, max=830000, message="Postal code is 6 digits")])
     unit_no = StringField('Unit No',[validators.Length(min=5,max=7),validators.DataRequired()])
-    date = DateField('Date', [validators.DataRequired()], render_kw = {"placeholder": "dd-mm-yy"}, format='%d-%m-%y')
-    time = TimeField('Time',[validators.DataRequired()], render_kw = {"placeholder": "12:30"})
 
 
 class SearchBar(Form):
