@@ -43,6 +43,20 @@ mail = Mail(app)
 def searchBar():
     return SearchBar(request.form)
 
+def testing():
+    productDict = {}
+    db = shelve.open('storage.db', 'a')
+    productDict = db['Products']
+    for product in productDict:
+        productDict[product].increase_purchases(1)
+        break
+    # test = productDict['709283M']
+    # test.increase_purchases(0)
+    # for x in range(10):
+    #     test.increase_views()
+    db['Products'] = productDict
+    db.close()
+
 @app.route('/search/<searchString>', methods=['GET', 'POST'])
 def search(searchString):
     db = shelve.open('storage.db', 'r')
@@ -62,20 +76,6 @@ def search(searchString):
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
     return render_template('search.html', productList=products, searchString=searchString, productCount=len(products), searchForm=searchForm)
-
-
-def testing():
-    productDict = {}
-    db = shelve.open('storage.db', 'a')
-    productDict = db['Products']
-    del productDict['952571Z']
-
-    # test = productDict['709283M']
-    # test.increase_purchases(0)
-    # for x in range(10):
-    #     test.increase_views()
-    db['Products'] = productDict
-    db.close()
 
 # Homepage
 @app.route('/home', methods=['GET', 'POST'])
@@ -251,7 +251,7 @@ def supplements(subCategory):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current)
+    return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
 
 # Ribena(one of the products)
 @app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
@@ -550,12 +550,40 @@ def dashboard():
     for key in productDict:
         product = productDict.get(key)
         productList.append(product)
-        viewList = sort_by(productList, 'view', 'descending')[:5]
-        purchaseList = sort_by(productList, 'purchase', 'descending')[:5]
+        viewsList = sort_by(productList, 'view', 'descending')[:5]
+        purchasesList = sort_by(productList, 'purchase', 'descending')[:5]
 
-    return render_template('dashboard.html', viewList = viewList, purchaseList = purchaseList)
+    purchasesName = []
+    purchasesAmount = []
+    for product in purchasesList:
+        purchasesName.append(product.get_product_name())
+        purchasesAmount.append(product.get_purchases())
 
-@app.route('/dashboard/productStats/<category>/<order>/')
+    purchasesData = {
+            'data':  [go.Bar(name='Purchases', x=purchasesAmount, y=purchasesName, orientation='h', marker_color='#8FAFA2')],
+
+            'layout': {}
+            }
+
+    purchasesGraph = json.dumps(purchasesData, cls=plotly.utils.PlotlyJSONEncoder)
+
+    viewsName = []
+    viewsAmount = []
+    for product in viewsList:
+        viewsName.append(product.get_product_name())
+        viewsAmount.append(product.get_views())
+
+    viewsData = {
+            'data':  [go.Bar(name='Views', x=viewsAmount, y=viewsName, orientation='h', marker_color='#E9BA6C')],
+
+            'layout': {}
+            }
+
+    viewsGraph = json.dumps(viewsData, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return render_template('dashboard.html', viewsList = viewsList, purchasesGraph = purchasesGraph, viewsGraph = viewsGraph, currentPage='Dashboard')
+
+@app.route('/productStats/<category>/<order>/')
 def viewAll(category, order):
     productDict = {}
     db = shelve.open('storage.db', 'w')
@@ -590,14 +618,17 @@ def viewAll(category, order):
     purchasesList = purchasesList[:10]
     viewsList = viewsList[:10]
 
-    data=[
-        go.Bar(name='Purchases', x=purchasesList, y=nameList, orientation='h'),
-        go.Bar(name='Views', x=viewsList, y=nameList, orientation='h')
-    ]
+    graph = {}
+    graph= {
+            'data':  [go.Bar(name='Purchases', x=purchasesList, y=nameList, orientation='h', marker_color='#8FAFA2'),
+                      go.Bar(name='Views', x=viewsList, y=nameList, orientation='h', marker_color='#E9BA6C')],
 
-    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
+            'layout': {}
+            }
 
-    return render_template('productStats.html', productList=productList, graphJSON=graphJSON)
+    graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return render_template('productStats.html', productList=productList, graphJSON=graphJSON, currentPage='Statistics')
 
 @app.route('/products/<category>/<order>/', methods=['GET', 'POST'])
 def products(category, order):
@@ -620,7 +651,7 @@ def products(category, order):
     if request.method == "POST" and adminSearchForm.validate():
         return redirect('/products/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
 
-    return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList, searchString='', searchCat='')
+    return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList, searchString='', searchCat='', currentPage='Catalog')
 
 @app.route('/products/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
 def adminSearch(searchCat, searchString):
@@ -655,7 +686,7 @@ def adminSearch(searchCat, searchString):
     if request.method == "POST" and adminSearchForm.validate():
         return redirect('/products/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
 
-    return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList, searchString=searchString, searchCat=searchCat)
+    return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList, searchString=searchString, searchCat=searchCat, currentPage='Catalog')
 
 @app.route('/productSettings/<serialNo>/', methods=['GET', 'POST'])
 def productSettings(serialNo):
@@ -711,7 +742,7 @@ def productSettings(serialNo):
         editProductForm.activated.data = product.get_activated()
         editProductForm.serialNo.data = product.get_serial_no()
 
-    return render_template('productSettings.html', form=editProductForm, label=product.get_thumbnail())
+    return render_template('productSettings.html', form=editProductForm, label=product.get_thumbnail(), currentPage='Catalog')
 
 @app.route('/addProduct', methods=['GET', 'POST'])
 def addProduct():
@@ -756,7 +787,7 @@ def addProduct():
 
         return redirect('/products/name/ascending')
 
-    return render_template('addProduct.html', form=createProductForm)
+    return render_template('addProduct.html', form=createProductForm, currentPage='Catalog')
 
 @app.route('/categories')
 def categories():

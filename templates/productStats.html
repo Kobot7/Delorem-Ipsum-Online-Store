@@ -3,8 +3,6 @@
 {% block style %}<link rel="stylesheet" href="/static/styles/productStats.css">{% endblock %}
 
 {% block headScript %}
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -13,34 +11,27 @@
     <h1 class="d-inline">Product Statistics</h1>
 
     <ul class="nav nav-tabs my-4">
-      <li class="nav-item"><a class="nav-link" href="#bargraph" data-toggle="tab">Graph</a></li>
       <li class="nav-item active"><a class="nav-link active" href="#table" data-toggle="tab">Table</a></li>
+      <li class="nav-item"><a class="nav-link" href="#bargraph" data-toggle="tab">Graph</a></li>
     </ul>
 
     <div class="tab-content">
-      <div class="tab-pane fade" id="bargraph">
-        <script>
-          var graph = {{graphJSON | safe}};
-          Plotly.plot("bargraph", graph, {});
-        </script>
-      </div> <!--Tab Content-->
-
       <div class="tab-pane active in" id="table">
         <table class="table mt-4">
           <thead>
             <tr>
               <th>Thumbnail</th>
-              <th>Name <a href="/dashboard/productStats/name/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                       <a href="/dashboard/productStats/name/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+              <th>Name <a href="/productStats/name/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                       <a href="/productStats/name/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
               </th>
-              <th>Serial No. <a href="/dashboard/productStats/serial-no/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                       <a href="/dashboard/productStats/serial-no/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+              <th>Serial No. <a href="/productStats/serial-no/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                       <a href="/productStats/serial-no/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
               </th>
-              <th>Purchases <a href="/dashboard/productStats/purchase/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                       <a href="/dashboard/productStats/purchase/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+              <th>Purchases <a href="/productStats/purchase/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                       <a href="/productStats/purchase/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
               </th>
-              <th>Views <a href="/dashboard/productStats/view/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                       <a href="/dashboard/productStats/view/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+              <th>Views <a href="/productStats/view/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                       <a href="/productStats/view/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
               </th>
           </thead>
 
@@ -58,6 +49,13 @@
         </table>
       </div> <!--Tab Content-->
 
+      <div class="tab-pane fade contanier-fluid" id="bargraph">
+      </div> <!--Tab Content-->
+        <script>
+          var graph = {{graphJSON | safe}};
+          graph.layout = { yaxis: {automargin: true}};
+          var chart = Plotly.plot("bargraph", graph.data, graph.layout, {responsive: true});
+        </script>
     </div> <!--Nav Tabs-->
   </div>
 </div>

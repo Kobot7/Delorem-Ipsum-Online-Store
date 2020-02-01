@@ -36,53 +36,58 @@
   </div>
 
   <div class="col-md-11">
-    <table class="table mt-4">
-      <thead>
-        <tr>
-          <th>Thumbnail</th>
-          <th>Name <a href="/products/name/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                   <a href="/products/name/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-          </th>
-          <th>Sub-Category <a href="/products/sub-category/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                           <a href="/products/sub-category/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-          </th>
-          <th>Serial No. <a href="/products/serial-no/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                         <a href="/products/serial-no/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-          </th>
-          <th>Price <a href="/products/price/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                    <a href="/products/price/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-          </th>
-          <th>Quantity <a href="/products/quantity/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                       <a href="/products/quantity/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-          </th>
-          <th>Show/Hide <a href="/products/activated/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                        <a href="/products/activated/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-          </th>
-          <th></th>
-        </tr>
-      </thead>
+        {% if productList|length==0 %}
+          <p>&nbsp;&nbsp;No match found.</p>
+        {% else %}
+          <table class="table mt-4">
+            <thead>
+              <tr>
+                <th>Thumbnail</th>
+                <th>Name <a href="/products/name/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                         <a href="/products/name/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                </th>
+                <th>Sub-Category <a href="/products/sub-category/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                                 <a href="/products/sub-category/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                </th>
+                <th>Serial No. <a href="/products/serial-no/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                               <a href="/products/serial-no/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                </th>
+                <th>Price <a href="/products/price/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                          <a href="/products/price/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                </th>
+                <th>Quantity <a href="/products/quantity/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                             <a href="/products/quantity/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                </th>
+                <th>Show/Hide <a href="/products/activated/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                              <a href="/products/activated/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                </th>
+                <th></th>
+              </tr>
+            </thead>
 
-      <tbody id="table-body">
-        {% for product in productList %}
-          <tr>
-            <td><img src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
-            <td class="name">{{ product.get_product_name() }}</td>
-            <td class="sub-category">{{ product.get_sub_category() }}</td>
-            <td class="serial-no">{{ product.get_serial_no() }}</td>
-            <td class="price">${{ product.get_price() }}</td>
-            <td class="quantity">{{ product.get_quantity() }}
+            <tbody id="table-body">
+            {% for product in productList %}
+              <tr>
+                <td><img src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+                <td class="name">{{ product.get_product_name() }}</td>
+                <td class="sub-category">{{ product.get_sub_category() }}</td>
+                <td class="serial-no">{{ product.get_serial_no() }}</td>
+                <td class="price">${{ product.get_price() }}</td>
+                <td class="quantity">{{ product.get_quantity() }}
 
-            {% if product.get_activated()==True %}
-            <td>Show</td>
-            {% else %}
-            <td>Hide</td>
-            {% endif %}
+                {% if product.get_activated()==True %}
+                <td>Show</td>
+                {% else %}
+                <td>Hide</td>
+                {% endif %}
 
-            <td><a href="/productSettings/{{ product.get_serial_no() }}">Edit</a></td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+                <td><a href="/productSettings/{{ product.get_serial_no() }}">Edit</a></td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+
   </div>
 </div>
 {% endblock %}

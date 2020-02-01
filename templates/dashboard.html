@@ -5,10 +5,10 @@
 {% block content %}
 {% from "includes/_formhelper.html" import render_field %}
 
-<div class="row justify-content-center mt-2">
-    <div class="col-lg-5 dashboard-block p-4 mx-2 my-2">
-        <h2 class="d-inline">Best-Sellers</h2>
-        <a class="btn d-inline float-right mt-1 mb-2" href="/dashboard/productStats/purchase/descending">View All</a>
+<div class="row justify-content-center">
+    <div class="col-lg-10 dashboard-block p-4 mx-2 my-2">
+        <h2 class="d-inline">Low Stock</h2>
+        <a class="btn d-inline float-right mt-1 mb-2" href="/stock">View All</a>
         <table class="w-100">
             <thead>
                 <tr>
@@ -18,40 +18,41 @@
             </thead>
 
             <tbody>
-              {% for product in purchaseList %}
+              {% for product in lowStockList %}
                 <tr>
                   <td><img src="/static/images/{{ product.get_thumbnail() }}" class="thumbnail"></td>
                   <td>{{ product.get_product_name() }}</td>
-                  <td>{{ product.get_purchases() }}</td>
+                  <td>{{ product.get_stock() }}</td>
                 </tr>
               {% endfor %}
             </tbody>
         </table>
     </div>
+</div> <!--Row 1, Stock-->
+
+<div class="row justify-content-center mt-2">
+    <div class="col-lg-5 dashboard-block p-4 mx-2 my-2">
+        <h2 class="d-inline">Best-Sellers</h2>
+        <a class="btn d-inline float-right mt-1 mb-2" href="/productStats/purchase/descending">View All</a>
+        <div class="col mt-4" id="purchasesGraph"></div>
+        <script>
+          var purchasesData = {{purchasesGraph | safe}};
+          purchasesData.layout = { yaxis: {automargin: true}};
+          var chart = Plotly.newPlot("purchasesGraph", purchasesData.data, purchasesData.layout, {responsive: true});
+        </script>
+    </div>
 
     <div class="col-lg-5 dashboard-block p-4 mx-2 my-2">
         <h2 class="d-inline">Most-Viewed Items</h2>
-        <a class="btn d-inline float-right mt-1 mb-2" href="/dashboard/productStats/view/descending">View All</a>
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th colspan="2">&nbsp;&nbsp;Product</th>
-                    <th>No. of Views</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {% for product in viewList %}
-                  <tr>
-                    <td><img src="/static/images/{{ product.get_thumbnail() }}" class="thumbnail"></td>
-                    <td>{{ product.get_product_name() }}</td>
-                    <td>{{ product.get_views() }}</td>
-                  </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <a class="btn d-inline float-right mt-1 mb-2" href="/productStats/view/descending">View All</a>
+        <div class="col mt-4" id="viewsGraph"></div>
+        <script>
+          var viewsData = {{viewsGraph | safe}};
+          viewsData.layout = { yaxis: {automargin: true}};
+          var chart = Plotly.newPlot("viewsGraph", viewsData.data, viewsData.layout, {responsive: true});
+        </script>
     </div>
-</div> <!--Row 1-->
+</div> <!--Row 2, Stats-->
 
 <div class="row justify-content-center">
     <div class="col-lg-10 dashboard-block p-4 mx-2 my-2">
@@ -102,6 +103,6 @@
             </tbody>
         </table>
     </div>
-</div> <!--Row 2-->
+</div> <!--Row 3, Transactions-->
 
 {% endblock %}

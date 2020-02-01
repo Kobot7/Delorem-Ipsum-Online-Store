@@ -22,7 +22,7 @@ body {
 .navbar a:hover, .navbar a:focus,
 .navbar button:hover,
 .navbar button:focus {
-  background-color: #4f5b5b !important;
+  background-color: #3f4b4b !important;
 }
 
 .navbar .dropdown-menu {
@@ -74,4 +74,41 @@ tbody {
 
 table tbody tr:hover {
     background-color: #cccccc;
+}
+
+/*--------------Nav Bar dropdown--------------*/
+.dropbtn{
+  border: none;
+  background-color: #4f5b5b;
+}
+
+.dropdown{
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #ffffff;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown .dropdown-content a:hover {
+  color: #fff;
 }
