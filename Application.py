@@ -770,7 +770,7 @@ def addProduct():
 def categories():
     return render_template('categories.html')
 
-@app.route('/deliveryInvoice/<email>/',  methods=['POST'])
+@app.route('/deliveryInvoice/<email>/<total>/',  methods=['POST'])
 def deliveryInvoice(email):
     print("hey!")
     current_user = ""
@@ -816,7 +816,7 @@ def deliveryInvoice(email):
                 print("attached")
 
         msg.body = "This ur e reciept"
-        msg.html = render_template('html_in_invoice.html',  cartList=cartList, current_user=current_user ,order_ID= order_ID)
+        msg.html = render_template('html_in_invoice.html',  cartList=cartList, current_user=current_user ,order_ID= order_ID, total=total)
         print("testinggggggggggggggg")
         mail.send(msg)
         print("MAIL SENT")

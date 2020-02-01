@@ -26,7 +26,9 @@
       </p>
        <ul>
            <li>{{product.get_brand()}}</li>
-           <li>{{product.get_description()}}</li>
+           {%for line in (product.get_description()).split(". ")%}
+              <li>{{line}}</li>
+            {% endfor %}
        </ul>
         <form  action="{{url_for('addToCart', name = product.get_product_name())}}" method="POST">
            <button class="btn btn-success" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
