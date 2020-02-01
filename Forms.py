@@ -116,13 +116,9 @@ class SearchBar(Form):
     search_input = StringField('')
 
 
-admin_searchList = [('name', 'Product Name')
-                , ('brand', 'Brand')
+admin_searchList = [('name-brand', 'Name/Brand')
                 , ('sub-category', 'Sub-Category')
-                , ('serial-no', 'Serial No.')
-                , ('price', 'Price')
-                ,('quantity', 'Quantity')
-                ,('activated', 'Activated')]
+                , ('serial-no', 'Serial No.')]
 
 class AdminSearch(Form):
     search_cat = SelectField('', choices=admin_searchList, default='name')

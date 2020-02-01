@@ -555,13 +555,13 @@ def viewAll(category, order):
 
         count += 1
 
-    nameList = nameList[:5]
-    purchasesList = purchasesList[:5]
-    viewsList = viewsList[:5]
+    nameList = nameList[:10]
+    purchasesList = purchasesList[:10]
+    viewsList = viewsList[:10]
 
     data=[
-        go.Bar(name='Purchases', x=nameList, y=purchasesList),
-        go.Bar(name='Views', x=nameList, y=viewsList)
+        go.Bar(name='Purchases', x=purchasesList, y=nameList, orientation='h'),
+        go.Bar(name='Views', x=viewsList, y=nameList, orientation='h')
     ]
 
     graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
@@ -589,7 +589,7 @@ def products(category, order):
     if request.method == "POST" and adminSearchForm.validate():
         return redirect('/products/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
 
-    return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList)
+    return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList, searchString='', searchCat='')
 
 @app.route('/products/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
 def adminSearch(searchCat, searchString):
@@ -605,12 +605,8 @@ def adminSearch(searchCat, searchString):
     productList = []
     for key in productDict:
         product = productDict[key]
-        if searchCat=='name':
-            if searchString in product.get_product_name().lower():
-                productList.append(product)
-
-        elif searchCat=='brand':
-            if searchString in product.get_brand().lower():
+        if searchCat=='name-brand':
+            if searchString in product.get_product_name().lower() or searchString in product.get_brand().lower():
                 productList.append(product)
 
         elif searchCat=='sub-category':
@@ -628,7 +624,7 @@ def adminSearch(searchCat, searchString):
     if request.method == "POST" and adminSearchForm.validate():
         return redirect('/products/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
 
-    return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList)
+    return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList, searchString=searchString, searchCat=searchCat)
 
 @app.route('/productSettings/<serialNo>/', methods=['GET', 'POST'])
 def productSettings(serialNo):

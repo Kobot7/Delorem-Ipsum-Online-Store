@@ -14,10 +14,18 @@
       <form method="POST" action="" id="searchform">
         <div class="row form-group">
           <div class="col-lg-2 col-md-3">
+            {% if searchCat!='' %}
               {{ render_field(adminSearchForm.search_cat, class="form-control", id="SearchCat") }}
+            {% else %}
+              {{ render_field(adminSearchForm.search_cat, class="form-control", id="SearchCat") }}
+            {% endif %}
           </div>
           <div class="col-lg-3 col-md-4">
+            {% if searchString!='' %}
+              {{ render_field(adminSearchForm.search_input, class="form-control", placeholder="Search...", id="SearchBar", value=searchString) }}
+            {% else %}
               {{ render_field(adminSearchForm.search_input, class="form-control", placeholder="Search...", id="SearchBar") }}
+            {% endif %}
           </div>
           <div class="col">
             <input type="submit" value="Search" class="btn mr-2">
@@ -54,15 +62,15 @@
         </tr>
       </thead>
 
-      <tbody>
+      <tbody id="table-body">
         {% for product in productList %}
           <tr>
             <td><img src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
-            <td>{{ product.get_product_name() }}</td>
-            <td>{{ product.get_sub_category() }}</td>
-            <td>{{ product.get_serial_no() }}</td>
-            <td>${{ product.get_price() }}</td>
-            <td>{{ product.get_quantity() }}
+            <td class="name">{{ product.get_product_name() }}</td>
+            <td class="sub-category">{{ product.get_sub_category() }}</td>
+            <td class="serial-no">{{ product.get_serial_no() }}</td>
+            <td class="price">${{ product.get_price() }}</td>
+            <td class="quantity">{{ product.get_quantity() }}
 
             {% if product.get_activated()==True %}
             <td>Show</td>
@@ -80,5 +88,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/admin_search.js"></script>
+<!-- <script src="/static/js/admin_search.js"></script> -->
 {% endblock %}

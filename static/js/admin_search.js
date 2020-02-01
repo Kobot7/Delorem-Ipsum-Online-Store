@@ -1,31 +1,23 @@
 var selectField = document.getElementById("SearchCat");
+var inputField = document.getElementById("SearchBar");
 
-selectField.addEventListener("change", function() {
-  if (selectField.value=='name') {
-    alert('name');
-  }
+selectField.addEventListener("change", filter);
+inputField.addEventListener("keyup", filter);
 
-  else if (selectField.value=='brand') {
-    alert('brand');
-  }
+function filter() {
+    var input = inputField.value.toLowerCase();
+    var table = document.getElementById("table-body");
+    var tr = table.getElementsByTagName("tr");
 
-  else if (selectField.value=='sub-category') {
-    alert('sub-category');
-  }
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+      var value = tr[i].querySelector('.' + selectField.value).innerText.toLowerCase();
 
-  else if (selectField.value=='serial-no') {
-    alert('serial-no');
-  }
-
-  else if (selectField.value=='price') {
-    alert('price');
-  }
-
-  else if (selectField.value=='quantity') {
-    alert('quantity');
-  }
-
-  else {
-    alert('none');
-  }
-});
+      if (value.indexOf(input) > -1) {
+          tr[i].style.display = "";
+        }
+      else {
+          tr[i].style.display = "none";
+        }
+    }
+}
