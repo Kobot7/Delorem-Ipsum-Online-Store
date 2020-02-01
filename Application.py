@@ -128,7 +128,12 @@ def view_profile(username):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     db = shelve.open("storage.db", "c")
-    if db["Current User"] == "":
+    current = ""
+    try:
+        current = db["Current User"]
+    except:
+        print("Error in retrieving current user")
+    if current == "":
         loginForm = LoginForm(request.form)
         registrationForm = RegistrationForm(request.form)
         if request.method == "POST" and registrationForm.validate():
@@ -194,14 +199,23 @@ def login():
                     print("User successfully logged in")
                     return redirect(url_for("home"))
                 else:
+                    searchForm = searchBar()
+                    if request.method == "POST" and searchForm.validate():
+                        print(searchForm.search_input.data)
                     print("Credentials are incorrect.")
                     return render_template('login.html', username_correct=False, form=loginForm, form2=registrationForm, searchForm=searchForm)
             else:
+                searchForm = searchBar()
+                if request.method == "POST" and searchForm.validate():
+                    print(searchForm.search_input.data)
                 print("User does not exist.")
                 return render_template('login.html', username_correct=False, form=loginForm, form2=registrationForm, searchForm=searchForm)
 
         else:
-            return render_template('login.html', username_correct=True, form=loginForm, form2=registrationForm)
+            searchForm = searchBar()
+            if request.method == "POST" and searchForm.validate():
+                print(searchForm.search_input.data)
+            return render_template('login.html', username_correct=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
             print("Exception Error: navigating home.html to login.html")
 
         searchForm = searchBar()
