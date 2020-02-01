@@ -14,6 +14,7 @@ class User:
         self.__wishlist = self.default_wishlist()
         self.__address = ""
         self.__shopping_cart = {}
+        self.__transactions = []
 
     def set_user_id(self):
         user_id = random.randint(0, 9999999999999999999999999)
@@ -59,8 +60,8 @@ class User:
     def set_email(self, email):
         self.__email = email
 
-    def set_orders(self, orders):
-        self.__orders = orders
+    def set_transactions(self, transactions):
+        self.__transactions.append(transactions)
 
     def get_user_id(self):
         return self.__user_id
@@ -89,8 +90,8 @@ class User:
     def get_email(self):
         return self.__email
 
-    def get_orders(self):
-        return self.__orders
+    def get_transactions(self):
+        return self.__transactions
 
     def add_to_wishlist(self, item):
         wishlist = self.get_wishlist()

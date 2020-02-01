@@ -14,111 +14,59 @@
                 <span>{{user.get_email()}}</span>
             </div>
         </div>
-
-        <div id="delivery-option" class="box">
-                <div id="delivery-option_header">
-                    <h4 class="bold">DELIVERY OPTIONS</h4>
+        <div id="payment" class="box">
+                <div id="payment_header">
+                    <h4 class="bold">PAYMENT</h4>
                 </div>
-                {% if completedForm != "" %}
-                <div class = 'displayDetails'>
-                  <div class="streetName">
-                    <h3>Street Name</h3>
-                      <p>{{completedForm.get_street_name()}}</p>
-                  </div>
-
-                  <div class="postalCode">
-                    <h3>Postal Code</h3>
-                      <p>{{completedForm.get_postal_code()}}</p>
-                  </div>
-
-                  <div class="unitNo">
-                    <h3>Unit Number</h3>
-                      <p>{{completedForm.get_unit_no()}}</p>
-                  </div>
-
-                  <div class="date">
-                    <h3>Date</h3>
-                      <p>{{completedForm.get_date()}}</p>
-                  </div>
-
-                  <div class="time">
-                    <h3>Time</h3>
-                      <p>{{completedForm.get_time()}}</p>
-                  </div>
-                </div>
-
-                {% else %}
-                <form class="delivery" action = "{{url_for('checkout')}}" method= "POST" >
-                  <div class="form-group">
-                    {{ render_field(form.street_name, class="form-control") }}
-                  </div>
-                  <div class="form-group">
-                    {{ render_field(form.postal_code, class="") }}
-                  </div>
-                  <div class="form-group">
-                    {{ render_field(form.unit_no, class="form-control") }}
-                  </div>
-                  <div class="form-group">
-                    {{ render_field(form.date, class="form-control") }}
-                  </div>
-
-                  <div class="form-group">
-                    {{ render_field(form.time, class="form-control") }}
-                  </div>
-
-                  <div class="form-group">
-                    <button type="submit" class="btn btn-primary center-block">Submit</button>
-                  </div>
-                </form>
-
-                {% endif %}
-            </div>
-
-            <div id="payment" class="box">
-                    <div id="payment_header">
-                        <h4 class="bold">PAYMENT</h4>
-                    </div>
-                    <div id="section1">
-                        <div id="billing-address">
-                            <span class="bold">BILLING ADDRESS</span>
-                            <p>name</p>
-                            <p>address</p>
-                            <p>postal code</p>
-                            <p>phone number</p>
-                        </div>
-                        <div>
-                            <button>Change</button>
-                        </div>
-                    </div>
-                <hr>
-                <div id="section2">
-                        <div id="payment-details">
-                            <span class="bold">PAYMENT DETAILS</span>
-                            <div class="payment-row">
-                                <span>Cardholder name</span>
-                                <input type="text">
-                            </div>
-                            <div class="payment-row">
-                                <p>Credit card number</p>
-                                <input type="text">
-                            </div>
-                            <div class="payment-row">
-                                <p>Expiry date</p>
-                                <input type="date">
-                            </div>
-                            <div class="payment-row">
-                                <p>CVV</p>
-                                <input type="text">
-                            </div>
-                        </div>
-                        <div class="order">
-                          <form action="{{url_for('deliveryInvoice', email=user.get_email())}}" method="post">
-                            <button>Order</button>
-                          </form>
-
-                        </div>
+            <hr>
+            <div id="section2">
+                    <div id="payment-details">
+                        <span class="bold">PAYMENT DETAILS</span>
+                        <form class="delivery" action = "{{url_for('checkout')}}" method= "POST" >
+                          <div class="form-group">
+                            {{ render_field(deliveryform.name, class="form-control") }}
+                          </div>
+                          <div class="form-group">
+                            {{ render_field(deliveryform.phone) }}
+                          </div>
+                          <div class="form-group">
+                            {{ render_field(deliveryform.payment_mode) }}
+                          </div>
+                          <div class="form-group">
+                            {{ render_field(deliveryform.credit_card_number, class="form-control") }}
+                          </div>
+                          <div class="form-group">
+                            {{ render_field(deliveryform.credit_card_expiry) }}
+                          </div>
+                          <div class="form-group">
+                            {{ render_field(deliveryform.credit_card_cvv) }}
+                          </div>
                     </div>
                 </div>
+              </div>
+                <div id="delivery-option" class="box">
+                        <div id="delivery-option_header">
+                            <h4 class="bold">DELIVERY DETAILS</h4>
+                        </div>
+
+                          <div class="form-group">
+                            {{ render_field(deliveryform.street_name, class="form-control") }}
+                          </div>
+                          <div class="form-group">
+                            {{ render_field(deliveryform.postal_code, class="") }}
+                          </div>
+                          <div class="form-group">
+                            {{ render_field(deliveryform.unit_no, class="form-control") }}
+                          </div>
+
+                          <div class="order">
+                            <form action="{{url_for('deliveryInvoice', email=user.get_email())}}" method="post">
+                              <button>Confirm</button>
+                            </form>
+
+                          </div>
+                        </form>
+                    </div>
     </div>
     <div id="right-sticky">
             <div class="inner-items">

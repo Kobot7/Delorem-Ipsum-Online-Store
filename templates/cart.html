@@ -14,9 +14,7 @@
         <div class="item">
             <div class="details ">
               <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}">
-                    <div class="image">
-                        <img src="/static/images/{{product.get_thumbnail()}}">
-                    </div>
+                    <img class="image" src="/static/images/{{product.get_thumbnail()}}">
                   </a>
                 <div class="right">
                     <p class="price">SGD ${{product.get_price()}}</p>
