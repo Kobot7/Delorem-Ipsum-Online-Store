@@ -1,48 +1,54 @@
 {% extends "base.html" %}
 {% block title %}Log In | Sign Up{% endblock %}
-{% block style %}<link rel="stylesheet" href="/static/styles/login.css">{% endblock %}
+{% block style %}
+<link rel="stylesheet" href="/static/styles/login.css">{% endblock %}
 
 {% block content %}
 {% from "includes/_formhelper.html" import render_field %}
 
-  <div class="row justify-content-center">
-    <div class="col-xs-8 col-md-8 col-lg-5">
-      <ul class="nav nav-tabs nav-justified my-4">
-        <li class="nav-item active"><a class="nav-link active" href="#login" data-toggle="tab">Log In</a></li>
-        <li class="nav-item"><a class="nav-link" href="#signUp" data-toggle="tab">Sign Up</a></li>
-      </ul>
+<div class="row justify-content-center">
+  <div class="col-xs-8 col-md-8 col-lg-5">
+    <ul class="nav nav-tabs nav-justified my-4">
+      <li class="nav-item active"><a class="nav-link active" href="#login" data-toggle="tab">Log In</a></li>
+      <li class="nav-item"><a class="nav-link" href="#signUp" data-toggle="tab">Sign Up</a></li>
+    </ul>
 
-      <div class="tab-content">
-        <div class="tab-pane active in" id="login">
-          <form method="POST" action="">
-              <div class="form-group">
-                {{ render_field(form.username, class="form-control") }}
-              </div>
-              <div class="form-group">
-                {{ render_field(form.password, class="form-control") }}
-              </div>
-              <input type="submit" value="Submit" class="btn"/>
-          </form>
-        </div>
+    <div class="tab-content">
+      <div class="tab-pane active in" id="login">
+        <form method="POST" action="">
+          <div class="form-group">
+            {{ render_field(form.username, class="form-control") }}
+          </div>
+          <div class="form-group">
+              {{ render_field(form.password, class="form-control") }}
+              {% if not username_correct %}
+              <p style="color:#dc3545"> Your username or password was incorrect. Please try again. </p>
+              {% endif %}
+          </div>
+          <input type="submit" value="Submit" class="btn" />
+        </form>
+      </div>
 
-        <div class="tab-pane fade" id="signUp">
-          <form method="POST" action="">
-              <div class="form-group">
-                {{ render_field(form2.email, class="form-control") }}
-              </div>
-              <div class="form-group">
-                {{ render_field(form2.username, class="form-control") }}
-              </div>
-              <div class="form-group">
-                {{ render_field(form2.password, class="form-control") }}
-              </div>
-              <div class="form-group">
-                {{ render_field(form2.confirm, class="form-control") }}
-              </div>
-              <input type="submit" value="Submit" class="btn"/>
-          </form>
-        </div>
-      </div> <!--Tab Content-->
+      <div class="tab-pane fade" id="signUp">
+        <form method="POST" action="">
+          <div class="form-group">
+            {{ render_field(form2.email, class="form-control") }}
+          </div>
+          <div class="form-group">
+            {{ render_field(form2.username, class="form-control") }}
+          </div>
+          <div class="form-group">
+            {{ render_field(form2.password, class="form-control") }}
+          </div>
+          <div class="form-group">
+            {{ render_field(form2.confirm, class="form-control") }}
+          </div>
+          <input type="submit" value="Submit" class="btn" />
+        </form>
+      </div>
     </div>
-  </div> <!--Row 1-->
+    <!--Tab Content-->
+  </div>
+</div>
+<!--Row 1-->
 {% endblock %}

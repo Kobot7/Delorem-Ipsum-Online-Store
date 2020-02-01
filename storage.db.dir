@@ -1,5 +1,13 @@
+<<<<<<< HEAD
+'Products', (13824, 1597)
+'Users', (161280, 14285)
+'Usernames', (3072, 406)
+'Current User', (179712, 1953)
+'deliveryDetails', (47104, 1242)
+=======
 'Products', (13824, 1690)
 'Users', (36352, 9000)
 'Usernames', (3072, 225)
 'Current User', (20480, 1244)
 'deliveryDetails', (47104, 1356)
+>>>>>>> baf5900831611184e1bd2184381e331e9fc18352

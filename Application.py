@@ -84,7 +84,7 @@ def home():
     try:
         current = db["Current User"]
     except:
-        print("Error while retrieving current user")
+        print("Error while retrieving current user: user not logged in")
         current = False
     db.close()
 
@@ -104,83 +104,112 @@ def view_profile(username):
         current = db["Current User"]
     except:
         print("Error while retrieving usersDict")
+        return redirect(url_for("home"))
     editProfileForm = EditProfileForm(request.form)
     if request.method == "POST":
         current_id = current.get_user_id()
-        old_username = current.get_username()
-        # current.set_profile_pic(editProfileForm.image.data)
+        del namesDict[current.get_username()]
         current.set_username(editProfileForm.username.data)
         current.set_address(editProfileForm.address.data)
         current.set_phone(editProfileForm.phone.data)
         current.set_email(editProfileForm.email.data)
         usersDict[current_id] = current
         namesDict[current.get_username()] = current_id
-        namesDict.pop(old_username)
         db["Users"] = usersDict
+        db["Usernames"] = namesDict
         db["Current User"] = current
         db.close()
-        # return render_template('my-account.html', pic=current.get_profile_pic(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
-        return render_template('my-account.html', name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+        return render_template('my-account.html', current=current.get_username(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
     else:
         db.close()
-        return render_template('my-account.html', name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
-        # return render_template("my-account.html", pic=current.get_profile_pic(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
-
+        return render_template('my-account.html', current=current.get_username() ,name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
 
 # Login/Register
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    loginForm = LoginForm(request.form)
-    registrationForm = RegistrationForm(request.form)
-    if request.method == "POST" and registrationForm.validate():
-        db = shelve.open('storage.db', 'c')
-        namesDict = {}
-        usersDict = {}
-        try:
-            usersDict = db['Users']
-        except:
-            print('Error while retrieving usersDict')
-        try:
-            namesDict = db['Usernames']
-        except:
-            print("Error while retrieving namesDict")
-        U = User(registrationForm.username.data, registrationForm.password.data, registrationForm.email.data)
-        usersDict[U.get_user_id()] = U
-        namesDict[U.get_username()] = U.get_user_id()
-        db['Users'] = usersDict
-        db['Usernames'] = namesDict
-        db.close()
-        print("User created with name", U.get_username(), "id", U.get_user_id(),
-         "Password", U.get_password(), "and Email", U.get_email())
-
-    if request.method =="POST" and loginForm.validate():
-        usersDict = {}
-        namesDict = {}
-        db = shelve.open('storage.db', 'c')
-        try:
-            usersDict = db["Users"]
-        except:
-            print("Error while retrieving usersDict")
-        try:
-            namesDict = db["Usernames"]
-        except:
-            print("Error while retrieving namesDict")
-        exist = namesDict.get(loginForm.username.data, "Nothing")
-        if exist!= "Nothing":
-            current_user = usersDict[exist]
-            db["Current User"] = current_user
+    db = shelve.open("storage.db", "c")
+    if db["Current User"] == "":
+        loginForm = LoginForm(request.form)
+        registrationForm = RegistrationForm(request.form)
+        if request.method == "POST" and registrationForm.validate():
+            db = shelve.open('storage.db', 'c')
+            namesDict = {}
+            usersDict = {}
+            try:
+                usersDict = db['Users']
+            except:
+                print('Error while retrieving usersDict')
+            try:
+                namesDict = db['Usernames']
+            except:
+                print("Error while retrieving namesDict")
+            U = User(registrationForm.username.data, registrationForm.password.data, registrationForm.email.data)
+            usersDict[U.get_user_id()] = U
+            namesDict[U.get_username()] = U.get_user_id()
+            db['Users'] = usersDict
+            db['Usernames'] = namesDict
             db.close()
-            password = current_user.get_password()
-            if loginForm.password.data == password:
-                return redirect(url_for('home'))
+            print("User created with name", U.get_username(), "id", U.get_user_id(),
+             "Password", U.get_password(), "and Email", U.get_email())
 
-        if loginForm.username.data == "admin" and loginForm.password.data == "admin":
-            return redirect('/dashboard')
+        if request.method =="POST" and loginForm.validate():
+            usersDict = {}
+            namesDict = {}
+            db = shelve.open('storage.db', 'r')
+            try:
+                usersDict = db["Users"]
+            except:
+                print("Error while retrieving usersDict")
+            try:
+                namesDict = db["Usernames"]
+            except:
+                print("Error while retrieving namesDict")
 
-    searchForm = searchBar()
-    if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data)
-    return render_template('login.html', form=loginForm, form2=registrationForm, searchForm=searchForm)
+            # current_user = usersDict[exist]
+            # db["Current User"] = current_user
+            # db.close()
+            # password = current_user.get_password()
+            # username = current_user.get_username()
+
+            if loginForm.username.data == "admin" and loginForm.password.data == "admin":
+                return redirect('/dashboard')
+
+            username_exist = False
+            login_correct = False
+
+            for name in namesDict:
+                if name == loginForm.username.data:
+                    username_exist = True
+                    username_id = namesDict[loginForm.username.data]
+                    break
+
+            searchForm = searchBar()
+            if request.method == "POST" and searchForm.validate():
+                print(searchForm.search_input.data)
+
+            if username_exist:
+                user_obj = usersDict[username_id]
+                if user_obj.get_password() == loginForm.password.data:
+                    db["Current User"] = user_obj
+                    print("User successfully logged in")
+                    return redirect(url_for("home"))
+                else:
+                    print("Credentials are incorrect.")
+                    return render_template('login.html', username_correct=False, form=loginForm, form2=registrationForm, searchForm=searchForm)
+            else:
+                print("User does not exist.")
+                return render_template('login.html', username_correct=False, form=loginForm, form2=registrationForm, searchForm=searchForm)
+
+        else:
+            return render_template('login.html', username_correct=True, form=loginForm, form2=registrationForm)
+            print("Exception Error: navigating home.html to login.html")
+
+        searchForm = searchBar()
+        if request.method == "POST" and searchForm.validate():
+            print(searchForm.search_input.data)
+        return render_template('login.html', username_correct=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
+    else:
+        return redirect(url_for("home"))
 
 @app.route('/logout')
 # @login_required
@@ -189,7 +218,14 @@ def logout():
     db["Current User"] = ""
     print("User logged out successfully")
     return redirect(url_for('home'))
-    # return render_template("home.html", current="", logged_out=True)
+# return render_template("home.html", current="", logged_out=True)
+
+@app.route('/orderHistory')
+def orderHistory():
+    db = shelve.open("storage.db", "r")
+    db.close()
+    #METHOD GET - history of order transaction
+    return render_template('orderHistory.html')
 
 # Supplements(one of the subsections)
 @app.route('/subCategory/<subCategory>/', methods=['GET', 'POST'])
@@ -217,7 +253,6 @@ def supplements(subCategory):
         return redirect('/search/' + searchForm.search_input.data)
     return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current)
 
-
 # Ribena(one of the products)
 @app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
 def IndItem(serialNo):
@@ -237,7 +272,6 @@ def IndItem(serialNo):
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
     return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm)
-
 
 # Shopping Cart
 @app.route('/cart', methods=['GET', 'POST'])
@@ -352,7 +386,6 @@ def moveToWishlist(serialNo):
     db.close()
     return redirect('/cart')
 
-
 # Wishlist
 @app.route('/wishlist/<filter>/', methods=['GET', 'POST'])
 def wishlist(filter):
@@ -457,7 +490,6 @@ def moveToCart(serialNo):
     db.close()
     return redirect('/wishlist/a-z')
 
-
 # Checkout
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
@@ -501,7 +533,6 @@ def checkout():
         return redirect('/search/' + searchForm.search_input.data)
 
     return render_template('checkout.html', form=deliveryForm, user=current_user, completedForm='', searchForm=searchForm, cart=prodlist, total=total, number=number)
-
 
 # Admin Sides
 @app.route('/dashboard')
