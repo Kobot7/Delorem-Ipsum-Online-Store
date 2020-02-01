@@ -6,6 +6,18 @@ width: calc(25% - 9px);
 width: calc(33.3333% - 8px);
 }
 
+.breadcrumb{
+background-color:#84a220;
+border-radius: unset;
+}
+
+.breadcrumb-item>a{
+color:#ddd;
+}
+
+.breadcrumb-item:last-child{
+color:#fff;
+}
 
 .main-body{
 width: 100%;
@@ -85,8 +97,9 @@ padding: 0;
 position: relative;
 text-align: center;
 margin: 15px;
-background-color: #eee;
+background-color: white;
 display: block;
+border: 1px solid #84A220;
 }
 
 .delete{

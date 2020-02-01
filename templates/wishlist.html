@@ -4,6 +4,13 @@
 
 
 {% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/home">Home</a></li>
+    <li class="breadcrumb-item"><a href="#">Wishlist</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ filter_breadcrumb }}</li>
+  </ol>
+</nav>
 <div class='drop'>
  <div class='title pointerCursor'>Select an option <i class="fa fa-angle-right"></i></div>
 
