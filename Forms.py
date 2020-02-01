@@ -105,6 +105,8 @@ class EditProfileForm(Form):
     address = TextAreaField('Address')
     phone = StringField('Contact Number')
     email = StringField('Contact Email')
+    password = StringField("Password")
+    newpassword = StringField('New Password')
 
 cardlist = [('visa','Visa'),
             ('mastercard', 'Master card')]

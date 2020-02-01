@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %} My Account {% endblock %}
-{% block style %}<link rel="stylesheet" type = "text/css" href = "/static/styles/items.css">{% endblock %}
+{% block style %}
+<link rel="stylesheet" type="text/css" href="/static/styles/items.css">{% endblock %}
 
 {% block content %}
 <title>My Account</title>
@@ -38,8 +39,34 @@
       </div>
 
       <input type="submit" class="register" value="Update" onclick=alertchanges();>
+      <p> </p>
+      <a onclick="openChangePwd()" style="color:red; text-decoration: underline; margin-left: 233px;" class="changePassword"> CHANGE PASSWORD </a>
+
+      <div id="changePassModal" class="pwdModal">
+        <div class="pwdModalcontent">
+          <span class="close" onclick="closeChangePwd()">&times;</span>
+          <div class="pwdmodaltext">
+            <div class="form-control-user">
+              <label class="header">Current Password</label>
+              <input type="password" id="password" name="password" value="{{password}}" title="Please enter your current password.">
+            </div>
+            <div class="form-control-user">
+              <label class="header">New Password</label>
+              <input type="password" id="newpassword" name="newpassword" title="Please enter your new password.">
+            </div>
+            <div class="form-control-user">
+              <label class="header">Confirm Password</label>
+              <input type="password" id="reenterpassword" name="reenterpassword" title="Please confirm your new password.">
+            </div>
+            <p>
+            </p>
+            <input type="submit" value="Update" style="background-color: #84a220; width: 20%; height: 30px; border: none;" onclick=alertchanges();>
+          </div>
+        </div>
+      </div>
 
     </form>
+
     <div id="mySidebar" class="sidebar">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
       <a href="#">Check Current Deliveries</a>
@@ -58,13 +85,71 @@
         document.getElementById("mySidebar").style.width = "0";
         document.getElementById("main").style.marginLeft = "0";
       }
+
       function alertchanges() {
         alert("Changes added!");
+      }
+
+      function openChangePwd() {
+        changePassModal.style.display = "block";
+      }
+
+      function closeChangePwd() {
+        changePassModal.style.display = "none";
+      }
+      window.onclick = function(event) {
+        if (event.target == changePassModal) {
+          changePassModal.style.display = "none";
+        }
       }
     </script>
     <style>
       body {
         /* font-family: "Lato", sans-serif; */
+      }
+
+      .changePassword:hover {
+        color: blue;
+        text-decoration: none;
+      }
+
+      .pwdModal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        padding: 250px;
+        left: 0;
+        right:0;
+        top: 0;
+        width: auto;
+        height: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      .pwdModalcontent {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+      }
+
+      .pwdmodaltext {
+        padding: 10px;
+      }
+
+      .close {
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
       }
 
       .sidebar {

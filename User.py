@@ -72,9 +72,6 @@ class User:
     def get_password(self):
         return self.__password
 
-    # def get_profile_pic(self):
-    #     return self.__profile_pic
-
     def get_phone(self):
         return self.__phone
 

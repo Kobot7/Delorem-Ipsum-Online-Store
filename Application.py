@@ -110,25 +110,41 @@ def view_profile(username):
         current.set_address(editProfileForm.address.data)
         current.set_phone(editProfileForm.phone.data)
         current.set_email(editProfileForm.email.data)
+        if current.get_password() == editProfileForm.password.data:
+            if editProfileForm.newpassword.data != "":
+                current.set_password(editProfileForm.newpassword.data)
+                print("New password set for user " + current.get_username() + ", " + current.get_password())
+            else:
+                print("Current user password was incorrect.")
+        else:
+            print("No new password u baka")
+
         usersDict[current_id] = current
         namesDict[current.get_username()] = current_id
         db["Users"] = usersDict
         db["Usernames"] = namesDict
         db["Current User"] = current
+
+        searchForm = searchBar()
+        if request.method == "POST" and searchForm.validate():
+            print(searchForm.search_input.data)
         db.close()
-        return render_template('my-account.html', current=current.get_username(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+        return render_template('my-account.html', current=current, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm)
     else:
+        searchForm = searchBar()
+        if request.method == "POST" and searchForm.validate():
+            print(searchForm.search_input.data)
         db.close()
-        return render_template('my-account.html', current=current.get_username() ,name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+        return render_template('my-account.html', current=current, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm)
 
 # Login/Register
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     db = shelve.open("storage.db", "c")
-    current = ""
     try:
         current = db["Current User"]
     except:
+        current = ""
         print("Error in retrieving current user")
     if current == "":
         loginForm = LoginForm(request.form)
