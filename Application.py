@@ -279,8 +279,10 @@ def cart():
     db = shelve.open('storage.db','r')
     try:
         user = db['Current User']
+        current = db['Current User']
     except:
         print('Error reading Current User.')
+        current = False
 
     cart = user.get_shopping_cart()
     db.close()
@@ -294,7 +296,7 @@ def cart():
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current)
 
 @app.route("/addToCart/<name>", methods=['GET', 'POST'])
 def addToCart(name):
@@ -389,6 +391,12 @@ def moveToWishlist(serialNo):
 # Wishlist
 @app.route('/wishlist/<filter>/', methods=['GET', 'POST'])
 def wishlist(filter):
+    filterDict = {"hightolow": "Price: High to low", "lowtohigh":"Price: Low to high", "a-z": "A-Z", "z-a":"Z-A" }
+    for key in filterDict:
+        filter_breadcrumb = ""
+        if filter == key:
+            filter_breadcrumb = filterDict[filter]
+            break
     current_user = ""
     db = shelve.open('storage.db', 'r')
     try:
@@ -409,7 +417,7 @@ def wishlist(filter):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm)
+    return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm, filter_breadcrumb=filter_breadcrumb)
 
 @app.route("/addToWishlist/<name>", methods=['GET', 'POST'])
 def addToWishlist(name):
