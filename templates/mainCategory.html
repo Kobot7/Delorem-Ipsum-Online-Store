@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Drug Store - Items{% endblock %}
+{% block title %}Category - {{ mainCategory }}{% endblock %}
 {% block style %}<link rel="stylesheet" type = "text/css" href = "/static/styles/items.css">{% endblock %}
 {% block content %}
 
@@ -7,21 +7,21 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/home">Home</a></li>
-        <li class="breadcrumb-item"><a href="#">{{ mainCategory }}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ subCategory }}</li>
+        <li class="breadcrumb-item active" aria-current="page"><a href="#">{{ mainCategory }}</a></li>
       </ol>
     </nav>
 
     <div class="row justify-content-center">
       <div class="col-md-10">
-        <h3 class="">{{ subCategory }}</h3>
+        <h3 class="">{{ mainCategory }}</h3>
         <form action="">
             <p class="float-left">Sort By:</p>
-            <select>
-                <option value="popularity">Popularity</option>
-                <option value="price lowest to highest">Price low to high</option>
-                <option value="price highest to lowest">Price high to low</option>
-                <option value="what's new">What's New</option>
+            <select id="filterSelect">
+                <option value="/view/descending">Popularity</option>
+                <option value="/name/ascending">A-Z</option>
+                <option value="/name/descending">Z-A</option>
+                <option value="/price/ascending">Price: Low to High</option>
+                <option value="/price/descending">Price: High to Low</option>
             </select>
         </form>
 
@@ -52,4 +52,16 @@
       </div> <!--Column-->
     </div> <!--Row-->
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  var pathname = window.location.pathname.split('/');
+  document.getElementById("filterSelect").value = '/' + pathname[3] + '/' + pathname[4];
+  
+  document.getElementById('filterSelect').addEventListener("change", function() {
+    var filter = document.getElementById('filterSelect').value;
+    window.location.href = '/' + pathname[1] + '/' + pathname[2] + filter;
+  });
+</script>
 {% endblock %}

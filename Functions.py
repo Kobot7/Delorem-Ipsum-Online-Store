@@ -34,6 +34,9 @@ def view_key(item):
 def purchase_key(item):
     return item.get_purchases()
 
+def threshold_key(item):
+    return item.get_stock_threshold()
+
 keyDict = {}
 keyDict['name'] = name_key
 keyDict['brand'] = brand_key
@@ -44,6 +47,7 @@ keyDict['activated'] = activated_key
 keyDict['quantity'] = quantity_key
 keyDict['view'] = view_key
 keyDict['purchase'] = purchase_key
+keyDict['threshold'] = threshold_key
 
 def get_main_category(subCategory):
     if subCategory in ['Pain&Fever','FamilyPlanning','FirstAid&Surgical','Eye&EarCare','Supplements']:

@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark">
   <a class="navbar-brand" href="/dashboard"><img class="pill" src="/static/images/drugs.svg"></img>Dolorem Ipsum</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#adminNavbar" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -23,9 +23,9 @@
 
       <li class="nav-item">
         {% if currentPage=='Stock' %}
-          <a class="nav-link active" href="/stock">Stock</a>
+          <a class="nav-link active" href="/stock/name/ascending">Stock</a>
         {% else %}
-          <a class="nav-link" href="/stock">Stock</a>
+          <a class="nav-link" href="/stock/name/ascending">Stock</a>
         {% endif %}
       </li> <!--Transactions-->
 

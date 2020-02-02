@@ -277,9 +277,36 @@ def orderHistory():
     #METHOD GET - history of order transaction
     return render_template('orderHistory.html')
 
+@app.route('/mainCategory/<mainCategory>/<category>/<order>/', methods=['GET', 'POST'])
+def mainCategory(mainCategory, category, order):
+    db = shelve.open('storage.db', 'r')
+    try:
+        Products = db["Products"]
+    except:
+        print("Error in retrieving products from shelve")
+    try:
+        current = db["Current User"]
+    except:
+        print("Error in retrieving current user, subcat")
+
+    products = []
+
+    for id in Products:
+        product = Products[id]
+        if get_main_category(product.get_sub_category()).replace(' ','') == mainCategory:
+            if product.get_activated() == True:
+                products.append(product)
+
+    products = sort_by(products, category, order)
+
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        return redirect('/search/' + searchForm.search_input.data)
+    return render_template('mainCategory.html', productList=products, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
+
 # Supplements(one of the subsections)
-@app.route('/subCategory/<subCategory>/', methods=['GET', 'POST'])
-def supplements(subCategory):
+@app.route('/subCategory/<subCategory>/<category>/<order>/', methods=['GET', 'POST'])
+def subCategory(subCategory, category, order):
     db = shelve.open('storage.db', 'r')
     try:
         Products = db["Products"]
@@ -297,11 +324,12 @@ def supplements(subCategory):
                 products.append(product)
 
     mainCategory = get_main_category(subCategory)
+    products = sort_by(products, category, order)
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('supplements.html', productList=products, subCategory=subCategory, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
+    return render_template('subCategory.html', productList=products, subCategory=subCategory, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
 
 # Ribena(one of the products)
 @app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
@@ -669,7 +697,7 @@ def dashboard():
         purchasesAmount.append(product.get_purchases())
 
     purchasesData = {
-            'data':  [go.Bar(name='Purchases', x=purchasesAmount, y=purchasesSerial, text=purchasesName, textposition='auto', orientation='h', marker_color='#8FAFA2')],
+            'data':  [go.Bar(name='Purchases', x=purchasesAmount, y=purchasesSerial, text=purchasesName, textposition='auto', orientation='h', marker_color='#d1f082')],
 
             'layout': {}
             }
@@ -685,7 +713,7 @@ def dashboard():
         viewsAmount.append(product.get_views())
 
     viewsData = {
-            'data':  [go.Bar(name='Views', x=viewsAmount, y=purchasesSerial, text=viewsName, textposition='auto', orientation='h', marker_color='#E9BA6C')],
+            'data':  [go.Bar(name='Views', x=viewsAmount, y=purchasesSerial, text=viewsName, textposition='auto', orientation='h', marker_color='#82f0c0')],
 
             'layout': {}
             }
@@ -722,8 +750,8 @@ def viewAll(category, order):
 
     graph = {}
     graph= {
-            'data':  [go.Bar(name='Purchases', x=purchasesList, y=nameList, orientation='h', marker_color='#8FAFA2'),
-                      go.Bar(name='Views', x=viewsList, y=nameList, orientation='h', marker_color='#E9BA6C')],
+            'data':  [go.Bar(name='Purchases', x=purchasesList, y=nameList, orientation='h', marker_color='#d1f082', width=0.3),
+                      go.Bar(name='Views', x=viewsList, y=nameList, orientation='h', marker_color='#a182f0', width=0.3)],
 
             'layout': {}
             }
@@ -891,8 +919,8 @@ def addProduct():
 
     return render_template('addProduct.html', form=createProductForm, currentPage='Catalog')
 
-@app.route('/stock')
-def stock():
+@app.route('/stock/<category>/<order>/')
+def stock(category, order):
     db = shelve.open('storage.db', 'c')
 
     try:
@@ -916,11 +944,16 @@ def stock():
         else:
             highStockList.append(product)
 
+    lowStockList = sort_by(lowStockList, category, order)
+    midStockList = sort_by(midStockList, category, order)
+    highStockList = sort_by(highStockList, category, order)
+
     return render_template('stock.html', currentPage='Stock', lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList)
 
 @app.route('/transactions')
 def transactions():
     transactionsDict = {}
+    transactionsList = []
 
     db = shelve.open('storage.db', 'c')
 

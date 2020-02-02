@@ -62,7 +62,7 @@
             );
           }
           var graph = {{graphJSON | safe}};
-          var heightValue = {{ productList|length }}*50;
+          var heightValue = {{ productList|length }}*60;
           var widthValue = getWidth() - 200;
           graph.layout = { yaxis: {automargin: true}, margin: {t:50, b:50}, height: heightValue, width: widthValue};
           var chart = Plotly.plot("bargraph", graph.data, graph.layout, {responsive: true});

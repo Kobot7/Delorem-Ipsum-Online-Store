@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Category - {{ subCategory }}{% endblock %}
+{% block style %}<link rel="stylesheet" type = "text/css" href = "/static/styles/items.css">{% endblock %}
+{% block content %}
+
+<div class="main-body">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/home">Home</a></li>
+        <li class="breadcrumb-item"><a href="/mainCategory/{{ mainCategory }}">{{ mainCategory }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ subCategory }}</li>
+      </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <h3 class="">{{ subCategory }}</h3>
+        <form action="">
+            <p class="float-left">Sort By:</p>
+            <select id="filterSelect">
+                <option value="/view/descending">Popularity</option>
+                <option value="/name/ascending">A-Z</option>
+                <option value="/name/descending">Z-A</option>
+                <option value="/price/ascending">Price: Low to High</option>
+                <option value="/price/descending">Price: High to Low</option>
+            </select>
+        </form>
+
+          <div class="tertiary-body">
+              <p class="results-number">{{ productCount }} results found</p>
+              <div class="items-block">
+                {% for product in productList %}
+                  <article class="item">
+                  <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
+                      <div class="item-img">
+                          <img src="/static/images/{{product.get_thumbnail()}}">
+                      </div>
+                      <div class="item-caption-box">
+                          <div class="item-caption">
+                              <div>
+                                  <p class="item-description">{{product.get_product_name()}}</p>
+                              </div>
+                          </div>
+                      </div>
+                      <p class="price-box">
+                          <span class="price-small">${{product.get_price()}}</span>
+                      </p>
+                  </a>
+                  </article>
+                {% endfor %}
+              </div> <!--Items block-->
+          </div> <!--Tertiary body->
+      </div> <!--Column-->
+    </div> <!--Row-->
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  var pathname = window.location.pathname.split('/');
+  document.getElementById("filterSelect").value = '/' + pathname[3] + '/' + pathname[4];
+  
+  document.getElementById('filterSelect').addEventListener("change", function() {
+    var filter = document.getElementById('filterSelect').value;
+    window.location.href = '/' + pathname[1] + '/' + pathname[2] + filter;
+  });
+</script>
+{% endblock %}

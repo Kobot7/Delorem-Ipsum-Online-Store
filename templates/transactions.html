@@ -10,7 +10,25 @@
 
   <div class="col-md-11 mt-3">
     {% for transaction in transactionsList %}
-      
+    <div id="accordion">
+    <div class="card">
+      <div class="card-header" id="headingOne">
+        <h5 class="mb-0">
+          <button class="btn btn-link" data-toggle="collapse" data-target="#{{ transaction.get_id() }}" aria-expanded="true" aria-controls="collapseOne">
+            {{ transaction.get_id() }}
+          </button>
+        </h5>
+      </div>
+
+      <div id="{{ transaction.get_id() }}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+        <div class="card-body">
+          Name: {{ transaction.get_name() }}
+          Phone: {{ transaction.get_phone() }}
+          Email: {{ transaction.get_email() }}
+        </div>
+      </div>
+    </div>
+    </div>
     {% endfor %}
   </div>
 </div>

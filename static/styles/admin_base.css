@@ -128,19 +128,21 @@ table tbody tr:hover {
 
 /*--------------Stock Table--------------*/
 tr.lowStock {
-  background-color: #EA725E;
+  background-color: #f07e78;
 }
 
 tr.lowStock:hover {
   background-color: #EA422E;
+  color: white;
 }
 
 tr.midStock {
-  background-color: #E9BA6C;
+  background-color: #f0c982;
 }
 
 tr.midStock:hover {
   background-color: #E99A4C;
+  color: white;
 }
 
 /*--------------Product Table--------------*/
