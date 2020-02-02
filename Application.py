@@ -25,14 +25,16 @@ import sys
 import asyncio
 from threading import Thread
 
+# print('MAIL_PASSWORD' in os.environ)
+
 app = Flask(__name__, static_url_path='/static')
 app.config.update(
     MAIL_SERVER= 'smtp.office365.com',
     MAIL_PORT= 587,
     MAIL_USE_TLS= True,
     MAIL_USE_SSL= False,
-	MAIL_USERNAME = '191993Y@mymail.nyp.edu.sg',
-	MAIL_PASSWORD = '4mhzlkwjhfrA',
+	MAIL_USERNAME = 'deloremipsumonlinestore@outlook.com',
+	# MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
 	MAIL_DEBUG = True,
 	MAIL_SUPPRESS_SEND = False,
     MAIL_ASCII_ATTACHMENTS = True
@@ -460,6 +462,7 @@ def wishlist(filter):
     db = shelve.open('storage.db', 'r')
     try:
         current_user = db["Current User"]
+        current = db["Current User"]
     except:
         print('Error in retrieving current user from storage.db.')
 
@@ -476,7 +479,7 @@ def wishlist(filter):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm, filter_breadcrumb=filter_breadcrumb)
+    return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm, filter_breadcrumb=filter_breadcrumb, current=current)
 
 @app.route("/addToWishlist/<name>", methods=['GET', 'POST'])
 def addToWishlist(name):
@@ -969,7 +972,7 @@ def deliveryInvoice(email):
 
     try:
         msg = Message("Delorem Ipsum Pharmacy",
-        sender="191993Y@mymail.nyp.edu.sg",
+        sender="deloremipsumonlinestore@outlook.com",
         recipients=[email])
 
         for image in images:
