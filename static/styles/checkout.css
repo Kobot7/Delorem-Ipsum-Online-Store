@@ -88,8 +88,11 @@ h1{
 .payment-row{
 justify-content: space-between;
 display:flex;
-
 margin: 10px 0;
+}
+
+#payment_mode{
+  list-style-type: none;
 }
 
 .order button{
