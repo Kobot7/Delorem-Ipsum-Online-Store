@@ -591,23 +591,22 @@ def moveToCart(serialNo):
 # Checkout
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
+    current = "" #define current pls yuxde
     searchForm = searchBar()
-
     deliveryForm = DeliveryForm(request.form)
     collectionForm = CollectionForm(request.form)
     db = shelve.open('storage.db', 'c')
     transactions = {}
     try:
-        current_user = db["Current User"]
+        current = db["Current User"]
     except:
         print("Error in retrieving current user for checkout")
-
     try:
         transactions = db["Transactions"]
     except:
         print("error in retrieving transaction information")
 
-    cart = current_user.get_shopping_cart()
+    cart = current.get_shopping_cart()
     prodlist = []
     total = 0
     for key in cart:
@@ -615,22 +614,20 @@ def checkout():
         total += float(cart[key].get_price())
     number = len(prodlist)
     if request.method == "POST" and deliveryForm.validate():
-        deliveryInfo = Transaction(deliveryForm.name.data, deliveryForm.phone.data,
-                    current_user.get_email(),total, prodlist, deliveryForm.payment_mode.data,
-                     deliveryForm.credit_card_number.data, deliveryForm.credit_card_expiry.data, deliveryForm.credit_card_cvv.data)
-        # current_user.set_transactions(deliveryInfo.get_id())
-        # transactions[deliveryInfo.get_id()] = deliveryInfo
-        # db["Transactions"] = transactions
-    #     current_user.set_orders(deliveryInfo.get_id())
-    #     db["Current User"] = current_user
+        deliveryInfo = Transaction(deliveryForm.name.data, deliveryForm.phone.data, current.get_email(), total, prodlist, deliveryForm.payment_mode.data, deliveryForm.credit_card_number.data, deliveryForm.credit_card_expiry.data, deliveryForm.credit_card_cvv.data)
+    # current.set_transactions(deliveryInfo.get_id())
+    # transactions[deliveryInfo.get_id()] = deliveryInfo
+    # db["Transactions"] = transactions
+    #     current.set_orders(deliveryInfo.get_id())
+    #     db["Current User"] = current
     #     db.close()
-    #     return render_template('checkout.html', user=current_user, completedForm=deliveryInfo, searchForm=searchForm, cart=prodlist, total=total, number=number)
+    #     return render_template('checkout.html', current=current, completedForm=deliveryInfo, searchForm=searchForm, cart=prodlist, total=total, number=number)
         print(deliveryInfo.get_name())
     total = "%.2f" %float(total)
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data)
 
-    return render_template('checkout.html', deliveryform=deliveryForm, user=current_user, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number)
+    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number)
 
 # Summary page
 @app.route('/summary', methods= ["GET", "POST"])
