@@ -31,80 +31,54 @@
   </div>
 </div>
 
-<div class="row justify-content-center mt-4">
-  <div class="col-md-10">
-    <div id="accordion">
-      <div class="card"> <!--Best sellers-->
-        <div class="card-header" id="headingOne">
-          <h5 class="mb-0">
-            <button class="btn btn-link" data-toggle="collapse" data-target="#bestSellers" aria-expanded="true" aria-controls="collapseOne">
-              Best Sellers
-            </button>
-          </h5>
-        </div>
-
-        <div id="bestSellers" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-          <div class="card-body">
-            <div class="items-block">
-              {% for product in purchasesList %}
-                <article class="item">
-                <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
-                    <div class="item-img">
-                        <img src="/static/images/{{product.get_thumbnail()}}">
+<div class="tertiary-body">
+  <div class="row">
+    <span>Most popular Items</span>
+  </div>
+    <div class="home-block">
+      {% for product in viewsList %}
+        <article class="item">
+        <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
+            <div class="item-img">
+                <img src="/static/images/{{product.get_thumbnail()}}">
+            </div>
+            <div class="item-caption-box">
+                <div class="item-caption">
+                    <div>
+                        <p class="item-description">{{product.get_product_name()}}</p>
                     </div>
-                    <div class="item-caption-box">
-                        <div class="item-caption">
-                            <div>
-                                <p class="item-description">{{product.get_product_name()}}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="price-box">
-                        <span class="price-small">${{product.get_price()}}</span>
-                    </p>
-                </a>
-                </article>
-              {% endfor %}
-            </div> <!--Items block-->
-          </div>
-        </div>
-      </div> <!--Best sellers-->
-
-      <div class="card"> <!--Health is Wealth-->
-        <div class="card-header" id="healdingTwo">
-          <h5 class="mb-0">
-            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#healthIsWealth" aria-expanded="false" aria-controls="collapseTwo">
-              Health is Wealth
-            </button>
-          </h5>
-        </div>
-        <div id="healthIsWealth" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-          <div class="card-body">
-            <div class="items-block">
-              {% for product in healthList %}
-                <article class="item">
-                <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
-                    <div class="item-img">
-                        <img src="/static/images/{{product.get_thumbnail()}}">
-                    </div>
-                    <div class="item-caption-box">
-                        <div class="item-caption">
-                            <div>
-                                <p class="item-description">{{product.get_product_name()}}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="price-box">
-                        <span class="price-small">${{product.get_price()}}</span>
-                    </p>
-                </a>
-                </article>
-              {% endfor %}
-            </div> <!--Items block-->
-          </div>
-        </div>
-      </div> <!--Health is Wealth-->
-    </div> <!--Accordian-->
-  </div> <!--Col-->
-</div> <!--Row-->
+                </div>
+            </div>
+            <p class="price-box">
+                <span class="price-small">${{product.get_price()}}</span>
+            </p>
+        </a>
+        </article>
+      {% endfor %}
+    </div> <!--Items block-->
+    <div class="row">
+      <span>Hot Selling Items</span>
+    </div>
+      <div class="home-block">
+        {% for product in purchasesList %}
+          <article class="item">
+          <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
+              <div class="item-img">
+                  <img src="/static/images/{{product.get_thumbnail()}}">
+              </div>
+              <div class="item-caption-box">
+                  <div class="item-caption">
+                      <div>
+                          <p class="item-description">{{product.get_product_name()}}</p>
+                      </div>
+                  </div>
+              </div>
+              <p class="price-box">
+                  <span class="price-small">${{product.get_price()}}</span>
+              </p>
+          </a>
+          </article>
+        {% endfor %}
+      </div> <!--Items block-->
+</div>
 {% endblock %}
