@@ -186,9 +186,15 @@ outline: none;
 }
 
 .drop{
-	border: 0.1em solid black;
+	background-color: #84a220;
+  color: white;
 	width: 10em;
 	margin-bottom: 1em;
+  padding: 5px;
+}
+
+.menu>a{
+  color: white;
 }
 
 .title{
@@ -332,3 +338,14 @@ outline: none;
       display: inline-block;
       font-family: 'Josefin Sans', sans-serif !important;
   }
+
+  .home-block{
+  position: relative;
+  display: flex;
+  overflow: visible;
+  text-align: center;
+  }
+
+.row{
+  justify-content: center;
+}

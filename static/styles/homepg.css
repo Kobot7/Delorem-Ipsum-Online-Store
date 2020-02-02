@@ -4,5 +4,24 @@
 }
 
 .custom-carousel{
-    width: 80%;
+    height:400px;
+    width:400px;
+    background-color: white;
+}
+
+.carousel-indicators .active{
+  background-color: #84a220;
+}
+
+.carousel-indicators li{
+  background-color: #84a220;
+}
+
+.description{
+  position: relative;
+  bottom:20px;
+}
+
+.carousel-indicators{
+  bottom:30px;
 }
