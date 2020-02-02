@@ -1,0 +1,25 @@
+*{
+  text-align: center;
+}
+
+h1{
+  font-size: 1.625rem;
+  font-weight: 700;
+}
+
+
+.box{
+  background-color: white;
+  padding: 20px 20px;
+  margin-bottom: 1em;
+  margin-left: 450px;
+  margin-right: 450px;
+}
+
+.buttons{
+  width:auto;
+}
+
+.edit, .confirm{
+  width:200px;
+}

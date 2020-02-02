@@ -564,6 +564,27 @@ def checkout():
 
     return render_template('checkout.html', deliveryform=deliveryForm, user=current_user, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number)
 
+# Summary page
+@app.route('/summary', methods= ["GET", "POST"])
+def summary(order):
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        return redirect('/search/' + searchForm.search_input.data)
+
+    details.get_street_name()
+    details.get_postal_code()
+    details.get_unit_no()
+    details.get_name()
+    details.get_phone()
+    details.get_payment_mode()
+    details.get_credit_card_number()
+    details.get_credit_card_expiry()
+    details.get_credit_card_cvv()
+
+    if request.method == "POST":
+        db = open.shelve('storage.db', 'c')
+        details = db[Transactions]
+    return render_template('summary.html', searchForm=searchForm, details=order)
 
 # Admin Side
 @app.route('/dashboard')
