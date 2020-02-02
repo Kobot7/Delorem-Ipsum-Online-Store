@@ -299,7 +299,7 @@ def supplements(subCategory):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
+    return render_template('supplements.html', productList=products, subCategory=subCategory, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
 
 # Ribena(one of the products)
 @app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
@@ -622,6 +622,7 @@ def summary(order):
         db = open.shelve('storage.db', 'c')
         details = db[Transactions]
     return render_template('summary.html', searchForm=searchForm, details=order)
+
 
 # Admin Side
 @app.route('/dashboard')
