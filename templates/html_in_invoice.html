@@ -1,16 +1,18 @@
 <p>Hello {{current_user.get_username()}},</p>
 
-<p>This is your e-receipt for your purchase made on {{date}}
+<p>This is your e-receipt for your purchase, order id: {{order_ID}}
 <br>Thank you for shopping with us.</p>
-<p>Order ID: {{order_ID}}</p>
+<ul>
 {% for product in cartList %}
   <div class="ordered_item">
     <img src="/static/images/{{product.get_thumbnail()}}" alt="">
-    <p>{{product.get_product_name()}}</p>
-    <p>${{product.get_price()}}</p>
+    <li>{{product.get_product_name()}} : ${{product.get_price()}}</li>
   </div>
 
 {% endfor %}
+</ul>
+
+<p>Total : ${{total}}</p>
 
 
 

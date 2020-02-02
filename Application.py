@@ -12,12 +12,12 @@ import os
 from pathlib import Path
 
 # Graphing
-# import json
-# import plotly
+import json
+import plotly
 
-# import pandas as pd
-# import numpy as np
-# import plotly.graph_objs as go
+import pandas as pd
+import numpy as np
+import plotly.graph_objs as go
 
 # Flask mail
 from flask_mail import Mail, Message
@@ -77,19 +77,35 @@ def search(searchString):
 # Homepage
 @app.route('/home', methods=['GET', 'POST'])
 def home():
+    productDict = {}
+
     db = shelve.open('storage.db', 'c')
+    productsDict = {}
     try:
         current = db["Current User"]
     except:
         print("Error while retrieving current user: user not logged in")
         current = False
-    db.close()
+
+    try:
+        productDict = db['Products']
+        db.close()
+    except:
+        print('Error in retrieving Products from storage.db.')
+
+    productList = []
+    for key in productDict:
+        product = productDict[key]
+        productList.append(product)
+
+    purchasesList = sort_by(productList, 'purchase', 'descending')[:6]
+    viewsList = sort_by(productList, 'view', 'descending')[:6]
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
 
-    return render_template("home.html", current=current, searchForm=searchForm)
+    return render_template("home.html", current=current, searchForm=searchForm, viewsList = viewsList, purchasesList = purchasesList)
 
 # Profile/Username
 @app.route('/my-account/<username>', methods=['GET', 'POST'])
@@ -102,6 +118,7 @@ def view_profile(username):
     except:
         print("Error while retrieving usersDict")
         return redirect(url_for("home"))
+
     editProfileForm = EditProfileForm(request.form)
     if request.method == "POST":
         current_id = current.get_user_id()
@@ -110,25 +127,41 @@ def view_profile(username):
         current.set_address(editProfileForm.address.data)
         current.set_phone(editProfileForm.phone.data)
         current.set_email(editProfileForm.email.data)
+        if current.get_password() == editProfileForm.password.data:
+            if editProfileForm.newpassword.data != "":
+                current.set_password(editProfileForm.newpassword.data)
+                print("New password set for user " + current.get_username() + ", " + current.get_password())
+            else:
+                print("Current user password was incorrect.")
+        else:
+            print("No new password u baka")
+
         usersDict[current_id] = current
         namesDict[current.get_username()] = current_id
         db["Users"] = usersDict
         db["Usernames"] = namesDict
         db["Current User"] = current
+
+        searchForm = searchBar()
+        if request.method == "POST" and searchForm.validate():
+            print(searchForm.search_input.data)
         db.close()
-        return render_template('my-account.html', current=current.get_username(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+        return render_template('my-account.html', current=current, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm)
     else:
+        searchForm = searchBar()
+        if request.method == "POST" and searchForm.validate():
+            print(searchForm.search_input.data)
         db.close()
-        return render_template('my-account.html', current=current.get_username() ,name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+        return render_template('my-account.html', current=current, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm)
 
 # Login/Register
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     db = shelve.open("storage.db", "c")
-    current = ""
     try:
         current = db["Current User"]
     except:
+        current = ""
         print("Error in retrieving current user")
     if current == "":
         loginForm = LoginForm(request.form)
@@ -217,7 +250,7 @@ def login():
 
         searchForm = searchBar()
         if request.method == "POST" and searchForm.validate():
-            print(searchForm.search_input.data)
+            return redirect('/search/' + searchForm.search_input.data)
         return render_template('login.html', username_correct=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
     else:
         return redirect(url_for("home"))
@@ -262,7 +295,7 @@ def supplements(subCategory):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
+    return render_template('supplements.html', productList=products, subCategory=subCategory, number=len(products), mainCategory=mainCategory, searchForm=searchForm)
 
 # Ribena(one of the products)
 @app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
@@ -541,15 +574,17 @@ def checkout():
 
     cart = current_user.get_shopping_cart()
     prodlist = []
-    total = 0
+    subtotal = 0
     for key in cart:
         prodlist.append(cart[key])
-        total += float(cart[key].get_price())
+        subtotal += float(cart[key].get_price())
     number = len(prodlist)
+    total = subtotal + 12
     if request.method == "POST" and deliveryForm.validate():
         deliveryInfo = Transaction(deliveryForm.name.data, deliveryForm.phone.data,
                     current_user.get_email(),total, prodlist, deliveryForm.payment_mode.data,
                      deliveryForm.credit_card_number.data, deliveryForm.credit_card_expiry.data, deliveryForm.credit_card_cvv.data)
+        return redirect(url_for('summary', order=deliveryInfo))
         # current_user.set_transactions(deliveryInfo.get_id())
         # transactions[deliveryInfo.get_id()] = deliveryInfo
         # db["Transactions"] = transactions
@@ -559,10 +594,11 @@ def checkout():
     #     return render_template('checkout.html', user=current_user, completedForm=deliveryInfo, searchForm=searchForm, cart=prodlist, total=total, number=number)
         print(deliveryInfo.get_name())
     total = "%.2f" %float(total)
+    subtotal = "%.2f" %float(subtotal)
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data)
 
-    return render_template('checkout.html', deliveryform=deliveryForm, user=current_user, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number)
+    return render_template('checkout.html', deliveryform=deliveryForm, current=current_user, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal= subtotal)
 
 # Summary page
 @app.route('/summary', methods= ["GET", "POST"])

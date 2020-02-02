@@ -15,10 +15,10 @@
  <div class='title pointerCursor'>Select an option <i class="fa fa-angle-right"></i></div>
 
  <div class='menu pointerCursor hide'>
-   <div class='option' id='a-z'><a href="/wishlist/a-z">A-Z</a></div>
-   <div class='option' id='z-a'><a href="/wishlist/z-a">Z-A</a></div>
-   <div class='option' id='high-low'><a href="/wishlist/hightolow">Price: High to low</a></div>
-   <div class='option' id='low-high'><a href="/wishlist/lowtohigh">Price: Low to high</a></div>
+   <a href="/wishlist/a-z"><div class='option' id='a-z'>A-Z</div></a>
+   <a href="/wishlist/z-a"><div class='option' id='z-a'>Z-A</div></a>
+   <a href="/wishlist/hightolow"><div class='option' id='high-low'>Price: High to low</div></a>
+   <a href="/wishlist/lowtohigh"><div class='option' id='low-high'>Price: Low to high</div></a>
  </div>
 
 </div>
@@ -27,7 +27,7 @@
          <div class="items-block">
              {% for product in filtered_list%}
              <article class="item">
-             <!-- <a href="#" class="item-link"> -->
+             <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
                  <div class="item-img">
                      <img src="/static/images/{{product.get_thumbnail()}}" alt="{{ product.get_product_name() }} thumbnail">
                   </div>
@@ -50,6 +50,7 @@
                        <div class="btn-txt">Remove</div>
                      </button>
                    </form>
+                 </a>
 
 
                   </article>
