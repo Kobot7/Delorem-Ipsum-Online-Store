@@ -11,9 +11,10 @@ class User:
         self.set_email(email)
         # self.set_profile_pic(r"..\static\images\default-profile-picture1.jpg")
         self.__phone = ""
-        self.__wishlist = self.default_wishlist()
+        self.__wishlist = {}
         self.__address = ""
         self.__shopping_cart = {}
+        self.__wishlist = {}
         self.__transactions = []
 
     def set_user_id(self):
@@ -113,20 +114,6 @@ class User:
         serial_no = item.get_serial_no()
         del wishlist[serial_no]
         self.set_wishlist(wishlist)
-
-    def default_wishlist(self):
-        db = shelve.open('storage.db')
-        productsDict = {}
-        try:
-            productsDict = db['Products']
-        except:
-            print("Error retrieving products")
-        wishlist = {}
-        for key in productsDict:
-            product = productsDict.get(key)
-            wishlist[key] = product
-        self.set_wishlist(wishlist)
-        return self.__wishlist
 
     def add_to_cart(self, item):
         cart = self.get_shopping_cart()
