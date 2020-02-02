@@ -425,6 +425,7 @@ def wishlist(filter):
     db = shelve.open('storage.db', 'r')
     try:
         current_user = db["Current User"]
+        current = db["Current User"]
     except:
         print('Error in retrieving current user from storage.db.')
 
@@ -441,7 +442,7 @@ def wishlist(filter):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm, filter_breadcrumb=filter_breadcrumb)
+    return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm, filter_breadcrumb=filter_breadcrumb, current=current)
 
 @app.route("/addToWishlist/<name>", methods=['GET', 'POST'])
 def addToWishlist(name):
