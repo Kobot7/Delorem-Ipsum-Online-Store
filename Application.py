@@ -25,7 +25,7 @@ import sys
 import asyncio
 from threading import Thread
 
-print('MAIL_PASSWORD' in os.environ)
+# print('MAIL_PASSWORD' in os.environ)
 
 app = Flask(__name__, static_url_path='/static')
 app.config.update(
@@ -34,7 +34,7 @@ app.config.update(
     MAIL_USE_TLS= True,
     MAIL_USE_SSL= False,
 	MAIL_USERNAME = 'deloremipsumonlinestore@outlook.com',
-	MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
+	# MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
 	MAIL_DEBUG = True,
 	MAIL_SUPPRESS_SEND = False,
     MAIL_ASCII_ATTACHMENTS = True
