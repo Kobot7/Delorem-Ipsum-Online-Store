@@ -98,15 +98,3 @@ body {
 .sticky-top{
   border-bottom: solid 1px #84a220;
 }
-
-.row{
-  background-color: #84a220;
-  color: white;
-  padding:12px;
-  font-weight: bold;
-}
-
-.carousel-img{
-  display: block;
-  width: -webkit-fill-available;
-}

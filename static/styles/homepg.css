@@ -25,3 +25,16 @@
 .carousel-indicators{
   bottom:30px;
 }
+
+.puthir{
+  background-color: #84a220;
+  color: white;
+  padding:12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.carousel-img{
+  display: block;
+  width: -webkit-fill-available;
+}

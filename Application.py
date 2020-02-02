@@ -80,7 +80,6 @@ def home():
     productDict = {}
 
     db = shelve.open('storage.db', 'c')
-    productsDict = {}
     try:
         current = db["Current User"]
     except:
@@ -94,18 +93,23 @@ def home():
         print('Error in retrieving Products from storage.db.')
 
     productList = []
+    healthList = []
     for key in productDict:
         product = productDict[key]
         productList.append(product)
 
+        if product.get_sub_category() in ['Eye&EarCare', 'Pain&Fever', 'Supplements']:
+            if product.get_activated() == True:
+                healthList.append(product)
+
     purchasesList = sort_by(productList, 'purchase', 'descending')[:6]
-    viewsList = sort_by(productList, 'view', 'descending')[:6]
+    viewsList = sort_by(productList,'view','descending')[:6]
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
 
-    return render_template("home.html", current=current, searchForm=searchForm, viewsList = viewsList, purchasesList = purchasesList)
+    return render_template("home.html", current=current, searchForm=searchForm, purchasesList=purchasesList, healthList=healthList, viewsList=viewsList)
 
 # Profile/Username
 @app.route('/my-account/<username>', methods=['GET', 'POST'])
@@ -284,7 +288,7 @@ def supplements(subCategory):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('supplements.html', productList=products, subCategory=subCategory, number=len(products), mainCategory=mainCategory, searchForm=searchForm)
+    return render_template('supplements.html', productList=products, subCategory=subCategory, modalCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
 
 # Ribena(one of the products)
 @app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
@@ -563,17 +567,15 @@ def checkout():
 
     cart = current_user.get_shopping_cart()
     prodlist = []
-    subtotal = 0
+    total = 0
     for key in cart:
         prodlist.append(cart[key])
-        subtotal += float(cart[key].get_price())
+        total += float(cart[key].get_price())
     number = len(prodlist)
-    total = subtotal + 12
     if request.method == "POST" and deliveryForm.validate():
         deliveryInfo = Transaction(deliveryForm.name.data, deliveryForm.phone.data,
                     current_user.get_email(),total, prodlist, deliveryForm.payment_mode.data,
                      deliveryForm.credit_card_number.data, deliveryForm.credit_card_expiry.data, deliveryForm.credit_card_cvv.data)
-        return redirect(url_for('summary', order=deliveryInfo))
         # current_user.set_transactions(deliveryInfo.get_id())
         # transactions[deliveryInfo.get_id()] = deliveryInfo
         # db["Transactions"] = transactions
@@ -583,11 +585,10 @@ def checkout():
     #     return render_template('checkout.html', user=current_user, completedForm=deliveryInfo, searchForm=searchForm, cart=prodlist, total=total, number=number)
         print(deliveryInfo.get_name())
     total = "%.2f" %float(total)
-    subtotal = "%.2f" %float(subtotal)
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data)
 
-    return render_template('checkout.html', deliveryform=deliveryForm, current=current_user, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal= subtotal)
+    return render_template('checkout.html', deliveryform=deliveryForm, user=current_user, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number)
 
 
 # Admin Side
