@@ -13,23 +13,24 @@
 <!-- Page Content -->
 <div class="container">
   <!-- Portfolio Item Row -->
-  <div class="row">
-
+  <div class="row pt-4">
     <div class="col-md-6">
       <img class="d-block picture" src="/static/images/{{product.get_thumbnail()}}" alt="First slide">
     </div>
 
     <div class="col-md-4">
-      <h3 class="my-3">{{product.get_product_name()}}</h3>
-      <p class="price-box">
+      <h3 class="mt-0 mb-3">{{product.get_product_name()}}</h3>
+      <p class="price-box mb-0">
           <span class="price">${{product.get_price()}}</span>
       </p>
-       <ul>
-           <li>{{product.get_brand()}}</li>
-           <li>{{product.get_description()}}</li>
-       </ul>
+      <p>
+        Brand: {{product.get_brand()}}
+      </p>
+      <p>
+        {{product.get_description()}}
+      </p>
         <form  action="{{url_for('addToCart', name = product.get_product_name())}}" method="POST">
-           <button class="btn btn-success" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
+           <button class="btn btn-success my-2" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
         </form>
         {% if taken== True %}
         <button value="submit" class="btn btn-danger" disabled><i class="icon-heart"> Already in Wish List</i></button>

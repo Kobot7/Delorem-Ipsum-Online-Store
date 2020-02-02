@@ -12,12 +12,12 @@ import os
 from pathlib import Path
 
 # Graphing
-# import json
-# import plotly
+import json
+import plotly
 
-# import pandas as pd
-# import numpy as np
-# import plotly.graph_objs as go
+import pandas as pd
+import numpy as np
+import plotly.graph_objs as go
 
 # Flask mail
 from flask_mail import Mail, Message
@@ -77,19 +77,38 @@ def search(searchString):
 # Homepage
 @app.route('/home', methods=['GET', 'POST'])
 def home():
+    productDict = {}
+
     db = shelve.open('storage.db', 'c')
     try:
         current = db["Current User"]
     except:
         print("Error while retrieving current user: user not logged in")
         current = False
-    db.close()
+
+    try:
+        productDict = db['Products']
+        db.close()
+    except:
+        print('Error in retrieving Products from storage.db.')
+
+    productList = []
+    healthList = []
+    for key in productDict:
+        product = productDict[key]
+        productList.append(product)
+
+        if product.get_sub_category() in ['Eye&EarCare', 'Pain&Fever', 'Supplements']:
+            if product.get_activated() == True:
+                healthList.append(product)
+
+    purchasesList = sort_by(productList, 'purchase', 'descending')[:6]
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
 
-    return render_template("home.html", current=current, searchForm=searchForm)
+    return render_template("home.html", current=current, searchForm=searchForm, purchasesList=purchasesList, healthList=healthList)
 
 # Profile/Username
 @app.route('/my-account/<username>', methods=['GET', 'POST'])
@@ -102,6 +121,7 @@ def view_profile(username):
     except:
         print("Error while retrieving usersDict")
         return redirect(url_for("home"))
+        
     editProfileForm = EditProfileForm(request.form)
     if request.method == "POST":
         current_id = current.get_user_id()
@@ -117,9 +137,14 @@ def view_profile(username):
         db["Current User"] = current
         db.close()
         return render_template('my-account.html', current=current.get_username(), name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        return redirect('/search/' + searchForm.search_input.data)
+
     else:
         db.close()
-        return render_template('my-account.html', current=current.get_username() ,name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email())
+        return render_template('my-account.html', current=current.get_username() ,name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm)
 
 # Login/Register
 @app.route('/login', methods=['GET', 'POST'])
@@ -217,7 +242,7 @@ def login():
 
         searchForm = searchBar()
         if request.method == "POST" and searchForm.validate():
-            print(searchForm.search_input.data)
+            return redirect('/search/' + searchForm.search_input.data)
         return render_template('login.html', username_correct=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
     else:
         return redirect(url_for("home"))
