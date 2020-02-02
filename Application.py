@@ -604,10 +604,6 @@ def checkout():
 # Summary page
 @app.route('/summary', methods= ["GET", "POST"])
 def summary(order):
-    searchForm = searchBar()
-    if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data)
-
     details.get_street_name()
     details.get_postal_code()
     details.get_unit_no()
@@ -621,6 +617,11 @@ def summary(order):
     if request.method == "POST":
         db = open.shelve('storage.db', 'c')
         details = db[Transactions]
+
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        return redirect('/search/' + searchForm.search_input.data)
+
     return render_template('summary.html', searchForm=searchForm, details=order)
 
 
@@ -926,7 +927,10 @@ def transactions():
     except:
         print('Error in retrieving Transactions from storage.db.')
 
-    return render_template('transactions.html', currentPage='Transactions')
+    for key in transactionsDict:
+        transactionsList.append(transactionsDict[key])
+
+    return render_template('transactions.html', currentPage='Transactions', transactionsList=transactionsList)
 
 
 # Other stuff

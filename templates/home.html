@@ -32,13 +32,36 @@
 </div>
 
 <div class="row justify-content-center mt-4">
-
-    <div class="tertiary-body">
+  <div class="tertiary-body">
+    <div class="puthir">
+      <span>Most popular Items</span>
+    </div>
+      <div class="home-block">
+        {% for product in viewsList %}
+          <article class="item">
+          <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
+              <div class="item-img">
+                  <img src="/static/images/{{product.get_thumbnail()}}">
+              </div>
+              <div class="item-caption-box">
+                  <div class="item-caption">
+                      <div>
+                          <p class="item-description">{{product.get_product_name()}}</p>
+                      </div>
+                  </div>
+              </div>
+              <p class="price-box">
+                  <span class="price-small">${{product.get_price()}}</span>
+              </p>
+          </a>
+          </article>
+        {% endfor %}
+      </div> <!--Items block-->
       <div class="puthir">
-        <span>Most popular Items</span>
+        <span>Hot Selling Items</span>
       </div>
         <div class="home-block">
-          {% for product in viewsList %}
+          {% for product in purchasesList %}
             <article class="item">
             <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
                 <div class="item-img">
@@ -58,31 +81,6 @@
             </article>
           {% endfor %}
         </div> <!--Items block-->
-        <div class="puthir">
-          <span>Hot Selling Items</span>
-        </div>
-          <div class="home-block">
-            {% for product in purchasesList %}
-              <article class="item">
-              <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
-                  <div class="item-img">
-                      <img src="/static/images/{{product.get_thumbnail()}}">
-                  </div>
-                  <div class="item-caption-box">
-                      <div class="item-caption">
-                          <div>
-                              <p class="item-description">{{product.get_product_name()}}</p>
-                          </div>
-                      </div>
-                  </div>
-                  <p class="price-box">
-                      <span class="price-small">${{product.get_price()}}</span>
-                  </p>
-              </a>
-              </article>
-            {% endfor %}
-          </div> <!--Items block-->
-    </div>
-
+  </div>
 </div>
 {% endblock %}
