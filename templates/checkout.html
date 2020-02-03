@@ -144,9 +144,9 @@
                 <div>Please enter your discount code</div>
                 <input type="text">
             </div>
-            <div class="modal-footer">
-                <button type="button" data-dismiss="modal">Confirm</button>
-            </div>
+            <form action="{{url_for('checkout')}}" method="POST">
+                <button type="button" data-dismiss="modal" value="submit">Confirm</button>
+            </form>
         </div>
     </div>
 </div>
