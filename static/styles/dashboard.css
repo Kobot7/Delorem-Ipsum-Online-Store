@@ -5,3 +5,11 @@
 table#transactions tbody tr:hover {
   cursor: pointer;
 }
+
+.small-block-1 {
+  border-right: 8px solid #e8e8e8;
+}
+
+.small-block-2 {
+  border-left: 8px solid #e8e8e8;
+}
