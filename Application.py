@@ -140,11 +140,17 @@ def view_profile(username):
         if current.get_password() == editProfileForm.password.data:
             if editProfileForm.newpassword.data != "":
                 current.set_password(editProfileForm.newpassword.data)
-                print("New password set for user " + current.get_username() + ", " + current.get_password())
+                print("New password set for user " + current.get_username() + ", " + current.get_password() + ".")
+            elif editProfileForm.newpassword.data == "":
+                print("New password field was left empty.")
+                print("No new password was set.")
+        elif current.get_password() != editProfileForm.password.data:
+            if editProfileForm.password.data == "":
+                print("Current password field was left empty.")
             else:
                 print("Current user password was incorrect.")
         else:
-            print("No new password u baka")
+            print("\n\n\nAn unexpected error has occured.\n\n\n")
 
         usersDict[current_id] = current
         namesDict[current.get_username()] = current_id
