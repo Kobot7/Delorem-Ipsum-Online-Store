@@ -23,6 +23,25 @@
     {% block content %}
     {% endblock %}
 
+    {%block coupon%}
+    <div id="coupon">
+    <div class="container">
+      <!-- <div class="row"> -->
+        <div class="col-md-3 ">
+          <button data-toggle="collapse" data-target="#coupon_content">Use code at checkout</button>
+          <div class="collapse" id="coupon_content">
+            <div class="well">
+              Get $10 OFF min. $65 spend
+              <div class="code">
+                YAYFEB
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+    {%endblock%}
+
     <div id="backgroundDim" class="background-dim"></div>
     {% block scripts %}
       <script src="/static/js/navbar.js"></script>
