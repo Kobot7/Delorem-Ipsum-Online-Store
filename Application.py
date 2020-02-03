@@ -602,7 +602,7 @@ def moveToCart(serialNo):
 # Checkout
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
-    current = "" #define current pls yuxde
+    current = ""
     searchForm = searchBar()
     deliveryForm = DeliveryForm(request.form)
     collectionForm = CollectionForm(request.form)
@@ -644,6 +644,8 @@ def checkout():
         deliveryId = deliveryInfo.get_id()
         transactions[deliveryId] = deliveryInfo
         db["Transactions"] = transactions
+        current.set_transaction(deliveryId)
+        db["Current User"] = current
         db.close()
         return redirect(url_for("summary", deliveryId= deliveryId))
         # current_user.set_transactions(deliveryInfo.get_id())
@@ -659,7 +661,7 @@ def checkout():
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data)
 
-    return render_template('checkout.html', deliveryform=deliveryForm, current=current_user, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal)
+    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal)
 
 # Summary page
 @app.route('/summary/<deliveryId>', methods= ["GET", "POST"])
@@ -1048,7 +1050,7 @@ def download():
 def categories():
     return render_template('categories.html')
 
-@app.route('/deliveryInvoice/<email>/',  methods=['POST'])
+@app.route('/deliveryInvoice/<email>/',  methods=['get','POST'])
 def deliveryInvoice(email):
     print("hey!")
     current_user = ""
@@ -1059,7 +1061,7 @@ def deliveryInvoice(email):
         print('Error in retrieving current user from storage.db.')
 
     cart = current_user.get_shopping_cart()
-    order_ID = current_user.get_orders()
+    order_ID = current_user.get_transactions()
     cartList = []
     images = []
     for product in cart:
