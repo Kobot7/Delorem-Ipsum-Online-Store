@@ -11,12 +11,6 @@
 <div class="signup-w3ls">
   <div class="signup-agile1">
     <form action="#" method="post">
-
-      <!-- <div class="form-control-user">
-        <label class="header">Profile Photo:</label>
-        <img style="margin-left:25px;" src="{{pic}}" alt="default-profile-picture" width="200" height="200" />
-        <input id="image" style="margin-left:255px;" type="file" name="profile_photo" capture>
-      </div> -->
       <h2> Personal Information </h2>
       <div class="form-control-user">
         <label class="header">Username:</label>
@@ -40,8 +34,7 @@
 
       <input type="submit" class="register" value="Update" onclick=alertchanges();>
       <p> </p>
-      <a onclick="openChangePwd()" style="color:red; text-decoration: underline; margin-left: 233px;" class="changePassword"> CHANGE PASSWORD </a>
-
+      <input value="Change Password" class="changePassword" onclick=openChangePwd();>
       <div id="changePassModal" class="pwdModal">
         <div class="pwdModalcontent">
           <span class="close" onclick="closeChangePwd()">&times;</span>
@@ -91,15 +84,15 @@
       }
 
       function openChangePwd() {
-        changePassModal.style.display = "block";
+        document.getElementById("changePassModal").style.display = "block";
       }
 
       function closeChangePwd() {
-        changePassModal.style.display = "none";
+        document.getElementById("changePassModal").style.display = "none";
       }
       window.onclick = function(event) {
         if (event.target == changePassModal) {
-          changePassModal.style.display = "none";
+          document.getElementById("changePassModal").style.display = "none";
         }
       }
     </script>
@@ -108,9 +101,19 @@
         /* font-family: "Lato", sans-serif; */
       }
 
+      .changePassword {
+        padding: 10px;
+        margin-left: 233px;
+        background-color: #84a220;
+        width: 200px;
+        text-align: center;
+        height: auto;
+        border: none;
+      }
+
       .changePassword:hover {
-        color: blue;
-        text-decoration: none;
+        background-color: #36b051;
+        cursor: pointer;
       }
 
       .pwdModal {
@@ -119,7 +122,7 @@
         z-index: 1;
         padding: 250px;
         left: 0;
-        right:0;
+        right: 0;
         top: 0;
         width: auto;
         height: auto;
