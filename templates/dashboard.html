@@ -6,7 +6,7 @@
 {% from "includes/_formhelper.html" import render_field %}
 
 <div class="row justify-content-center">
-    <div class="col-lg-10 dashboard-block p-4 mx-2 my-2">
+    <div class="col-lg-10 dashboard-block p-4 mx-2 mt-3">
         <h2 class="d-inline">Low Stock</h2>
         <a class="btn d-inline float-right mt-1 mb-2" href="/stock/name/ascending">View All</a>
         <table class="w-100 products">
@@ -45,7 +45,7 @@
 </div> <!--Row 1, Stock-->
 
 <div class="row justify-content-center mt-2">
-    <div class="col-lg-5 dashboard-block p-4 mx-2 my-2">
+    <div class="col-lg-5 dashboard-block p-4 my-2 small-block-1">
         <h2 class="d-inline">Best-Sellers</h2>
         <a class="btn d-inline float-right mt-1 mb-2" href="/productStats/purchase/descending">View All</a>
         <div class="col mt-4" id="purchasesGraph"></div>
@@ -56,7 +56,7 @@
         </script>
     </div>
 
-    <div class="col-lg-5 dashboard-block p-4 mx-2 my-2">
+    <div class="col-lg-5 dashboard-block p-4 my-2 small-block-2">
         <h2 class="d-inline">Most-Viewed Items</h2>
         <a class="btn d-inline float-right mt-1 mb-2" href="/productStats/view/descending">View All</a>
         <div class="col mt-4" id="viewsGraph"></div>
@@ -70,8 +70,8 @@
 
 <div class="row justify-content-center">
     <div class="col-lg-10 dashboard-block p-4 mx-2 my-2">
-        <h2 class="d-inline">Orders</h2>
-        <a class="btn d-inline float-right mt-1 mb-2" href="#">View All</a>
+        <h2 class="d-inline">Transactions</h2>
+        <a class="btn d-inline float-right mt-1 mb-2" href="/transactions">View All</a>
         <table class="w-100" id="transactions">
             <thead>
                 <tr>

@@ -294,6 +294,8 @@ def mainCategory(mainCategory, category, order):
         print("Error in retrieving current user, subcat")
         current = False
 
+    db.close()
+
     products = []
 
     for id in Products:
@@ -322,6 +324,8 @@ def subCategory(subCategory, category, order):
     except:
         print("Error in retrieving current user, subcat")
         current = False
+
+    db.close()
 
     products = []
     for id in Products:
@@ -631,10 +635,10 @@ def checkout():
     #     return render_template('checkout.html', current=current, completedForm=deliveryInfo, searchForm=searchForm, cart=prodlist, total=total, number=number)
         print(deliveryInfo.get_name())
     total = "%.2f" %float(total)
-    # if request.method == "POST" and searchForm.validate():
-    #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
+    if request.method == "POST" and searchForm.validate():
+        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
 
-    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number)
+    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform=collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number)
 
 # Summary page
 @app.route('/summary', methods= ["GET", "POST"])
@@ -751,6 +755,9 @@ def viewAll(category, order):
         purchasesList.append(product.get_purchases())
         viewsList.append(product.get_views())
 
+    nameList.reverse()
+    purchasesList.reverse()
+    viewsList.reverse()
 
     graph = {}
     graph= {
