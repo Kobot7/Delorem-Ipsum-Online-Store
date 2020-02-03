@@ -5,8 +5,8 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/">Home</a></li>
-    <li class="breadcrumb-item"><a href="/subCategory/{{ product.get_sub_category() }}">{{ mainCategory }}</a></li>
-    <li class="breadcrumb-item active" aria-current="page"><a href="supplements">{{product.get_sub_category()}}</a></li>
+    <li class="breadcrumb-item"><a href="/mainCategory/{{ mainCategory }}/view/descending">{{ mainCategory }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page"><a href="/subCategory/{{ product.get_sub_category() }}/view/descending">{{product.get_sub_category()}}</a></li>
   </ol>
 </nav>
 
