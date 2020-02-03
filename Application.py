@@ -659,7 +659,7 @@ def checkout():
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data)
 
-    return render_template('checkout.html', deliveryform=deliveryForm, current=current_user, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal)
+    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal)
 
 # Summary page
 @app.route('/summary/<deliveryId>', methods= ["GET", "POST"])
@@ -989,7 +989,7 @@ def transactions():
     db = shelve.open('storage.db', 'c')
 
     try:
-        productDict = db['Transactions']
+        transactionsDict = db['Transactions']
         db.close()
     except:
         print('Error in retrieving Transactions from storage.db.')
