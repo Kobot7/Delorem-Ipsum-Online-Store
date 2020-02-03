@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Drug Store - Brands{% endblock %}
+{% block style %}<link rel="stylesheet" type = "text/css" href = "/static/styles/items.css">{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="listOfBrands">Brands</a></li>
+    <li class="breadcrumb-item active" aria-current="page"><a href="listOfBrands">{{brand}}</a></li>
+  </ol>
+</nav>
+
+<div class="main-body">
+    <div class="row justify-content-center">
+      <div class="col-md-10 mt-4">
+
+
+        <div class="tertiary-body">
+            <p class="results-number">{{ productCount }} results found</p>
+            <div class="items-block">
+              {% for product in productList %}
+                <article class="item">
+                <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
+                    <div class="item-img">
+                        <img src="/static/images/{{product.get_thumbnail()}}">
+                    </div>
+                    <div class="item-caption-box">
+                        <div class="item-caption">
+                            <div>
+                                <p class="item-description">{{product.get_product_name()}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="price-box">
+                        <span class="price">${{product.get_price()}}</span>
+                    </p>
+                </a>
+                </article>
+              {% endfor %}
+            </div> <!--Items block-->
+        </div> <!--Tertiary body->
+      </div> <!--Column-->
+    </div> <!--Row-->
+</div>
+{% endblock %}
