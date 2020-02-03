@@ -3,6 +3,7 @@
 {% block style %}
 <link rel="stylesheet" href="/static/styles/cart.css">{% endblock %}
 {% block content %}
+{% from "includes/_formhelper.html" import render_field %}
 <div id="content">
 
   <div id="MyCart">
@@ -80,12 +81,14 @@
         <div>SGD $21.35</div>
         <div>NEW TOTAL</div>
       </div>
+      <form method="POST" action="{{url_for('cart')}}">
       <div id="delivery">
-        <input type="checkbox">Home Delivery</input>
+        {{render_field(NoCollectForm.home_delivery)}}
       </div>
       <div id="CHECKOUT">
-        <a href="/checkout" class="mybutton">CHECKOUT</a>
+        <button class="mybutton" value="submit">CHECKOUT</a>
       </div>
+      </form>
     </div>
   </div>
 </div>

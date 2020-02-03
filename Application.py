@@ -382,15 +382,15 @@ def IndItem(serialNo):
 # Shopping Cart
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
+    Delivery = NoCollectForm(request.form)
     db = shelve.open('storage.db','r')
     try:
-        user = db['Current User']
         current = db['Current User']
     except:
         print('Error reading Current User.')
         current = False
 
-    cart = user.get_shopping_cart()
+    cart = current.get_shopping_cart()
     db.close()
     cartList = []
     totalCost = 0
@@ -399,10 +399,20 @@ def cart():
         cartList.append(cart[product])
     totalCost = '%.2f' %float(totalCost)
 
+    if request.method == "POST" and Delivery.validate():
+        NoCollect = Delivery.home_delivery.data
+        if NoCollect == True:
+            return redirect(url_for('checkout',delivery=NoCollect))
+        else:
+            searchForm = searchBar()
+            # if request.method == "POST" and searchForm.validate():
+            #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
+            return redirect(url_for('checkout', delivery=False))
+
     searchForm = searchBar()
-    if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current)
+    # if request.method == "POST" and searchForm.validate():
+    #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery)
 
 @app.route("/addToCart/<name>", methods=['GET', 'POST'])
 def addToCart(name):
@@ -606,8 +616,9 @@ def moveToCart(serialNo):
     return redirect('/wishlist/a-z')
 
 # Checkout
-@app.route('/checkout', methods=['GET', 'POST'])
-def checkout():
+@app.route('/checkout/<delivery>', methods=['GET', 'POST'])
+def checkout(delivery):
+    Delivery = delivery
     current = ""
     searchForm = searchBar()
     deliveryForm = DeliveryForm(request.form)
@@ -650,10 +661,31 @@ def checkout():
         deliveryId = deliveryInfo.get_id()
         transactions[deliveryId] = deliveryInfo
         db["Transactions"] = transactions
-        current.set_transaction(deliveryId)
+        current.set_transactions(deliveryId)
         db["Current User"] = current
         db.close()
         return redirect(url_for("summary", deliveryId= deliveryId))
+    if request.method == "POST" and collectionForm.validate():
+        db = shelve.open('storage.db','c')
+        transactions = {}
+        try:
+            transactions = db["Transactions"]
+        except:
+            print("Error in retrieving transactions")
+        try:
+            current = db["Current User"]
+        except:
+            print("Current dude for collection MIA")
+        collection = Collection(collectionForm.name.data, collectionForm.phone.data, current.get_email(), total, prodlist,
+        collectionForm.payment_mode.data, collectionForm.credit_card_number.data, collectionForm.credit_card_expiry.data, collectionForm.credit_card_cvv.data,
+        collectionForm.date.data, collectionForm.time.data)
+        collectionId = collection.get_id()
+        transactions[collectionId] = collection
+        db["Transactions"] = transactions
+        current.set_transactions(collectionId)
+        db["Current User"] = current
+        db.close()
+        return redirect(url_for("summary",collectionId=collectionId))
         # current_user.set_transactions(deliveryInfo.get_id())
         # transactions[deliveryInfo.get_id()] = deliveryInfo
         # db["Transactions"] = transactions
@@ -667,7 +699,7 @@ def checkout():
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data)
 
-    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal)
+    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal, delivery = Delivery)
 
 # Summary page
 @app.route('/summary/<deliveryId>', methods= ["GET", "POST"])

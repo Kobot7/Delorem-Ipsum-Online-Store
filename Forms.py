@@ -108,6 +108,10 @@ class EditProfileForm(Form):
     password = StringField("Password")
     newpassword = StringField('New Password')
 
+class NoCollectForm(Form):
+    home_delivery = BooleanField("Home Delivery")
+
+
 cardlist = [('visa','Visa'),
             ('mastercard', 'Master card')]
 
@@ -131,7 +135,6 @@ class CollectionForm(Form):
     credit_card_cvv = IntegerField('CVV', [validators.DataRequired(), validators.NumberRange(min=100, max = 999)])
     date = DateField('Date',[validators.DataRequired()])
     time = IntegerField('Postal Code', [validators.NumberRange(min=10000, max=830000, message="Postal code is 6 digits")])
-    unit_no = StringField('Unit No',[validators.Length(min=5,max=7),validators.DataRequired()])
 
 
 class SearchBar(Form):

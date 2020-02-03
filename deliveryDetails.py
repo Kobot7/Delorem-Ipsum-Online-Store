@@ -76,6 +76,7 @@ class Delivery(Transaction):
         self.__street_name = street_name
         self.__postal_code = postal_code
         self.__unit_no = unit_no
+        self.__type = "delivery"
 
     def set_street_name(self, street_name):
         self.__street_name = street_name
@@ -100,6 +101,7 @@ class Collection(Transaction):
         super().__init__(name, phone, email, total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv)
         self.__date = date
         self.__time = time
+        self.__type = "collection"
 
     def set_date(self, date):
         self.__date = date
