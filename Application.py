@@ -650,7 +650,7 @@ def checkout():
         deliveryId = deliveryInfo.get_id()
         transactions[deliveryId] = deliveryInfo
         db["Transactions"] = transactions
-        current.set_transaction(deliveryId)
+        current.set_transactions(deliveryId)
         db["Current User"] = current
         db.close()
         return redirect(url_for("summary", deliveryId= deliveryId))
