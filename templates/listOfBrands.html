@@ -9,8 +9,15 @@
   </ol>
 </nav>
 
-<div class="container">
-{%for%}
+{%for key in brandsDict%}
+<h3>{{key}}</h3>
+<hr>
+<ul>
+  {%for brand in brandsDict[key]%}
+  <li><a href="">{{brand}}<a></li>
+{%endfor%}
+</ul>
+{%endfor%}
 
 
 </div>

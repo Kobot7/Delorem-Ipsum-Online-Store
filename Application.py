@@ -1092,23 +1092,18 @@ def listOfBrands():
 
     start_with_letter = []
     start_with_other = []
-    brands = []
+
+    brandsDict = {}
+    for letter in string.ascii_lowercase:
+        brandsDict[letter]=[]
+
+
     for product in productsDict:
         brand = productsDict[product].get_brand()
-        brands.append(brand)
-        if brand[0].isalpha():
-            start_with_letter.append(brand)
-        else:
-            start_with_other.append(brand)
+        first_letter = brand[0].lower()
+        brandsDict[first_letter].append(brand)
 
-    letters = []
-    for letter in string.ascii_lowercase:
-        letters.append(letter)
 
-    
-
-    for brand in sorted_alphabetically:
-        first_letter=brand[0]
 
 
     db.close()
@@ -1116,7 +1111,7 @@ def listOfBrands():
     if request.method == "POST" and searchForm.validate():
         print(searchForm.search_input.data)
 
-    return render_template('listOfBrands.html', searchForm=searchForm, sorted_alphabetically=sorted_alphabetically)
+    return render_template('listOfBrands.html', searchForm=searchForm, brandsDict=brandsDict)
 
 if __name__=='__main__':
     excel.init_excel(app)
