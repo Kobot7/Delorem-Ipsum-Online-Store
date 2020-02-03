@@ -10,25 +10,39 @@
 
   <div class="col-md-11 mt-3">
     {% for transaction in transactionsList %}
+    {% set id = '{{ transaction.get_id() }}' %}
     <div id="accordion">
     <div class="card">
       <div class="card-header" id="headingOne">
         <h5 class="mb-0">
-          <button class="btn btn-link" data-toggle="collapse" data-target="#{{ transaction.get_id() }}" aria-expanded="true" aria-controls="collapseOne">
+          <a data-toggle="collapse" data-target="#{{id}}" aria-expanded="true" aria-controls="collapseOne">
             {{ transaction.get_id() }}
-          </button>
+          </a>
         </h5>
       </div>
 
-      <div id="{{ transaction.get_id() }}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+      <div id="{{id}}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
         <div class="card-body">
           Name: {{ transaction.get_name() }}
+          <br><br>
           Phone: {{ transaction.get_phone() }}
+          <br><br>
           Email: {{ transaction.get_email() }}
-          Date: {{ transaction.get_date() }}
-          Time:  {{ transaction.get_time() }}
-
-          total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv
+          <br><br>
+          Payment Mode: {{ transaction.get_payment_mode() }}
+          <br><br>
+          Credit Card no.: {{ transaction.get_credit_card_number() }}
+          <br><br>
+          Street Name: {{ transaction.get_street_name() }}, #{{ transaction.get_unit_no() }}, S{{ transaction.get_postal_code() }}
+          <br><br>
+          Items:
+            <ol>
+              {% for item in transaction.get_items() %}
+                <li>{{ item.get_product_name() }} ({{item.get_serial_no()}})<br>
+              {% endfor %}
+            </ol>
+          <br>
+          Total: ${{ transaction.get_total() }}
         </div>
       </div>
     </div>
