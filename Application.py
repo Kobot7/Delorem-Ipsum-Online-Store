@@ -1081,6 +1081,43 @@ def deliveryInvoice(email):
         print(searchForm.search_input.data)
     return redirect('/home')
 
+@app.route('/listOfBrands')
+def listOfBrands():
+    productsDict ={}
+    db = shelve.open('storage.db', 'c')
+    try:
+        productsDict = db["Products"]
+    except:
+        print("Error retrieving products from storage.db")
+
+    start_with_letter = []
+    start_with_other = []
+    brands = []
+    for product in productsDict:
+        brand = productsDict[product].get_brand()
+        brands.append(brand)
+        if brand[0].isalpha():
+            start_with_letter.append(brand)
+        else:
+            start_with_other.append(brand)
+
+    letters = []
+    for letter in string.ascii_lowercase:
+        letters.append(letter)
+
+    
+
+    for brand in sorted_alphabetically:
+        first_letter=brand[0]
+
+
+    db.close()
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
+
+    return render_template('listOfBrands.html', searchForm=searchForm, sorted_alphabetically=sorted_alphabetically)
+
 if __name__=='__main__':
     excel.init_excel(app)
     app.run(debug=True)
