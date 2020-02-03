@@ -101,10 +101,10 @@ class RegistrationForm(Form):
     confirm = PasswordField('Repeat Password')
 
 class EditProfileForm(Form):
-    username = StringField('Username')
+    username = StringField('Username', [validators.Length(min=1, max=25), validators.DataRequired()])
     address = TextAreaField('Address')
-    phone = StringField('Contact Number')
-    email = StringField('Contact Email')
+    phone = IntegerField('Contact Number',[validators.NumberRange(min=80000000, max=99999999, message="Please enter a valid phone number")])
+    email = StringField('Contact Email', [validators.Length(min=6, max=35)])
     password = StringField("Password")
     newpassword = StringField('New Password')
 
@@ -113,7 +113,7 @@ class NoCollectForm(Form):
 
 
 cardlist = [('visa','Visa'),
-            ('mastercard', 'Master card')]
+            ('mastercard', 'MasterCard')]
 
 class DeliveryForm(Form):
     name = StringField('Cardholder Name',[validators.DataRequired()])
