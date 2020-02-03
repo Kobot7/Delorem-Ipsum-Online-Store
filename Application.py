@@ -1113,6 +1113,25 @@ def listOfBrands():
 
     return render_template('listOfBrands.html', searchForm=searchForm, brandsDict=brandsDict)
 
+@app.route('/Brand/<brand>', methods=['GET', 'POST'])
+def brand(brand):
+    db = shelve.open('storage.db', 'r')
+    try:
+        Products = db["Products"]
+    except:
+        print("Error in retrieving products from shelve")
+
+    products = []
+    for id in Products:
+        product = Products[id]
+        if brand == product.get_brand().lower():
+            if product.get_activated() == True:
+                products.append(product)
+
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        return redirect('/search/' + searchForm.search_input.data)
+    return render_template('search.html', productList=products, productCount=len(products), searchForm=searchForm, brand=brand)
 if __name__=='__main__':
     excel.init_excel(app)
     app.run(debug=True)
