@@ -9,13 +9,13 @@
     <div id="carousel-ads" class="carousel slide" data-ride="carousel">
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <a href="/search/yakult"><img class="d-block w-100" src="/static/images/carousel-yakult.jpg" alt="First slide"></a>
+          <a href="/search/yakult/view/descending"><img class="d-block w-100" src="/static/images/carousel-yakult.jpg" alt="First slide"></a>
         </div>
         <div class="carousel-item">
-          <img class="d-block w-100" src="/static/images/carousel-perfume.jpg" alt="Second slide">
+          <a href="/mainCategory/Cosmetics/view/descending"><img class="d-block w-100" src="/static/images/carousel-perfume.jpg" alt="Second slide"></a>
         </div>
         <div class="carousel-item">
-          <img class="d-block w-100" src="/static/images/carousel-meds.jpg" alt="Third slide">
+          <a href="/mainCategory/Health/view/descending"><img class="d-block w-100" src="/static/images/carousel-meds.jpg" alt="Third slide"></a>
         </div>
       </div>
 
@@ -34,7 +34,7 @@
 <div class="row justify-content-center mt-4">
   <div class="tertiary-body">
     <div class="puthir">
-      <span>Most popular Items</span>
+      <span>Today's View</span>
     </div>
       <div class="home-block">
         {% for product in viewsList %}
@@ -58,7 +58,7 @@
         {% endfor %}
       </div> <!--Items block-->
       <div class="puthir">
-        <span>Hot Selling Items</span>
+        <span>Hot Selling</span>
       </div>
         <div class="home-block">
           {% for product in purchasesList %}

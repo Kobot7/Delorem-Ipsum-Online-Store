@@ -9,11 +9,12 @@
         <h3 class="">Search results for '{{ searchString }}'</h3>
         <form action="">
             <p class="float-left">Sort By:</p>
-            <select>
-                <option value="popularity">Popularity</option>
-                <option value="price lowest to highest">Price low to high</option>
-                <option value="price highest to lowest">Price high to low</option>
-                <option value="what's new">What's New</option>
+            <select id="filterSelect">
+                <option value="/view/descending">Popularity</option>
+                <option value="/name/ascending">A-Z</option>
+                <option value="/name/descending">Z-A</option>
+                <option value="/price/ascending">Price: Low to High</option>
+                <option value="/price/descending">Price: High to Low</option>
             </select>
         </form>
 
@@ -44,4 +45,16 @@
       </div> <!--Column-->
     </div> <!--Row-->
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  var pathname = window.location.pathname.split('/');
+  document.getElementById("filterSelect").value = '/' + pathname[3] + '/' + pathname[4];
+
+  document.getElementById('filterSelect').addEventListener("change", function() {
+    var filter = document.getElementById('filterSelect').value;
+    window.location.href = '/' + pathname[1] + '/' + pathname[2] + filter;
+  });
+</script>
 {% endblock %}

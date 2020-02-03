@@ -7,7 +7,7 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/home">Home</a></li>
-        <li class="breadcrumb-item"><a href="/mainCategory/{{ mainCategory }}">{{ mainCategory }}</a></li>
+        <li class="breadcrumb-item"><a href="/mainCategory/{{ mainCategory }}/view/descending">{{ mainCategory }}</a></li>
         <li class="breadcrumb-item active" aria-current="page">{{ subCategory }}</li>
       </ol>
     </nav>
@@ -59,7 +59,7 @@
 <script>
   var pathname = window.location.pathname.split('/');
   document.getElementById("filterSelect").value = '/' + pathname[3] + '/' + pathname[4];
-  
+
   document.getElementById('filterSelect').addEventListener("change", function() {
     var filter = document.getElementById('filterSelect').value;
     window.location.href = '/' + pathname[1] + '/' + pathname[2] + filter;

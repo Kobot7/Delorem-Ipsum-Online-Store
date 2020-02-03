@@ -58,8 +58,8 @@ def testing():
     db['Products'] = productDict
     db.close()
 
-@app.route('/search/<searchString>', methods=['GET', 'POST'])
-def search(searchString):
+@app.route('/search/<searchString>/<category>/<order>', methods=['GET', 'POST'])
+def search(searchString, category, order):
     db = shelve.open('storage.db', 'r')
     try:
         Products = db["Products"]
@@ -73,9 +73,11 @@ def search(searchString):
             if product.get_activated() == True:
                 products.append(product)
 
+    products = sort_by(products, category, order)
+
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
     return render_template('search.html', productList=products, searchString=searchString, productCount=len(products), searchForm=searchForm)
 
 # Homepage
@@ -111,7 +113,7 @@ def home():
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
 
     return render_template("home.html", current=current, searchForm=searchForm, purchasesList=purchasesList, healthList=healthList, viewsList=viewsList)
 
@@ -258,7 +260,7 @@ def login():
 
         searchForm = searchBar()
         if request.method == "POST" and searchForm.validate():
-            return redirect('/search/' + searchForm.search_input.data)
+            return redirect('/search/' + searchForm.search_input.data + '/view/descending')
         return render_template('login.html', username_correct=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
     else:
         return redirect(url_for("home"))
@@ -290,6 +292,7 @@ def mainCategory(mainCategory, category, order):
         current = db["Current User"]
     except:
         print("Error in retrieving current user, subcat")
+        current = False
 
     products = []
 
@@ -303,8 +306,8 @@ def mainCategory(mainCategory, category, order):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data)
-    return render_template('mainCategory.html', productList=products, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
+        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
+    return render_template('mainCategory.html', productList=products, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current)
 
 # Supplements(one of the subsections)
 @app.route('/subCategory/<subCategory>/<category>/<order>/', methods=['GET', 'POST'])
@@ -318,6 +321,8 @@ def subCategory(subCategory, category, order):
         current = db["Current User"]
     except:
         print("Error in retrieving current user, subcat")
+        current = False
+
     products = []
     for id in Products:
         product = Products[id]
@@ -330,8 +335,8 @@ def subCategory(subCategory, category, order):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data)
-    return render_template('subCategory.html', productList=products, subCategory=subCategory, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm)
+        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
+    return render_template('subCategory.html', productList=products, subCategory=subCategory, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current)
 
 # Ribena(one of the products)
 @app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
@@ -361,7 +366,7 @@ def IndItem(serialNo):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
     return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken)
 
 # Shopping Cart
@@ -386,7 +391,7 @@ def cart():
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
     return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current)
 
 @app.route("/addToCart/<name>", methods=['GET', 'POST'])
@@ -418,7 +423,7 @@ def addToCart(name):
 
     # searchForm = searchBar()
     # if request.method == "POST" and searchForm.validate():
-    #     return redirect('/search/' + searchForm.search_input.data)
+    #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
     return redirect("/cart")
 
 @app.route('/deleteShoppingCartItem/<serialNo>', methods=['GET', 'POST'])
@@ -450,7 +455,7 @@ def deleteShoppingCartItem(serialNo):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
     return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
 
 @app.route('/moveToWishlist/<serialNo>', methods=['GET', 'POST'])
@@ -508,7 +513,7 @@ def wishlist(filter):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
     return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm, filter_breadcrumb=filter_breadcrumb, current=current)
 
 @app.route("/addToWishlist/<name>", methods=['GET', 'POST'])
@@ -538,7 +543,7 @@ def addToWishlist(name):
     wishlist = current_user.get_wishlist()
     db.close()
     # if request.method == "POST" and searchForm.validate():
-    #     return redirect('/search/' + searchForm.search_input.data)
+    #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
     return redirect("/wishlist/a-z")
 
 @app.route('/deleteWishListItem/<serialNo>', methods=['GET', 'POST'])
@@ -627,7 +632,7 @@ def checkout():
         print(deliveryInfo.get_name())
     total = "%.2f" %float(total)
     # if request.method == "POST" and searchForm.validate():
-    #     return redirect('/search/' + searchForm.search_input.data)
+    #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
 
     return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number)
 
@@ -650,7 +655,7 @@ def summary(order):
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data)
+        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
 
     return render_template('summary.html', searchForm=searchForm, details=order)
 
