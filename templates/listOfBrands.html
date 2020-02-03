@@ -10,16 +10,21 @@
 </nav>
 
 {%for key in brandsDict%}
-<h3>{{key}}</h3>
-<hr>
+<h3>{{key.upper()}}</h3>
 <ul>
-  {%for brand in brandsDict[key]%}
-  <li><a href="/Brand/{{brand}}">{{brand}}<a></li>
-{%endfor%}
+  {%if brandsDict[key] != []%}
+    {%for brand in brandsDict[key]%}
+    <li><a href="/Brand/{{brand}}">{{brand}}<a></li>
+    {%endfor%}
+  {%else%}
+  <p>No brands start with this letter!</p>
+  {%endif%}
+
 </ul>
+<hr>
 {%endfor%}
 
 
-</div>
+
 
 {%endblock%}

@@ -1090,6 +1090,11 @@ def listOfBrands():
     except:
         print("Error retrieving products from storage.db")
 
+    try:
+        current = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
     start_with_letter = []
     start_with_other = []
 
@@ -1121,17 +1126,23 @@ def brand(brand):
     except:
         print("Error in retrieving products from shelve")
 
+    try:
+        current = db["Current User"]
+
+    except:
+        print('Error in retrieving current user from storage.db.')
+
     products = []
     for id in Products:
         product = Products[id]
-        if brand == product.get_brand().lower():
+        if brand.lower() == product.get_brand().lower():
             if product.get_activated() == True:
                 products.append(product)
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('search.html', productList=products, productCount=len(products), searchForm=searchForm, brand=brand)
+    return render_template('productByBrand.html', productList=products, productCount=len(products), searchForm=searchForm, brand=brand, current=current)
 if __name__=='__main__':
     excel.init_excel(app)
     app.run(debug=True)
