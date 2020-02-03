@@ -18,6 +18,8 @@ import plotly
 import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
+import flask_excel as excel
+
 
 # Flask mail
 from flask_mail import Mail, Message
@@ -965,6 +967,49 @@ def transactions():
 
     return render_template('transactions.html', currentPage='Transactions', transactionsList=transactionsList)
 
+@app.route('/downloadProducts', methods=['GET'])
+def download():
+    db = shelve.open('storage.db', 'c')
+
+    try:
+        productDict = db['Products']
+        db.close()
+    except:
+        print('Error in retrieving Products from storage.db.')
+
+    productArray = [['Name'
+                    , 'Brand'
+                    , 'Sub-Category'
+                    , 'Serial No.'
+                    , 'Price'
+                    , 'Description'
+                    , 'Activated'
+                    , 'Quantity'
+                    , 'Stock Threshold']]
+
+
+    for key in productDict:
+        product = productDict[key]
+
+        if product.get_activated():
+            activated = 'Show'
+        else:
+            activated = 'Hide'
+
+        data = [product.get_product_name()
+                , product.get_brand()
+                , product.get_sub_category()
+                , product.get_serial_no()
+                , product.get_price()
+                , product.get_description()
+                , activated
+                , product.get_quantity()
+                , product.get_stock_threshold()]
+
+        productArray.append(data)
+
+    return excel.make_response_from_array(productArray, file_type='xls', file_name='Delorem Ipsum product records')
+
 
 # Other stuff
 @app.route('/categories')
@@ -1037,4 +1082,5 @@ def deliveryInvoice(email):
     return redirect('/home')
 
 if __name__=='__main__':
+    excel.init_excel(app)
     app.run(debug=True)
