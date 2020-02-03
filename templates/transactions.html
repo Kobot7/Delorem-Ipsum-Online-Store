@@ -33,6 +33,8 @@
           <br><br>
           Credit Card no.: {{ transaction.get_credit_card_number() }}
           <br><br>
+          Street Name: {{ transaction.get_street_name() }}, #{{ transaction.get_unit_no() }}, S{{ transaction.get_postal_code() }}
+          <br><br>
           Items:
             <ol>
               {% for item in transaction.get_items() %}
