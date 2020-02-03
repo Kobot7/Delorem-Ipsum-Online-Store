@@ -36,7 +36,7 @@ app.config.update(
     MAIL_USE_TLS= True,
     MAIL_USE_SSL= False,
 	MAIL_USERNAME = 'deloremipsumonlinestore@outlook.com',
-	# MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
+	MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
 	MAIL_DEBUG = True,
 	MAIL_SUPPRESS_SEND = False,
     MAIL_ASCII_ATTACHMENTS = True
@@ -1068,6 +1068,7 @@ def deliveryInvoice(email):
 
     cart = current_user.get_shopping_cart()
     order_ID = current_user.get_transactions()
+
     cartList = []
     images = []
     for product in cart:
@@ -1102,7 +1103,7 @@ def deliveryInvoice(email):
                 print("attached")
 
         msg.body = "This ur e reciept"
-        msg.html = render_template('html_in_invoice.html',  cartList=cartList, current_user=current_user ,order_ID= order_ID)
+        msg.html = render_template('html_in_invoice.html',  cartList=cartList, current_user=current_user )
         print("testinggggggggggggggg")
         mail.send(msg)
         print("MAIL SENT")
