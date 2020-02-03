@@ -607,7 +607,6 @@ def checkout():
     deliveryForm = DeliveryForm(request.form)
     collectionForm = CollectionForm(request.form)
     db = shelve.open('storage.db', 'c')
-    transactions = {}
     try:
         current = db["Current User"]
     except:
@@ -619,49 +618,70 @@ def checkout():
 
     cart = current.get_shopping_cart()
     prodlist = []
-    total = 0
+    subtotal = 0
     for key in cart:
         prodlist.append(cart[key])
-        total += float(cart[key].get_price())
+        subtotal += float(cart[key].get_price())
     number = len(prodlist)
+    total = subtotal + 12
+    db.close()
     if request.method == "POST" and deliveryForm.validate():
-        deliveryInfo = Transaction(deliveryForm.name.data, deliveryForm.phone.data, current.get_email(), total, prodlist, deliveryForm.payment_mode.data, deliveryForm.credit_card_number.data, deliveryForm.credit_card_expiry.data, deliveryForm.credit_card_cvv.data)
-    # current.set_transactions(deliveryInfo.get_id())
-    # transactions[deliveryInfo.get_id()] = deliveryInfo
-    # db["Transactions"] = transactions
-    #     current.set_orders(deliveryInfo.get_id())
-    #     db["Current User"] = current
+        db = shelve.open('storage.db','c')
+        transactions = {}
+        try:
+            transactions = db["Transactions"]
+        except:
+            print("error in retrieving transaction information")
+        try:
+            current = db["Current User"]
+        except:
+            print("Can't get user")
+
+        deliveryInfo = Delivery(deliveryForm.name.data, deliveryForm.phone.data,
+                    current.get_email(),total, prodlist, deliveryForm.payment_mode.data,
+                     deliveryForm.credit_card_number.data, deliveryForm.credit_card_expiry.data, deliveryForm.credit_card_cvv.data,
+                     deliveryForm.street_name.data,deliveryForm.postal_code.data,deliveryForm.unit_no.data)
+        deliveryId = deliveryInfo.get_id()
+        transactions[deliveryId] = deliveryInfo
+        db["Transactions"] = transactions
+        db.close()
+        return redirect(url_for("summary", deliveryId= deliveryId))
+        # current_user.set_transactions(deliveryInfo.get_id())
+        # transactions[deliveryInfo.get_id()] = deliveryInfo
+        # db["Transactions"] = transactions
+    #     current_user.set_orders(deliveryInfo.get_id())
+    #     db["Current User"] = current_user
     #     db.close()
     #     return render_template('checkout.html', current=current, completedForm=deliveryInfo, searchForm=searchForm, cart=prodlist, total=total, number=number)
         print(deliveryInfo.get_name())
     total = "%.2f" %float(total)
-    if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
+    subtotal = "%.2f" %float(subtotal)
+    # if request.method == "POST" and searchForm.validate():
+    #     return redirect('/search/' + searchForm.search_input.data)
 
-    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform=collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number)
+    return render_template('checkout.html', deliveryform=deliveryForm, current=current_user, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal)
 
 # Summary page
-@app.route('/summary', methods= ["GET", "POST"])
-def summary(order):
-    details.get_street_name()
-    details.get_postal_code()
-    details.get_unit_no()
-    details.get_name()
-    details.get_phone()
-    details.get_payment_mode()
-    details.get_credit_card_number()
-    details.get_credit_card_expiry()
-    details.get_credit_card_cvv()
-
-    if request.method == "POST":
-        db = open.shelve('storage.db', 'c')
-        details = db[Transactions]
-
+@app.route('/summary/<deliveryId>', methods= ["GET", "POST"])
+def summary(deliveryId):
+    deliveryId = int(deliveryId)
+    db = shelve.open('storage.db','r')
+    transactions = {}
+    try:
+        transactions = db["Transactions"]
+    except:
+        print("error in retrieving transaction information")
+    for id in transactions:
+        if id == deliveryId:
+            details = transactions[deliveryId]
+            break
+        else:
+            print(id)
     searchForm = searchBar()
-    if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
+        # if request.method == "POST" and searchForm.validate():
+        #     return redirect('/search/' + searchForm.search_input.data)
 
-    return render_template('summary.html', searchForm=searchForm, details=order)
+    return render_template('summary.html', searchForm=searchForm, details=details)
 
 
 # Admin Side
