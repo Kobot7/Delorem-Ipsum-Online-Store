@@ -23,26 +23,26 @@
 
       <div id="{{id}}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
         <div class="card-body">
-          Name: {{ transaction.get_name() }}
+          <b>Name:</b> {{ transaction.get_name() }}
           <br><br>
-          Phone: {{ transaction.get_phone() }}
+          <b>Phone:</b> {{ transaction.get_phone() }}
           <br><br>
-          Email: {{ transaction.get_email() }}
+          <b>Email:</b> {{ transaction.get_email() }}
           <br><br>
-          Payment Mode: {{ transaction.get_payment_mode() }}
+          <b>Payment Mode:</b> {{ transaction.get_payment_mode() }}
           <br><br>
-          Credit Card no.: {{ transaction.get_credit_card_number() }}
+          <b>Credit Card no.:</b> {{ transaction.get_credit_card_number() }}
           <br><br>
-          Street Name: {{ transaction.get_street_name() }}, #{{ transaction.get_unit_no() }}, S{{ transaction.get_postal_code() }}
+          <b>Street Name:</b> {{ transaction.get_street_name() }}, #{{ transaction.get_unit_no() }}, S{{ transaction.get_postal_code() }}
           <br><br>
-          Items:
+          <b>Items:</b>
             <ol>
               {% for item in transaction.get_items() %}
                 <li>{{ item.get_product_name() }} ({{item.get_serial_no()}})<br>
               {% endfor %}
             </ol>
           <br>
-          Total: ${{ transaction.get_total() }}
+          <b>Total:</b> ${{ transaction.get_total() }}
         </div>
       </div>
     </div>

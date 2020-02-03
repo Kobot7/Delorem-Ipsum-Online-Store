@@ -20,7 +20,7 @@
             <hr>
             <div id="section2">
                     <div id="payment-details">
-                        <form class="delivery" action = "{{url_for('checkout')}}" method= "POST" >
+                        <form class="delivery" action = "" method= "POST" >
                           <div class="form-group">
                             {{ render_field(deliveryform.name, class="form-control") }}
                           </div>
@@ -61,8 +61,11 @@
                             <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="post">
                               <button>Confirm</button>
                             </form>
-
+                          </form>
                           </div>
+                          <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="POST">
+                              <button>Email</button>
+                          </form>
 
                     </div>
     </div>
@@ -143,9 +146,7 @@
                 <div>Please enter your discount code</div>
                 <input type="text">
             </div>
-            <form action="{{url_for('checkout')}}" method="POST">
-                <button type="button" data-dismiss="modal" value="submit">Confirm</button>
-            </form>
+
         </div>
     </div>
 </div>
