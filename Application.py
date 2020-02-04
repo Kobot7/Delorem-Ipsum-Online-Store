@@ -363,12 +363,15 @@ def IndItem(serialNo):
         print("Unable to get the current dude!")
     IndItem = products[serialNo]
     IndItem.increase_views()
-    wishlist = current.get_wishlist()
-    taken = False
-    for serial_no in wishlist:
-        if serial_no == serialNo:
-            taken = True
-            break
+    try:
+        wishlist = current.get_wishlist()
+        taken = False
+        for serial_no in wishlist:
+            if serial_no == serialNo:
+                taken = True
+                break
+    except:
+        taken =''
     db['Products'] = products
     db.close()
     subCategory = IndItem.get_sub_category()
