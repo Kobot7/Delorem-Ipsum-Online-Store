@@ -1154,6 +1154,68 @@ def deliveryInvoice(email):
         print(searchForm.search_input.data)
     return redirect('/home')
 
+@app.route('/listOfBrands')
+def listOfBrands():
+    productsDict ={}
+    db = shelve.open('storage.db', 'c')
+    try:
+        productsDict = db["Products"]
+    except:
+        print("Error retrieving products from storage.db")
+
+    try:
+        current = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    start_with_letter = []
+    start_with_other = []
+
+    brandsDict = {}
+    for letter in string.ascii_lowercase:
+        brandsDict[letter]=[]
+
+
+    for product in productsDict:
+        brand = productsDict[product].get_brand()
+        first_letter = brand[0].lower()
+        brandsDict[first_letter].append(brand)
+
+
+
+
+    db.close()
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
+
+    return render_template('listOfBrands.html', searchForm=searchForm, brandsDict=brandsDict)
+
+@app.route('/Brand/<brand>', methods=['GET', 'POST'])
+def brand(brand):
+    db = shelve.open('storage.db', 'r')
+    try:
+        Products = db["Products"]
+    except:
+        print("Error in retrieving products from shelve")
+
+    try:
+        current = db["Current User"]
+
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    products = []
+    for id in Products:
+        product = Products[id]
+        if brand.lower() == product.get_brand().lower():
+            if product.get_activated() == True:
+                products.append(product)
+
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        return redirect('/search/' + searchForm.search_input.data)
+    return render_template('productByBrand.html', productList=products, productCount=len(products), searchForm=searchForm, brand=brand, current=current)
 if __name__=='__main__':
     excel.init_excel(app)
     app.run(debug=True)
