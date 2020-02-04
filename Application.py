@@ -36,7 +36,7 @@ app.config.update(
     MAIL_USE_TLS= True,
     MAIL_USE_SSL= False,
 	MAIL_USERNAME = 'deloremipsumonlinestore@outlook.com',
-	MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
+	# MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
 	MAIL_DEBUG = True,
 	MAIL_SUPPRESS_SEND = False,
     MAIL_ASCII_ATTACHMENTS = True
@@ -306,7 +306,7 @@ def mainCategory(mainCategory, category, order):
 
     for id in Products:
         product = Products[id]
-        if get_main_category(product.get_sub_category()).replace(' ','') == mainCategory:
+        if get_main_category(product.get_sub_category()).replace(' ','') == mainCategory.replace(' ',''):
             if product.get_activated() == True:
                 products.append(product)
 
