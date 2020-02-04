@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Drug Store - Item{% endblock %}
-{% block style %}<link rel="stylesheet" type = "text/css" href = "/static/styles/items.css">{% endblock %}
+{% block style %}
+<link rel="stylesheet" type="text/css" href="/static/styles/items.css">{% endblock %}
 {% block content %}
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
@@ -21,7 +22,7 @@
     <div class="col-md-4">
       <h3 class="mt-0 mb-3">{{product.get_product_name()}}</h3>
       <p class="price-box mb-0">
-          <span class="price">${{product.get_price()}}</span>
+        <span class="price">${{product.get_price()}}</span>
       </p>
       <p>
         Brand: {{product.get_brand()}}
@@ -29,6 +30,7 @@
       <p>
         {{product.get_description()}}
       </p>
+
       {%if current == ''%}
       <form action="{{url_for('login')}}" method="post" onsubmit="return confirm('Are you sure you want to move this item to your wishlist?')">
         <button class="btn btn-success my-2" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
@@ -64,26 +66,26 @@
 
     <div class="col-md-3 col-sm-6 mb-4">
       <a href="#">
-            <img class="img-fluid" src="/static/images/Ribena-2.jpg" alt="">
-          </a>
+        <img class="img-fluid" src="/static/images/Ribena-2.jpg" alt="">
+      </a>
     </div>
 
     <div class="col-md-3 col-sm-6 mb-4">
       <a href="#">
-            <img class="img-fluid" src="/static/images/Ribena-3.jpg" alt="">
-          </a>
+        <img class="img-fluid" src="/static/images/Ribena-3.jpg" alt="">
+      </a>
     </div>
 
     <div class="col-md-3 col-sm-6 mb-4">
       <a href="#">
-            <img class="img-fluid" src="/static/images/Ribena-4.jpg" alt="">
-          </a>
+        <img class="img-fluid" src="/static/images/Ribena-4.jpg" alt="">
+      </a>
     </div>
 
     <div class="col-md-3 col-sm-6 mb-4">
       <a href="#">
-            <img class="img-fluid" src="/static/images/Ribena-1.jpg" alt="">
-          </a>
+        <img class="img-fluid" src="/static/images/Ribena-1.jpg" alt="">
+      </a>
     </div>
 
   </div>
