@@ -30,17 +30,23 @@
             </div>
           </div>
         </li>
-        {% else %}
-        <li class="nav-item">
-          <a class="nav-link" href="/login"><i class="icon-user"></i> Login | Register</a>
-        </li>
-        {% endif %}
         <li class="nav-item">
           <a class="nav-link" href="/cart"><i class="icon-shopping-cart"></i> Cart</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/wishlist/a-z"><i class="icon-heart"></i> Wish List</a>
         </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="/login"><i class="icon-user"></i> Login | Register</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/login"><i class="icon-shopping-cart"></i> Cart</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/login"><i class="icon-heart"></i> Wish List</a>
+        </li>
+        {% endif %}
       </ul>
     </div>
   </nav>
