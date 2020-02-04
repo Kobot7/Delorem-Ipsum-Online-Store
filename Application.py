@@ -384,6 +384,7 @@ def IndItem(serialNo):
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
     Delivery = NoCollectForm(request.form)
+    Discount = DiscountForm(request.form)
     db = shelve.open('storage.db','r')
     try:
         current = db['Current User']
@@ -410,10 +411,13 @@ def cart():
             #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
             return redirect(url_for('checkout', delivery=False))
 
+    # if request.method == "POST" and Discount.validate():
+
+
     searchForm = searchBar()
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery)
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount)
 
 @app.route("/addToCart/<name>", methods=['GET', 'POST'])
 def addToCart(name):
@@ -1190,7 +1194,7 @@ def listOfBrands():
     if request.method == "POST" and searchForm.validate():
         print(searchForm.search_input.data)
 
-    return render_template('listOfBrands.html', searchForm=searchForm, brandsDict=brandsDict)
+    return render_template('listOfBrands.html', searchForm=searchForm, brandsDict=brandsDict, current=current)
 
 @app.route('/Brand/<brand>', methods=['GET', 'POST'])
 def brand(brand):

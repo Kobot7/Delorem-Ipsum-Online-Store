@@ -148,3 +148,6 @@ admin_searchList = [('name-brand', 'Name/Brand')
 class AdminSearch(Form):
     search_cat = SelectField('', choices=admin_searchList, default='name')
     search_input = StringField('', [validators.DataRequired()])
+
+class DiscountForm(Form):
+    discount_code = StringField('Discount code')
