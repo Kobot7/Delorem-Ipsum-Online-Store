@@ -1,0 +1,10 @@
+a[href='/stock/name/ascending'] {
+  border-color: #AAAAAA;
+  border-width: 3px;
+  color: #888888;
+}
+
+a[href='/stock/name/ascending']:hover {
+    background-color: #AAAAAA;
+    color: #ffffff;
+}

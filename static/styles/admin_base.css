@@ -12,6 +12,11 @@ body {
     font-family: 'Josefin Sans', sans-serif;
 }
 
+.thumbnail:hover {
+    transform: scale(3);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
 /*--------------Form-------------- */
 .form-control {
     background-color: #f9f9f9;

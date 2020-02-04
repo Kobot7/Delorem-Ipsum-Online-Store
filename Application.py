@@ -67,6 +67,12 @@ def search(searchString, category, order):
     except:
         print("Error in retrieving products from shelve")
 
+    try:
+        current = db["Current User"]
+    except:
+        print("Error in retrieving current user")
+        current = False
+
     products = []
     for id in Products:
         product = Products[id]
@@ -79,7 +85,7 @@ def search(searchString, category, order):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('search.html', productList=products, searchString=searchString, productCount=len(products), searchForm=searchForm)
+    return render_template('search.html', productList=products, searchString=searchString, productCount=len(products), searchForm=searchForm, current=current)
 
 # Homepage
 @app.route('/home', methods=['GET', 'POST'])
@@ -301,11 +307,13 @@ def mainCategory(mainCategory, category, order):
 
     for id in Products:
         product = Products[id]
-        if get_main_category(product.get_sub_category()).replace(' ','') == mainCategory.replace(' ',''):
+        if get_main_category(product.get_sub_category()).replace(' ','') == mainCategory:
             if product.get_activated() == True:
                 products.append(product)
 
     products = sort_by(products, category, order)
+
+    mainCategory = get_name_with_space(mainCategory)
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
@@ -337,6 +345,8 @@ def subCategory(subCategory, category, order):
 
     mainCategory = get_main_category(subCategory)
     products = sort_by(products, category, order)
+
+    subCategory = get_name_with_space(subCategory)
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
@@ -387,7 +397,6 @@ def IndItem(serialNo):
         number = random.randint(0,max)
         related.append(relatedProducts[number])
         relatedProducts.pop(number)
-
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
@@ -875,7 +884,7 @@ def products(category, order):
     return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList, searchString='', searchCat='', currentPage='Catalog')
 
 @app.route('/products/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
-def adminSearch(searchCat, searchString):
+def productsSearch(searchCat, searchString):
     productDict = {}
     db = shelve.open('storage.db', 'c')
 
@@ -1010,7 +1019,7 @@ def addProduct():
 
     return render_template('addProduct.html', form=createProductForm, currentPage='Catalog')
 
-@app.route('/stock/<category>/<order>/')
+@app.route('/stock/<category>/<order>/', methods=['GET', 'POST'])
 def stock(category, order):
     db = shelve.open('storage.db', 'c')
 
@@ -1039,7 +1048,60 @@ def stock(category, order):
     midStockList = sort_by(midStockList, category, order)
     highStockList = sort_by(highStockList, category, order)
 
-    return render_template('stock.html', currentPage='Stock', lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList)
+    adminSearchForm = AdminSearch(request.form)
+    if request.method == "POST" and adminSearchForm.validate():
+        return redirect('/stock/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
+
+    return render_template('stock.html', currentPage='Stock', adminSearchForm=adminSearchForm, lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList)
+
+@app.route('/stock/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
+def stockSearch(searchCat, searchString):
+    productDict = {}
+    db = shelve.open('storage.db', 'c')
+
+    try:
+        productDict = db['Products']
+        db.close()
+    except:
+        print('Error in retrieving Products from storage.db.')
+
+    productList = []
+    for key in productDict:
+        product = productDict[key]
+        if searchCat=='name-brand':
+            if searchString in product.get_product_name().lower() or searchString in product.get_brand().lower():
+                productList.append(product)
+
+        elif searchCat=='sub-category':
+            if searchString in product.get_sub_category().lower():
+                productList.append(product)
+
+        elif searchCat=='serial-no':
+            if searchString in product.get_serial_no().lower():
+                productList.append(product)
+
+        else:
+            print('error')
+
+    lowStockList = []
+    midStockList = []
+    highStockList = []
+
+    for product in productList:
+        if product.get_quantity()<product.get_stock_threshold():
+            lowStockList.append(product)
+
+        elif product.get_quantity()<(product.get_stock_threshold()*1.25):
+            midStockList.append(product)
+
+        else:
+            highStockList.append(product)
+
+    adminSearchForm = AdminSearch(request.form)
+    if request.method == "POST" and adminSearchForm.validate():
+        return redirect('/stock/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
+
+    return render_template('stock.html', adminSearchForm = adminSearchForm, productList=productList, lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList, searchString=searchString, searchCat=searchCat, currentPage='Stock')
 
 @app.route('/transactions')
 def transactions():
@@ -1236,6 +1298,8 @@ def brand(brand):
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
     return render_template('productByBrand.html', productList=products, productCount=len(products), searchForm=searchForm, brand=brand, current=current)
+
+app.jinja_env.filters['get_name_with_space'] = get_name_with_space
 if __name__=='__main__':
     excel.init_excel(app)
     app.run(debug=True)
