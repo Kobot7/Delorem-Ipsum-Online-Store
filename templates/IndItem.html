@@ -61,34 +61,29 @@
 
   <!-- Related Projects Row -->
   <h3 class="my-4">Related Products</h3>
-
   <div class="row">
-
-    <div class="col-md-3 col-sm-6 mb-4">
-      <a href="#">
-        <img class="img-fluid" src="/static/images/Ribena-2.jpg" alt="">
-      </a>
+    <div style="text-align:center; display:flex;">
+{% for product in related %}
+<article class="item">
+<a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
+    <div class="item-img">
+        <img src="/static/images/{{product.get_thumbnail()}}">
     </div>
-
-    <div class="col-md-3 col-sm-6 mb-4">
-      <a href="#">
-        <img class="img-fluid" src="/static/images/Ribena-3.jpg" alt="">
-      </a>
+    <div class="item-caption-box">
+        <div class="item-caption">
+            <div>
+                <p class="item-description">{{product.get_product_name()}}</p>
+            </div>
+        </div>
     </div>
-
-    <div class="col-md-3 col-sm-6 mb-4">
-      <a href="#">
-        <img class="img-fluid" src="/static/images/Ribena-4.jpg" alt="">
-      </a>
-    </div>
-
-    <div class="col-md-3 col-sm-6 mb-4">
-      <a href="#">
-        <img class="img-fluid" src="/static/images/Ribena-1.jpg" alt="">
-      </a>
-    </div>
-
-  </div>
+    <p class="price-box">
+        <span class="price-small">${{product.get_price()}}</span>
+    </p>
+</a>
+</article>
+{% endfor %}
+</div>
+</div>
   <!-- /.row -->
 
 </div>
