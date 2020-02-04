@@ -373,11 +373,24 @@ def IndItem(serialNo):
     db.close()
     subCategory = IndItem.get_sub_category()
     mainCategory = get_main_category(subCategory)
+    relatedProducts = []
+    for serial_no in products:
+        if get_main_category(products[serial_no].get_sub_category()) == mainCategory:
+            relatedProducts.append(products[serial_no])
+    relatedProducts.remove(IndItem)
+    related = []
+    for i in range(4):
+        max = len(relatedProducts)
+        max -= 1
+        number = random.randint(0,max)
+        related.append(relatedProducts[number])
+        relatedProducts.pop(number)
+
 
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken)
+    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken, related=related)
 
 # Shopping Cart
 @app.route('/cart', methods=['GET', 'POST'])
