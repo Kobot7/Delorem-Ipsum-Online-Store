@@ -361,6 +361,7 @@ def IndItem(serialNo):
         current = db['Current User']
     except:
         print("Unable to get the current dude!")
+
     IndItem = products[serialNo]
     IndItem.increase_views()
     try:
