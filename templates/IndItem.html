@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Drug Store - Item{% endblock %}
-{% block style %}<link rel="stylesheet" type = "text/css" href = "/static/styles/items.css">{% endblock %}
+{% block style %}
+<link rel="stylesheet" type="text/css" href="/static/styles/items.css">{% endblock %}
 {% block content %}
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
@@ -21,7 +22,7 @@
     <div class="col-md-4">
       <h3 class="mt-0 mb-3">{{product.get_product_name()}}</h3>
       <p class="price-box mb-0">
-          <span class="price">${{product.get_price()}}</span>
+        <span class="price">${{product.get_price()}}</span>
       </p>
       <p>
         Brand: {{product.get_brand()}}
@@ -29,16 +30,29 @@
       <p>
         {{product.get_description()}}
       </p>
-        <form  action="{{url_for('addToCart', name = product.get_product_name())}}" method="POST">
-           <button class="btn btn-success my-2" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
-        </form>
-        {% if taken== True %}
-        <button value="submit" class="btn btn-danger" disabled><i class="icon-heart"> Already in Wish List</i></button>
+      <!-- <form action="{{url_for('addToCart', name = product.get_product_name())}}" method="POST">
+        <button class="btn btn-success my-2" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
+      </form> -->
+      {% if taken == True %}
+      <form action="{{url_for('addToCart', name = product.get_product_name())}}" method="POST">
+        <button class="btn btn-success my-2" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
+      </form>
+      <button value="submit" class="btn btn-danger" disabled><i class="icon-heart"> Already in Wish List</i></button>
+      {% elif current %}
+      <form action="{{url_for('addToCart', name = product.get_product_name())}}" method="POST">
+        <button class="btn btn-success my-2" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
+      </form>
+      <form action="{{url_for('addToWishlist', name = product.get_product_name())}}" method="POST">
+        <button value="submit" class="btn btn-danger"><i class="icon-heart"> Add to Wish List</i></button>
+      </form>
       {% else %}
-      <form  action="{{url_for('addToWishlist', name = product.get_product_name())}}" method="POST">
-      <button value="submit" class="btn btn-danger"><i class="icon-heart"> Add to Wish List</i></button>
-    </form>
-    {% endif %}
+      <form action="{{url_for('login')}}">
+        <button class="btn btn-success my-2" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
+      </form>
+      <form action="{{url_for('login')}}">
+        <button value="submit" class="btn btn-danger"><i class="icon-heart"> Add to Wish List</i></button>
+      </form>
+      {% endif %}
     </div>
 
   </div>
@@ -51,26 +65,26 @@
 
     <div class="col-md-3 col-sm-6 mb-4">
       <a href="#">
-            <img class="img-fluid" src="/static/images/Ribena-2.jpg" alt="">
-          </a>
+        <img class="img-fluid" src="/static/images/Ribena-2.jpg" alt="">
+      </a>
     </div>
 
     <div class="col-md-3 col-sm-6 mb-4">
       <a href="#">
-            <img class="img-fluid" src="/static/images/Ribena-3.jpg" alt="">
-          </a>
+        <img class="img-fluid" src="/static/images/Ribena-3.jpg" alt="">
+      </a>
     </div>
 
     <div class="col-md-3 col-sm-6 mb-4">
       <a href="#">
-            <img class="img-fluid" src="/static/images/Ribena-4.jpg" alt="">
-          </a>
+        <img class="img-fluid" src="/static/images/Ribena-4.jpg" alt="">
+      </a>
     </div>
 
     <div class="col-md-3 col-sm-6 mb-4">
       <a href="#">
-            <img class="img-fluid" src="/static/images/Ribena-1.jpg" alt="">
-          </a>
+        <img class="img-fluid" src="/static/images/Ribena-1.jpg" alt="">
+      </a>
     </div>
 
   </div>

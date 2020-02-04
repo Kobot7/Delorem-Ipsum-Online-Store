@@ -216,12 +216,6 @@ def login():
             except:
                 print("Error while retrieving namesDict")
 
-            # current_user = usersDict[exist]
-            # db["Current User"] = current_user
-            # db.close()
-            # password = current_user.get_password()
-            # username = current_user.get_username()
-
             if loginForm.username.data == "admin" and loginForm.password.data == "admin":
                 return redirect('/dashboard')
 
@@ -352,7 +346,7 @@ def subCategory(subCategory, category, order):
 @app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
 def IndItem(serialNo):
     db = shelve.open('storage.db','w')
-    current=""
+    current = ""
     try:
         products = db['Products']
     except:
@@ -363,12 +357,18 @@ def IndItem(serialNo):
         print("Unable to get the current dude!")
     IndItem = products[serialNo]
     IndItem.increase_views()
-    wishlist = current.get_wishlist()
-    taken = False
-    for serial_no in wishlist:
-        if serial_no == serialNo:
-            taken = True
-            break
+    try:
+        wishlist = current.get_wishlist()
+        taken = False
+        for serial_no in wishlist:
+            if serial_no == serialNo:
+                taken = True
+                break
+    except:
+        taken = False
+    # except AttributeError:
+    #     # because current string = no current user, current user has no access to cart or wish list
+    #     return redirect(url_for('login'))
     db['Products'] = products
     db.close()
     subCategory = IndItem.get_sub_category()
