@@ -62,6 +62,18 @@
         <div class="price">SGD ${{ totalCost }}</div>
         <div>Sub-total</div>
       </div>
+      {% if discount != '' %}
+      <div id="discount" class="clearfix">
+        <div>
+          <button type="button" data-toggle="modal" data-target="#input-discount" class="mybutton">Edit</button>
+        </div>
+        <div>Discount Code: {{discount.get_code()}}</div>
+      </div>
+      <div id="discount-confirm">
+        <div style="float: right;">- ${{discount.get_discount_amount()}}</div>
+        <div>Discount</div>
+      </div>
+      {% else %}
       <div id="discount" class="clearfix">
         <div>
           <button type="button" data-toggle="modal" data-target="#input-discount" class="mybutton">click to<br>add</button>
@@ -72,6 +84,8 @@
         <div style="float: right;">- $9.15</div>
         <div>Discount</div>
       </div>
+      {% endif %}
+
 
 
     </div>

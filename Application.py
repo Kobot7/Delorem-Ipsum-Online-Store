@@ -5,6 +5,7 @@ from StorageClass import *
 from Functions import *
 from User import *
 from deliveryDetails import *
+from Discount import *
 
 # Image download
 from werkzeug.utils import secure_filename
@@ -406,6 +407,7 @@ def cart():
         current = False
 
     cart = current.get_shopping_cart()
+    codes = current.get_discount_codes()
     db.close()
     cartList = []
     totalCost = 0
@@ -424,13 +426,13 @@ def cart():
             #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
             return redirect(url_for('checkout', delivery=False))
 
-    # if request.method == "POST" and Discount.validate():
-
+    if request.method == "POST" and Discount.validate():
+        code = Discount.discount_code.data
 
     searchForm = searchBar()
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount)
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, codes=codes)
 
 @app.route("/addToCart/<name>", methods=['GET', 'POST'])
 def addToCart(name):
