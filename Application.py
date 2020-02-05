@@ -1138,6 +1138,31 @@ def addStock():
         db.close()
 
     return render_template('addStock.html', form=addStockForm)
+    
+@app.route('/discount')
+def disount():
+    AddDiscount = AddDiscountForm(request.form)
+    db = shelve.open('storage.db', 'c')
+    if request.method == "POST" and AddDiscount.validate():
+        try:
+            Valid_discounts = db['Valid Discounts']
+
+        except:
+            print('Error in retrieving valid discounts from storage.db.')
+
+        if AddDiscount.discount_amount.data == '':
+            discount = Discount(AddDiscount.discount_code.data, AddDiscount.discount_condition.data, AddDiscount.discount_start.data,AddDiscount.discount_expiry.data, AddDiscount.discount_percentage.data)
+            valid_discounts.append()
+            db['Valid Discounts'] = valid_discounts
+
+        else:
+            discount = Discount(AddDiscount.discount_code.data, AddDiscount.discount_condition.data, AddDiscount.discount_start.data,AddDiscount.discount_expiry.data, AddDiscount.discount_amount.data)
+            valid_discounts.append()
+            db['Valid Discounts'] = valid_discounts
+
+        db.close()
+
+    return render_template('discount.html', currentPage="Discount", AddDiscount=AddDiscount)
 
 @app.route('/transactions')
 def transactions():
