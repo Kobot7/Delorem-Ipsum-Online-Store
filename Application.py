@@ -400,6 +400,9 @@ def cart():
     Delivery = NoCollectForm(request.form)
     Discount = DiscountForm(request.form)
     db = shelve.open('storage.db','r')
+    error_msg = ""
+    code = ''
+
     try:
         current = db['Current User']
     except:
@@ -407,14 +410,63 @@ def cart():
         current = False
 
     cart = current.get_shopping_cart()
-    codes = current.get_discount_codes()
-    db.close()
+    users_codes = current.get_discount_codes()
     cartList = []
     totalCost = 0
     for product in cart:
         totalCost += float(cart[product].get_price())
         cartList.append(cart[product])
     totalCost = '%.2f' %float(totalCost)
+
+    if request.method == "POST" and Discount.validate():
+        code = Discount.discount_code.data
+        valid_codes = ""
+
+        try:
+            valid_codes = db["Valid Discounts"]
+        except:
+            print("Error retrieving valid discounts from storage.")
+
+        not_expired = False
+        for valid in valid_codes:
+            if valid == code:
+                not_expired = True
+                break
+
+        empty = not bool(users_codes)
+
+        if empty == True and not_expired==True :
+            user_codes.append(code)
+            current.set_discount_codes(user_codes)
+            db['Current User'] = current
+            if isinstance(valid_codes[code], AmountDiscount):
+                totalCost = totalCost - valid_codes[code].get_discount_amount()
+                totalCost = '%.2f' %float(totalCost)
+
+            else:
+                totalCost = totalCost * valid_codes[code].get_discount_percentage()/100
+                totalCost = '%.2f' %float(totalCost)
+
+        elif empty == False and not_expired==True:
+            for used in users_codes:
+                if code == used:
+                    error_msg = 'Discount code has already been used'
+                    code = ''
+                    print(error_msg)
+                else:
+                    user_codes.append(code)
+                    current.set_discount_codes(user_codes)
+                    db['Current User'] = current
+                    if isinstance(valid_codes[code], AmountDiscount):
+                        totalCost = totalCost - valid_codes[code].get_discount_amount()
+                        totalCost = '%.2f' %float(totalCost)
+
+                    else:
+                        totalCost = totalCost * valid_codes[code].get_discount_percentage()/100
+                        totalCost = '%.2f' %float(totalCost)
+        else:
+            error_msg = "Invalid discount code"
+            print(error_msg)
 
     if request.method == "POST" and Delivery.validate():
         NoCollect = Delivery.home_delivery.data
@@ -426,13 +478,10 @@ def cart():
             #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
             return redirect(url_for('checkout', delivery=False))
 
-    if request.method == "POST" and Discount.validate():
-        code = Discount.discount_code.data
-
     searchForm = searchBar()
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, codes=codes)
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, error_msg=error_msg, code=code)
 
 @app.route("/addToCart/<name>", methods=['GET', 'POST'])
 def addToCart(name):
