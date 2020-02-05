@@ -1054,7 +1054,7 @@ def stock(category, order):
     if request.method == "POST" and adminSearchForm.validate():
         return redirect('/stock/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
 
-    return render_template('stock.html', currentPage='Stock', adminSearchForm=adminSearchForm, lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList)
+    return render_template('stock.html', currentPage='Stock', searchCat='', adminSearchForm=adminSearchForm, lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList)
 
 @app.route('/stock/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
 def stockSearch(searchCat, searchString):
@@ -1085,25 +1085,32 @@ def stockSearch(searchCat, searchString):
         else:
             print('error')
 
-    lowStockList = []
-    midStockList = []
-    highStockList = []
+@app.route('/discount', methods=['GET', 'POST'])
+def disount():
+    AddDiscountAmount = AddDiscountAmountForm(request.form)
+    AddDiscountPercentage = AddDiscountPercentageForm(request.form)
+    db = shelve.open('storage.db', 'c')
+    valid_discounts = []
+    try:
+        valid_discounts = db['Valid Discounts']
+        print(valid_discounts)
+    except:
+        print(valid_discounts)
+        print('Error in retrieving valid discounts from storage.db.')
+    if request.method == "POST" and AddDiscountAmount.validate():
+            discount = AmountDiscount(AddDiscountAmount.discount_code.data, AddDiscountAmount.discount_condition.data, AddDiscountAmount.discount_start.data, AddDiscountAmount.discount_expiry.data, AddDiscountAmount.discount_amount.data)
+            valid_discounts.append(discount)
+            db['Valid Discounts'] = valid_discounts
 
-    for product in productList:
-        if product.get_quantity()<product.get_stock_threshold():
-            lowStockList.append(product)
+    elif request.method == "POST" and AddDiscountPercentage.validate():
+            discount = PercentageDiscount(AddDiscountPercentage.discount_code.data, AddDiscountPercentage.discount_condition.data, AddDiscountPercentage.discount_start.data,AddDiscountPercentage.discount_expiry.data, AddDiscountPercentage.discount_percentage.data)
+            valid_discounts.append(discount)
+            db['Valid Discounts'] = valid_discounts
 
-        elif product.get_quantity()<(product.get_stock_threshold()*1.25):
-            midStockList.append(product)
 
-        else:
-            highStockList.append(product)
+    db.close()
 
-    adminSearchForm = AdminSearch(request.form)
-    if request.method == "POST" and adminSearchForm.validate():
-        return redirect('/stock/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
-
-    return render_template('stock.html', adminSearchForm = adminSearchForm, productList=productList, lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList, searchString=searchString, searchCat=searchCat, currentPage='Stock')
+    return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage)
 
 @app.route('/transactions')
 def transactions():

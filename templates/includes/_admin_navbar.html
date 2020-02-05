@@ -44,6 +44,13 @@
           <a class="nav-link" href="/transactions">Transactions</a>
         {% endif %}
       </li> <!--Transactions-->
+      <li class="nav-item">
+        {% if currentPage=='Discounts' %}
+          <a class="nav-link active" href="/disount">Discounts</a>
+        {% else %}
+          <a class="nav-link" href="/discount">Discounts</a>
+        {% endif %}
+      </li>
     </ul>
   </div>
 
