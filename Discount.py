@@ -1,7 +1,8 @@
 class Discount:
-    def __init__(self, code, condition, expiry_date):
+    def __init__(self, code, condition, start_date, expiry_date):
         self.set_code(code)
         self.set_condition(condition)
+        self.set_start_date(start_date)
         self.set_expiry_date(expiry_date)
 
     def set_code(self, code):
@@ -9,6 +10,9 @@ class Discount:
 
     def set_condition(self, condition):
         self.__condition = condition
+
+    def set_start_date(self, start_date):
+        self.__start_date = start_date
 
     def set_expiry_date(self, expiry_date):
         self.__expiry_date = expiry_date
@@ -23,8 +27,8 @@ class Discount:
         return self.__expiry_date
 
 class AmountDiscount(Discount):
-    def __init__(self, code, condition, expiry_date, discount_amount):
-        super().__init__(code, condition,expiry_date)
+    def __init__(self, code, condition, start_date, expiry_date, discount_amount):
+        super().__init__(code, condition, start_date, expiry_date)
         self.set_discount_amount(discount_amount)
 
     def set_discount_amount(self, discount_amount):
@@ -34,8 +38,8 @@ class AmountDiscount(Discount):
         return self.__discount_amount
 
 class PercentageDiscount(Discount):
-    def __init__(self, code, condition, expiry_date, discount_percentage):
-        super().__init__(code, condition, expiry_date)
+    def __init__(self, code, condition, start_date, expiry_date, discount_percentage):
+        super().__init__(code, condition, start_date, expiry_date)
         self.set_discount_percentage(discount_percentage)
 
     def set_discount_percentage(self, discount_percentage):

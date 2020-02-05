@@ -152,14 +152,21 @@ class AdminSearch(Form):
 class DiscountForm(Form):
     discount_code = StringField('Discount code')
 
-class AddDiscountForm(Form):
+class AddDiscountAmountForm(Form):
+    discount_code = StringField('Discount code')
+    discount_condition =  DecimalField('Price at which disount is applicable', [validators.DataRequired(message='This is a required field.')
+                                , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
+    discount_start  = DateField('Date start', format = "%Y-%m-%d")
+    discount_expiry  = DateField('Date expiry', format = "%Y-%m-%d")
+    discount_amount = DecimalField('Discount Amount', [validators.DataRequired(message='This is a required field.')
+                                , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
+
+class AddDiscountPercentageForm(Form):
     discount_code = StringField('Discount code')
     discount_condition =  DecimalField('Price at which disount is applicable', [validators.DataRequired(message='This is a required field.')
                                 , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
     # discount_expiry = DateField('Expiry Date', format = "%Y-%m-%d")
     discount_start  = DateField('Date start', format = "%Y-%m-%d")
     discount_expiry  = DateField('Date expiry', format = "%Y-%m-%d")
-    discount_amount = DecimalField('Discount Amount', [validators.DataRequired(message='This is a required field.')
-                                , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
-    discount_percentage = DecimalField('Discount percentage', [validators.DataRequired(message='This is a required field.')
+    discount_percentage = DecimalField('Discount Percentage', [validators.DataRequired(message='This is a required field.')
                                 , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
