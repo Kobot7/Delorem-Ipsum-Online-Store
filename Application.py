@@ -228,6 +228,7 @@ def login():
 
             username_exist = False
             login_correct = False
+            success_login = False
 
             for name in namesDict:
                 if name == loginForm.username.data:
@@ -244,6 +245,7 @@ def login():
                 if user_obj.get_password() == loginForm.password.data:
                     db["Current User"] = user_obj
                     print("User successfully logged in")
+                    success_login = True
                     return redirect(url_for("home"))
                 else:
                     searchForm = searchBar()
