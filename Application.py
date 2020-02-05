@@ -1052,7 +1052,7 @@ def stock(category, order):
     if request.method == "POST" and adminSearchForm.validate():
         return redirect('/stock/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
 
-    return render_template('stock.html', currentPage='Stock', adminSearchForm=adminSearchForm, lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList)
+    return render_template('stock.html', currentPage='Stock', searchCat='', adminSearchForm=adminSearchForm, lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList)
 
 @app.route('/stock/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
 def stockSearch(searchCat, searchString):
@@ -1102,6 +1102,42 @@ def stockSearch(searchCat, searchString):
         return redirect('/stock/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
 
     return render_template('stock.html', adminSearchForm = adminSearchForm, productList=productList, lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList, searchString=searchString, searchCat=searchCat, currentPage='Stock')
+
+@app.route('/addStock')
+def addStock():
+    db = shelve.open('storage.db', 'r')
+    productDict = {}
+    try:
+        productDict = db['Products']
+        db.close()
+    except:
+        print('Error in retrieving Products from storage.db.')
+
+    productList = []
+    tupleList = []
+    for key in productDict:
+        productList.append(productDict[key])
+    productList = sort_by(productList, 'name', 'ascending')
+
+    for product in productList:
+        field = [product.get_serial_no(), product.get_product_name()]
+        tupleList.append(tuple(field))
+
+    class AddStockForm(Form):
+        product = SelectField('', choices=tupleList, default='Select Product')
+
+    addStockForm = AddStockForm(request.form)
+
+    if request.method=='POST' and addStockForm.validate():
+        db = shelve.open('storage.db', 'c')
+        try:
+            products = db['Products']
+        except:
+            print('Error in retrieveing Products from db.')
+
+        db.close()
+
+    return render_template('addStock.html', form=addStockForm)
 
 @app.route('/transactions')
 def transactions():

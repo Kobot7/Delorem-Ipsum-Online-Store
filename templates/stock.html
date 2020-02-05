@@ -1,6 +1,6 @@
 {% extends "admin_base.html" %}
 {% block title %}Stock{% endblock %}
-{% block style %}<link rel="stylesheet" href="/static/styles/stock.css">{% endblock %}
+{% block style %}{% endblock %}
 
 {% block content %}
 {% from "includes/_admin_formHelper.html" import render_field %}
@@ -24,7 +24,7 @@
           </div>
           <div class="col-lg-3 col-md-6 col-sm-12">
             <input type="submit" value="Search" class="btn mr-2">
-            <a href="/stock/name/ascending" class="btn">Clear Filters</a>
+            <a href="/stock/name/ascending" class="btn grayButton">Clear Filters</a>
           </div>
           <div class="col-lg-4 col-md-6 col-sm-12">
             <a class="btn float-right" href="/addStock">+ Add Stock</a>
@@ -90,4 +90,9 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+  {% if searchCat!='' %}
+  document.getElementById("SearchCat").value = '{{ searchCat }}';
+  {% endif %}
+</script>
 {% endblock %}

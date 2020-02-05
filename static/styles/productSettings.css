@@ -52,14 +52,3 @@ input:checked + .slider:before {
   -ms-transform: translateX(24px);
   transform: translateX(24px);
 }
-
-a[href='/products/name/ascending'] {
-  border-color: #AAAAAA;
-  border-width: 3px;
-  color: #888888;
-}
-
-a[href='/products/name/ascending']:hover {
-    background-color: #AAAAAA;
-    color: #ffffff;
-}

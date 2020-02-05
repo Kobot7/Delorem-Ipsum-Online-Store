@@ -76,6 +76,17 @@ body {
     color: #ffffff;
 }
 
+a.grayButton {
+  border-color: #AAAAAA;
+  border-width: 3px;
+  color: #888888;
+}
+
+a.grayButton:hover {
+    background-color: #AAAAAA;
+    color: #ffffff;
+}
+
 table {
     overflow-x: scroll;
 }
