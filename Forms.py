@@ -146,7 +146,7 @@ admin_searchList = [('name-brand', 'Name/Brand')
                 , ('serial-no', 'Serial No.')]
 
 class AdminSearch(Form):
-    search_cat = SelectField('', choices=admin_searchList, default='name')
+    search_cat = SelectField('', choices=admin_searchList, default='name-brand')
     search_input = StringField('', [validators.DataRequired()])
 
 class DiscountForm(Form):
@@ -163,3 +163,9 @@ class AddDiscountForm(Form):
                                 , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
     discount_percentage = DecimalField('Discount percentage', [validators.DataRequired(message='This is a required field.')
                                 , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
+
+class AddStockForm(Form):
+    search_cat = SelectField('', choices=admin_searchList, default='name-brand')
+    search_input = StringField('', [validators.DataRequired()])
+    quantity = IntegerField('', [validators.DataRequired(message='This is a required field.')
+                                      , validators.NumberRange(min=0, message='Value has to be more than 0')])

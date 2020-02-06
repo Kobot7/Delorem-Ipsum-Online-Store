@@ -1114,17 +1114,15 @@ def addStock():
         print('Error in retrieving Products from storage.db.')
 
     productList = []
-    tupleList = []
+
     for key in productDict:
         productList.append(productDict[key])
     productList = sort_by(productList, 'name', 'ascending')
 
-    for product in productList:
-        field = [product.get_serial_no(), product.get_product_name()]
-        tupleList.append(tuple(field))
-
-    class AddStockForm(Form):
-        product = SelectField('', choices=tupleList, default='Select Product')
+    # tupleList = [('', 'Select')]
+    # for product in productList:
+    #     field = [product.get_serial_no(), product.get_serial_no() + ' - ' + product.get_product_name()]
+    #     tupleList.append(tuple(field))
 
     addStockForm = AddStockForm(request.form)
 
@@ -1137,8 +1135,8 @@ def addStock():
 
         db.close()
 
-    return render_template('addStock.html', form=addStockForm)
-    
+    return render_template('addStock.html', form=addStockForm, currentPage='Stock')
+
 @app.route('/discount')
 def disount():
     AddDiscount = AddDiscountForm(request.form)
