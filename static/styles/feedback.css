@@ -1,0 +1,14 @@
+*{
+text-align: center;
+}
+
+.box{
+  padding: 20px 20px;
+  margin-left: 450px;
+  margin-right: 450px;
+}
+
+.box{
+  background-color: white;
+  border-radius: 30px;
+}
