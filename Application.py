@@ -737,7 +737,7 @@ def checkout(delivery):
         current.set_transactions(collectionId)
         db["Current User"] = current
         db.close()
-        return redirect(url_for("summary",collectionId=collectionId))
+        return redirect(url_for("summary",deliveryId=collectionId))
         # current_user.set_transactions(deliveryInfo.get_id())
         # transactions[deliveryInfo.get_id()] = deliveryInfo
         # db["Transactions"] = transactions
@@ -1165,15 +1165,19 @@ def statsSearch(searchCat, searchString):
     return render_template('productStats.html', graphJSON=graphJSON, currentPage='Statistics', adminSearchForm=adminSearchForm
     , lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList, length=len(nameList), searchCat=searchCat, searchString=searchString)
 
-@app.route('/addStock')
+@app.route('/addStock', methods=['GET', 'POST'])
 def addStock():
-    db = shelve.open('storage.db', 'r')
+    db = shelve.open('storage.db', 'c')
     productDict = {}
+    newStock = {}
     try:
         productDict = db['Products']
-        db.close()
     except:
         print('Error in retrieving Products from storage.db.')
+    try:
+        newStock = db['New Stock']
+    except:
+        print('Error in retrieving New Stock from storage.db.')
 
     productList = []
 
@@ -1181,45 +1185,56 @@ def addStock():
         productList.append(productDict[key])
     productList = sort_by(productList, 'name', 'ascending')
 
+    tupleList = []
+    for product in productList:
+        field = [product.get_serial_no(), product.get_serial_no() + ' - ' + product.get_product_name()]
+        tupleList.append(tuple(field))
+
+    class AddStockForm(Form):
+        product = SelectField('', choices=tupleList, default='')
+        quantity = IntegerField('', [validators.DataRequired(message='This is a required field.')
+                                    , validators.NumberRange(min=0, message='Value has to be more than 0')])
+
     addStockForm = AddStockForm(request.form)
 
     if request.method=='POST' and addStockForm.validate():
-        db = shelve.open('storage.db', 'c')
-        try:
-            products = db['Products']
-        except:
-            print('Error in retrieveing Products from db.')
-
+        newStock[addStockForm.product.data] = addStockForm.quantity.data
+        db['New Stock'] = newStock
         db.close()
 
-    return render_template('addStock.html', form=addStockForm, currentPage='Catalog')
+    return render_template('addStock.html', form=addStockForm, currentPage='Catalog', newStock=newStock, productDict=productDict)
 
-@app.route('/discount', methods=['GET', 'POST'])
-def disount():
-    AddDiscountAmount = AddDiscountAmountForm(request.form)
-    AddDiscountPercentage = AddDiscountPercentageForm(request.form)
+@app.route('/processAdditionOfStock')
+def processAdditionOfStock():
     db = shelve.open('storage.db', 'c')
-    valid_discounts = []
+    productDict = {}
+    newStock = {}
     try:
-        valid_discounts = db['Valid Discounts']
-        print(valid_discounts)
+        productDict = db['Products']
     except:
-        print(valid_discounts)
-        print('Error in retrieving valid discounts from storage.db.')
-    if request.method == "POST" and AddDiscountAmount.validate():
-            discount = AmountDiscount(AddDiscountAmount.discount_code.data, AddDiscountAmount.discount_condition.data, AddDiscountAmount.discount_start.data, AddDiscountAmount.discount_expiry.data, AddDiscountAmount.discount_amount.data)
-            valid_discounts.append(discount)
-            db['Valid Discounts'] = valid_discounts
+        print('Error in retrieving Products from storage.db.')
+    try:
+        newStock = db['New Stock']
+    except:
+        print('Error in retrieving New Stock from storage.db.')
 
-    elif request.method == "POST" and AddDiscountPercentage.validate():
-            discount = PercentageDiscount(AddDiscountPercentage.discount_code.data, AddDiscountPercentage.discount_condition.data, AddDiscountPercentage.discount_start.data,AddDiscountPercentage.discount_expiry.data, AddDiscountPercentage.discount_percentage.data)
-            valid_discounts.append(discount)
-            db['Valid Discounts'] = valid_discounts
+    for product in newStock:
+        productDict[product].increase_quantity(newStock[product])
 
+    db['Products'] = productDict
+    db['New Stock'] = {}
+    db.close()
+    print('yay')
 
+    return redirect('/products/name/ascending')
+
+@app.route('/cancelAdditionOfStock')
+def cancelAdditionOfStock():
+    db = shelve.open('storage.db', 'c')
+    db['New Stock'] = {}
     db.close()
 
-    return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage)
+    return redirect('/products/name/ascending')
 
 @app.route('/transactions')
 def transactions():
@@ -1284,6 +1299,32 @@ def download():
 
 
 # Other stuff
+@app.route('/discount', methods=['GET', 'POST'])
+def discount():
+    AddDiscountAmount = AddDiscountAmountForm(request.form)
+    AddDiscountPercentage = AddDiscountPercentageForm(request.form)
+    db = shelve.open('storage.db', 'c')
+    valid_discounts = []
+    try:
+        valid_discounts = db['Valid Discounts']
+        print(valid_discounts)
+    except:
+        print(valid_discounts)
+        print('Error in retrieving valid discounts from storage.db.')
+    if request.method == "POST" and AddDiscountAmount.validate():
+            discount = AmountDiscount(AddDiscountAmount.discount_code.data, AddDiscountAmount.discount_condition.data, AddDiscountAmount.discount_start.data, AddDiscountAmount.discount_expiry.data, AddDiscountAmount.discount_amount.data)
+            valid_discounts.append(discount)
+            db['Valid Discounts'] = valid_discounts
+
+    elif request.method == "POST" and AddDiscountPercentage.validate():
+            discount = PercentageDiscount(AddDiscountPercentage.discount_code.data, AddDiscountPercentage.discount_condition.data, AddDiscountPercentage.discount_start.data,AddDiscountPercentage.discount_expiry.data, AddDiscountPercentage.discount_percentage.data)
+            valid_discounts.append(discount)
+            db['Valid Discounts'] = valid_discounts
+
+    db.close()
+
+    return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage)
+
 @app.route('/categories')
 def categories():
     return render_template('categories.html')
