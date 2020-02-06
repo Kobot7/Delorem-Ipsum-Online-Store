@@ -602,7 +602,7 @@ def moveToCart(serialNo):
 # Checkout
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
-    current = "" #define current pls yuxde
+    current = ""
     searchForm = searchBar()
     deliveryForm = DeliveryForm(request.form)
     collectionForm = CollectionForm(request.form)
@@ -659,7 +659,7 @@ def checkout():
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data)
 
-    return render_template('checkout.html', deliveryform=deliveryForm, current=current_user, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal)
+    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal)
 
 # Summary page
 @app.route('/summary/<deliveryId>', methods= ["GET", "POST"])
@@ -680,9 +680,24 @@ def summary(deliveryId):
     searchForm = searchBar()
         # if request.method == "POST" and searchForm.validate():
         #     return redirect('/search/' + searchForm.search_input.data)
+    if request.method == "POST":
+        print(str(transactions) + "\n\n\n")
+        transactions.pop(deliveryId)
+        transactions = ""
+        return redirect("/checkout")
+
 
     return render_template('summary.html', searchForm=searchForm, details=details)
 
+# feedback page
+@app.route('/feedback', methods = ["GET", "POST"])
+def feedback():
+    feedbackForm = FeedbackForm(request.form)
+    searchForm = searchBar()
+
+    if request.method == "POST" and feedbackForm.validate():
+        return redirect('/home')
+    return render_template('feedback.html', searchForm=searchForm, feedbackForm=feedbackForm)
 
 # Admin Side
 @app.route('/dashboard')

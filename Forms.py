@@ -134,6 +134,22 @@ class CollectionForm(Form):
     unit_no = StringField('Unit No',[validators.Length(min=5,max=7),validators.DataRequired()])
 
 
+agendaChoices = [('products', 'Products'),
+                ('delivery', 'Delivery'),
+                ('app', 'Application'),
+                ('customer', 'Customer')]
+
+ratingChoice = [('1', '1'),
+                ('2', '2'),
+                ('3', '3'),
+                ('4', '4'),
+                ('5', '5')]
+class FeedbackForm(Form):
+    name = StringField("Name:", [validators.DataRequired()], render_kw={"placeholder": "e.g. Orion Raysher Lee"})
+    agenda = SelectField('What is your agenda?', choices= agendaChoices, default= "products")
+    comment = TextAreaField('Add a comment :)', [validators.DataRequired()], render_kw={"rows": 5})
+    rating = RadioField('Rate our delivery service!', [validators.DataRequired()], choices= ratingChoice)
+
 class SearchBar(Form):
     search_input = StringField('')
 
