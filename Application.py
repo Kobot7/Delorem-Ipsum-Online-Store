@@ -842,47 +842,6 @@ def dashboard():
 
     return render_template('dashboard.html', currentPage='Dashboard', viewsList = viewsList, purchasesGraph = purchasesGraph, viewsGraph = viewsGraph, lowStockList=lowStockList, midStockList=midStockList)
 
-@app.route('/productStats/<category>/<order>/')
-def viewAll(category, order):
-    productDict = {}
-    db = shelve.open('storage.db', 'r')
-
-    try:
-        productDict = db['Products']
-        db.close()
-    except:
-        print('Error in retrieving Products from storage.db.')
-
-    productList = []
-    for key in productDict:
-        product = productDict.get(key)
-        productList.append(product)
-        productList = sort_by(productList, category, order)
-
-    nameList = []
-    purchasesList = []
-    viewsList = []
-    for product in productList:
-        nameList.append(product.get_product_name())
-        purchasesList.append(product.get_purchases())
-        viewsList.append(product.get_views())
-
-    nameList.reverse()
-    purchasesList.reverse()
-    viewsList.reverse()
-
-    graph = {}
-    graph= {
-            'data':  [go.Bar(name='Purchases', x=purchasesList, y=nameList, orientation='h', marker_color='#d1f082', width=0.3),
-                      go.Bar(name='Views', x=viewsList, y=nameList, orientation='h', marker_color='#a182f0', width=0.3)],
-
-            'layout': {}
-            }
-
-    graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder)
-
-    return render_template('productStats.html', productList=productList, graphJSON=graphJSON, currentPage='Statistics')
-
 @app.route('/products/<category>/<order>/', methods=['GET', 'POST'])
 def products(category, order):
     productDict = {}
@@ -1042,9 +1001,10 @@ def addProduct():
 
     return render_template('addProduct.html', form=createProductForm, currentPage='Catalog')
 
-@app.route('/stock/<category>/<order>/', methods=['GET', 'POST'])
-def stock(category, order):
-    db = shelve.open('storage.db', 'c')
+@app.route('/productStats/<category>/<order>/', methods=['GET', 'POST'])
+def viewAll(category, order):
+    productDict = {}
+    db = shelve.open('storage.db', 'r')
 
     try:
         productDict = db['Products']
@@ -1058,6 +1018,7 @@ def stock(category, order):
 
     for key in productDict:
         product = productDict[key]
+
         if product.get_quantity()<product.get_stock_threshold():
             lowStockList.append(product)
 
@@ -1071,16 +1032,47 @@ def stock(category, order):
     midStockList = sort_by(midStockList, category, order)
     highStockList = sort_by(highStockList, category, order)
 
+    nameList = []
+    purchasesList = []
+    viewsList = []
+    for product in lowStockList:
+        nameList.append(product.get_product_name())
+        purchasesList.append(product.get_purchases())
+        viewsList.append(product.get_views())
+    for product in midStockList:
+        nameList.append(product.get_product_name())
+        purchasesList.append(product.get_purchases())
+        viewsList.append(product.get_views())
+    for product in highStockList:
+        nameList.append(product.get_product_name())
+        purchasesList.append(product.get_purchases())
+        viewsList.append(product.get_views())
+
+    nameList.reverse()
+    purchasesList.reverse()
+    viewsList.reverse()
+
+    graph = {}
+    graph= {
+            'data':  [go.Bar(name='Purchases', x=purchasesList, y=nameList, orientation='h', marker_color='#d1f082', width=0.3),
+                      go.Bar(name='Views', x=viewsList, y=nameList, orientation='h', marker_color='#a182f0', width=0.3)],
+
+            'layout': {}
+            }
+
+    graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder)
+
     adminSearchForm = AdminSearch(request.form)
     if request.method == "POST" and adminSearchForm.validate():
-        return redirect('/stock/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
+        return redirect('/productStats/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
 
-    return render_template('stock.html', currentPage='Stock', searchCat='', adminSearchForm=adminSearchForm, lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList)
+    return render_template('productStats.html', graphJSON=graphJSON, currentPage='Statistics', adminSearchForm=adminSearchForm
+    , lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList, length=len(nameList), searchCat='')
 
-@app.route('/stock/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
-def stockSearch(searchCat, searchString):
+@app.route('/productStats/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
+def statsSearch(searchCat, searchString):
     productDict = {}
-    db = shelve.open('storage.db', 'c')
+    db = shelve.open('storage.db', 'r')
 
     try:
         productDict = db['Products']
@@ -1088,9 +1080,14 @@ def stockSearch(searchCat, searchString):
     except:
         print('Error in retrieving Products from storage.db.')
 
+    lowStockList = []
+    midStockList = []
+    highStockList = []
     productList = []
+
     for key in productDict:
         product = productDict[key]
+
         if searchCat=='name-brand':
             if searchString in product.get_product_name().lower() or searchString in product.get_brand().lower():
                 productList.append(product)
@@ -1106,10 +1103,6 @@ def stockSearch(searchCat, searchString):
         else:
             print('error')
 
-    lowStockList = []
-    midStockList = []
-    highStockList = []
-
     for product in productList:
         if product.get_quantity()<product.get_stock_threshold():
             lowStockList.append(product)
@@ -1120,11 +1113,42 @@ def stockSearch(searchCat, searchString):
         else:
             highStockList.append(product)
 
+    nameList = []
+    purchasesList = []
+    viewsList = []
+    for product in lowStockList:
+        nameList.append(product.get_product_name())
+        purchasesList.append(product.get_purchases())
+        viewsList.append(product.get_views())
+    for product in midStockList:
+        nameList.append(product.get_product_name())
+        purchasesList.append(product.get_purchases())
+        viewsList.append(product.get_views())
+    for product in highStockList:
+        nameList.append(product.get_product_name())
+        purchasesList.append(product.get_purchases())
+        viewsList.append(product.get_views())
+
+    nameList.reverse()
+    purchasesList.reverse()
+    viewsList.reverse()
+
+    graph = {}
+    graph= {
+            'data':  [go.Bar(name='Purchases', x=purchasesList, y=nameList, orientation='h', marker_color='#d1f082', width=0.3),
+                      go.Bar(name='Views', x=viewsList, y=nameList, orientation='h', marker_color='#a182f0', width=0.3)],
+
+            'layout': {}
+            }
+
+    graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder)
+
     adminSearchForm = AdminSearch(request.form)
     if request.method == "POST" and adminSearchForm.validate():
-        return redirect('/stock/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
+        return redirect('/productStats/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
 
-    return render_template('stock.html', adminSearchForm = adminSearchForm, productList=productList, lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList, searchString=searchString, searchCat=searchCat, currentPage='Stock')
+    return render_template('productStats.html', graphJSON=graphJSON, currentPage='Statistics', adminSearchForm=adminSearchForm
+    , lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList, length=len(nameList), searchCat=searchCat, searchString=searchString)
 
 @app.route('/addStock')
 def addStock():
@@ -1142,11 +1166,6 @@ def addStock():
         productList.append(productDict[key])
     productList = sort_by(productList, 'name', 'ascending')
 
-    # tupleList = [('', 'Select')]
-    # for product in productList:
-    #     field = [product.get_serial_no(), product.get_serial_no() + ' - ' + product.get_product_name()]
-    #     tupleList.append(tuple(field))
-
     addStockForm = AddStockForm(request.form)
 
     if request.method=='POST' and addStockForm.validate():
@@ -1158,7 +1177,7 @@ def addStock():
 
         db.close()
 
-    return render_template('addStock.html', form=addStockForm, currentPage='Stock')
+    return render_template('addStock.html', form=addStockForm, currentPage='Catalog')
 
 @app.route('/discount', methods=['GET', 'POST'])
 def disount():
