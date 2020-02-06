@@ -440,11 +440,13 @@ def cart():
             current.set_discount_codes(user_codes)
             db['Current User'] = current
             if isinstance(valid_codes[code], AmountDiscount):
-                totalCost = totalCost - valid_codes[code].get_discount_amount()
+                deduct = valid_codes[code].get_discount_amount()
+                totalCost = totalCost - deduct
                 totalCost = '%.2f' %float(totalCost)
 
             else:
-                totalCost = totalCost * valid_codes[code].get_discount_percentage()/100
+                deduct = totalCost * valid_codes[code].get_discount_percentage()/100
+                totalCost = totalCost - deduct
                 totalCost = '%.2f' %float(totalCost)
 
         elif empty == False and not_expired==True:
@@ -477,6 +479,8 @@ def cart():
             # if request.method == "POST" and searchForm.validate():
             #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
             return redirect(url_for('checkout', delivery=False))
+
+    print(code)
 
     searchForm = searchBar()
     # if request.method == "POST" and searchForm.validate():
