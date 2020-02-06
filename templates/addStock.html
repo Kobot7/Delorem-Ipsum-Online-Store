@@ -1,0 +1,42 @@
+{% extends "admin_base.html" %}
+{% block title %}Edit Product{% endblock %}
+{% block style %}<link rel="stylesheet" href="/static/styles/productSettings.css">{% endblock %}
+{% block headScript %}
+<script type="text/javascript">
+
+</script>
+{% endblock %}
+
+{% block content %}
+{% from "includes/_admin_formhelper.html" import render_field %}
+<div class="row justify-content-center">
+    <div class="col-md-8 pb-4">
+        <h1 class="my-4">Add Stock</h1>
+
+        <table class="table products">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <form method="POST" action="">
+            <tr>
+              <td>
+                  {{ render_field(form.product, class="form-control") }}
+              </td>
+
+              <td>{{ render_field(form.quantity, class="form-control") }}</td>
+            </tr>
+          </form>
+          </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

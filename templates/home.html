@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %} Delorem Ipsum {% endblock %}
-{% block style %}<link rel="stylesheet" type = "text/css" href = "/static/styles/items.css">{% endblock %}
+{% block style %}
+<link rel="stylesheet" type="text/css" href="/static/styles/items.css">{% endblock %}
 
 
 {% block content %}
@@ -27,7 +28,8 @@
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="sr-only">Next</span>
       </a>
-    </div> <!--Carousel-->
+    </div>
+    <!--Carousel-->
   </div>
 </div>
 
@@ -36,51 +38,58 @@
     <div class="puthir">
       <span>Today's View</span>
     </div>
-      <div class="home-block">
-        {% for product in viewsList %}
-          <article class="item">
-          <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
-              <div class="item-img">
-                  <img src="/static/images/{{product.get_thumbnail()}}">
+    <div class="home-block">
+      {% for product in viewsList %}
+      <article class="item">
+        <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
+          <div class="item-img">
+            <img src="/static/images/{{product.get_thumbnail()}}">
+          </div>
+          <div class="item-caption-box">
+            <div class="item-caption">
+              <div>
+                <p class="item-description">{{product.get_product_name()}}</p>
               </div>
-              <div class="item-caption-box">
-                  <div class="item-caption">
-                      <div>
-                          <p class="item-description">{{product.get_product_name()}}</p>
-                      </div>
-                  </div>
+            </div>
+          </div>
+          <p class="price-box">
+            <span class="price-small">${{product.get_price()}}</span>
+          </p>
+        </a>
+      </article>
+      {% endfor %}
+    </div>
+    <!--Items block-->
+    <div class="puthir">
+      <span>Hot Selling</span>
+    </div>
+    <div class="home-block">
+      {% for product in purchasesList %}
+      <article class="item">
+        <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
+          <div class="item-img">
+            <img src="/static/images/{{product.get_thumbnail()}}">
+          </div>
+          <div class="item-caption-box">
+            <div class="item-caption">
+              <div>
+                <p class="item-description">{{product.get_product_name()}}</p>
               </div>
-              <p class="price-box">
-                  <span class="price-small">${{product.get_price()}}</span>
-              </p>
-          </a>
-          </article>
-        {% endfor %}
-      </div> <!--Items block-->
-      <div class="puthir">
-        <span>Hot Selling</span>
-      </div>
-        <div class="home-block">
-          {% for product in purchasesList %}
-            <article class="item">
-            <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
-                <div class="item-img">
-                    <img src="/static/images/{{product.get_thumbnail()}}">
-                </div>
-                <div class="item-caption-box">
-                    <div class="item-caption">
-                        <div>
-                            <p class="item-description">{{product.get_product_name()}}</p>
-                        </div>
-                    </div>
-                </div>
-                <p class="price-box">
-                    <span class="price-small">${{product.get_price()}}</span>
-                </p>
-            </a>
-            </article>
-          {% endfor %}
-        </div> <!--Items block-->
+            </div>
+          </div>
+          <p class="price-box">
+            <span class="price-small">${{product.get_price()}}</span>
+          </p>
+        </a>
+      </article>
+      {% endfor %}
+    </div>
+    <!--Items block-->
   </div>
 </div>
+{% if success_login %}
+<script type="text/javascript">
+  alert("Hello world");
+</script>
+{% endif %}
 {% endblock %}

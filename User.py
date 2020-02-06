@@ -16,6 +16,7 @@ class User:
         self.__shopping_cart = {}
         self.__wishlist = {}
         self.__transactions = []
+        self.__discount_codes = []
 
     def set_user_id(self):
         user_id = random.randint(0, 9999999999999999999999999)
@@ -64,6 +65,9 @@ class User:
     def set_transactions(self, transactions):
         self.__transactions.append(transactions)
 
+    def set_discount_codes(self, discount_codes):
+        self.__discount_codes = discount_codes
+
     def get_user_id(self):
         return self.__user_id
 
@@ -90,6 +94,9 @@ class User:
 
     def get_transactions(self):
         return self.__transactions
+
+    def get_discount_codes(self):
+        return self.__discount_codes
 
     def add_to_wishlist(self, item):
         wishlist = self.get_wishlist()

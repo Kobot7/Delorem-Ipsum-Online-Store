@@ -5,6 +5,7 @@ from StorageClass import *
 from Functions import *
 from User import *
 from deliveryDetails import *
+from Discount import *
 
 # Image download
 from werkzeug.utils import secure_filename
@@ -66,6 +67,14 @@ def search(searchString, category, order):
     except:
         print("Error in retrieving products from shelve")
 
+    try:
+        current = db["Current User"]
+        cart = current.get_shopping_cart()
+        Items = len(cart)
+    except:
+        print("Error in retrieving current user")
+        current = False
+        Items = 0
     products = []
     for id in Products:
         product = Products[id]
@@ -78,7 +87,7 @@ def search(searchString, category, order):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('search.html', productList=products, searchString=searchString, productCount=len(products), searchForm=searchForm)
+    return render_template('search.html', productList=products, searchString=searchString, productCount=len(products), searchForm=searchForm, current=current, Items=len(cart))
 
 # Homepage
 @app.route('/home', methods=['GET', 'POST'])
@@ -88,25 +97,22 @@ def home():
     db = shelve.open('storage.db', 'c')
     try:
         current = db["Current User"]
+        cart = current.get_shopping_cart()
+        Items = len(cart)
     except:
         print("Error while retrieving current user: user not logged in")
         current = False
-
+        Items = 0
     try:
         productDict = db['Products']
         db.close()
     except:
         print('Error in retrieving Products from storage.db.')
-
     productList = []
-    healthList = []
     for key in productDict:
         product = productDict[key]
         productList.append(product)
 
-        if product.get_sub_category() in ['Eye&EarCare', 'Pain&Fever', 'Supplements']:
-            if product.get_activated() == True:
-                healthList.append(product)
 
     purchasesList = sort_by(productList, 'purchase', 'descending')[:6]
     viewsList = sort_by(productList,'view','descending')[:6]
@@ -115,7 +121,7 @@ def home():
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
 
-    return render_template("home.html", current=current, searchForm=searchForm, purchasesList=purchasesList, healthList=healthList, viewsList=viewsList)
+    return render_template("home.html", current=current, searchForm=searchForm, purchasesList=purchasesList, viewsList=viewsList, Items=Items)
 
 # Profile/Username
 @app.route('/my-account/<username>', methods=['GET', 'POST'])
@@ -125,6 +131,8 @@ def view_profile(username):
         usersDict = db["Users"]
         namesDict = db["Usernames"]
         current = db["Current User"]
+        cart = current.get_shopping_cart()
+        Items = len(cart)
     except:
         print("Error while retrieving usersDict")
         return redirect(url_for("home"))
@@ -140,11 +148,17 @@ def view_profile(username):
         if current.get_password() == editProfileForm.password.data:
             if editProfileForm.newpassword.data != "":
                 current.set_password(editProfileForm.newpassword.data)
-                print("New password set for user " + current.get_username() + ", " + current.get_password())
+                print("New password set for user " + current.get_username() + ", " + current.get_password() + ".")
+            elif editProfileForm.newpassword.data == "":
+                print("New password field was left empty.")
+                print("No new password was set.")
+        elif current.get_password() != editProfileForm.password.data:
+            if editProfileForm.password.data == "":
+                print("Current password field was left empty.")
             else:
                 print("Current user password was incorrect.")
         else:
-            print("No new password u baka")
+            print("\n\n\nAn unexpected error has occured.\n\n\n")
 
         usersDict[current_id] = current
         namesDict[current.get_username()] = current_id
@@ -152,17 +166,18 @@ def view_profile(username):
         db["Usernames"] = namesDict
         db["Current User"] = current
 
+
         searchForm = searchBar()
         if request.method == "POST" and searchForm.validate():
             print(searchForm.search_input.data)
         db.close()
-        return render_template('my-account.html', current=current, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm)
+        return render_template('my-account.html', current=current, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm, Items=Items)
     else:
         searchForm = searchBar()
         if request.method == "POST" and searchForm.validate():
             print(searchForm.search_input.data)
         db.close()
-        return render_template('my-account.html', current=current, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm)
+        return render_template('my-account.html', current=current, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm, Items=Items)
 
 # Login/Register
 @app.route('/login', methods=['GET', 'POST'])
@@ -188,14 +203,29 @@ def login():
                 namesDict = db['Usernames']
             except:
                 print("Error while retrieving namesDict")
-            U = User(registrationForm.username.data, registrationForm.password.data, registrationForm.email.data)
-            usersDict[U.get_user_id()] = U
-            namesDict[U.get_username()] = U.get_user_id()
-            db['Users'] = usersDict
-            db['Usernames'] = namesDict
-            db.close()
-            print("User created with name", U.get_username(), "id", U.get_user_id(),
-             "Password", U.get_password(), "and Email", U.get_email())
+
+            unique_email = True
+            for user in usersDict.values():
+                if registrationForm.email.data == user.get_email():
+                    unique_email = False
+                    print("Email in use, you cannot create an account with the same email.")
+                    break
+
+            if unique_email:
+                U = User(registrationForm.username.data, registrationForm.password.data, registrationForm.email.data)
+                usersDict[U.get_user_id()] = U
+                namesDict[U.get_username()] = U.get_user_id()
+                db['Users'] = usersDict
+                db['Usernames'] = namesDict
+                db.close()
+                print("User created with name", U.get_username(), "id", U.get_user_id(),
+                 "Password", U.get_password(), "and Email", U.get_email())
+
+            else:
+                searchForm = searchBar()
+                if request.method == "POST" and searchForm.validate():
+                    print(searchForm.search_input.data)
+                return render_template("login.html", unique_email=unique_email, form=loginForm, form2=registrationForm, searchForm=searchForm)
 
         if request.method =="POST" and loginForm.validate():
             usersDict = {}
@@ -210,17 +240,12 @@ def login():
             except:
                 print("Error while retrieving namesDict")
 
-            # current_user = usersDict[exist]
-            # db["Current User"] = current_user
-            # db.close()
-            # password = current_user.get_password()
-            # username = current_user.get_username()
-
             if loginForm.username.data == "admin" and loginForm.password.data == "admin":
                 return redirect('/dashboard')
 
             username_exist = False
             login_correct = False
+            success_login = False
 
             for name in namesDict:
                 if name == loginForm.username.data:
@@ -237,31 +262,32 @@ def login():
                 if user_obj.get_password() == loginForm.password.data:
                     db["Current User"] = user_obj
                     print("User successfully logged in")
+                    success_login = True
                     return redirect(url_for("home"))
                 else:
                     searchForm = searchBar()
                     if request.method == "POST" and searchForm.validate():
                         print(searchForm.search_input.data)
                     print("Credentials are incorrect.")
-                    return render_template('login.html', username_correct=False, form=loginForm, form2=registrationForm, searchForm=searchForm)
+                    return render_template('login.html', username_correct=False,  unique_email=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
             else:
                 searchForm = searchBar()
                 if request.method == "POST" and searchForm.validate():
                     print(searchForm.search_input.data)
                 print("User does not exist.")
-                return render_template('login.html', username_correct=False, form=loginForm, form2=registrationForm, searchForm=searchForm)
+                return render_template('login.html', username_correct=False,  unique_email=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
 
         else:
             searchForm = searchBar()
             if request.method == "POST" and searchForm.validate():
                 print(searchForm.search_input.data)
-            return render_template('login.html', username_correct=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
+            return render_template('login.html', username_correct=True,  unique_email=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
             print("Exception Error: navigating home.html to login.html")
 
         searchForm = searchBar()
         if request.method == "POST" and searchForm.validate():
             return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-        return render_template('login.html', username_correct=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
+        return render_template('login.html', username_correct=True,  unique_email=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
     else:
         return redirect(url_for("home"))
 
@@ -277,9 +303,17 @@ def logout():
 @app.route('/orderHistory')
 def orderHistory():
     db = shelve.open("storage.db", "r")
+    try:
+        current = db["Current User"]
+        cart = current.get_shopping_cart()
+        Items = len(cart)
+    except:
+        current = False
+        Items = 0
     db.close()
+    searchForm = searchBar()
     #METHOD GET - history of order transaction
-    return render_template('orderHistory.html')
+    return render_template('orderHistory.html', searchForm = searchForm, Items=Items, current = current)
 
 @app.route('/mainCategory/<mainCategory>/<category>/<order>/', methods=['GET', 'POST'])
 def mainCategory(mainCategory, category, order):
@@ -290,9 +324,11 @@ def mainCategory(mainCategory, category, order):
         print("Error in retrieving products from shelve")
     try:
         current = db["Current User"]
+        Items = len(current.get_shopping_cart())
     except:
         print("Error in retrieving current user, subcat")
         current = False
+        Items = 0
 
     db.close()
 
@@ -306,10 +342,11 @@ def mainCategory(mainCategory, category, order):
 
     products = sort_by(products, category, order)
 
+    mainCategory = get_name_with_space(mainCategory)
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('mainCategory.html', productList=products, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current)
+    return render_template('mainCategory.html', productList=products, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current, Items=Items)
 
 # Supplements(one of the subsections)
 @app.route('/subCategory/<subCategory>/<category>/<order>/', methods=['GET', 'POST'])
@@ -321,9 +358,11 @@ def subCategory(subCategory, category, order):
         print("Error in retrieving products from shelve")
     try:
         current = db["Current User"]
+        Items = len(current.get_shopping_cart())
     except:
         print("Error in retrieving current user, subcat")
         current = False
+        Items = 0
 
     db.close()
 
@@ -337,54 +376,76 @@ def subCategory(subCategory, category, order):
     mainCategory = get_main_category(subCategory)
     products = sort_by(products, category, order)
 
+    subCategory = get_name_with_space(subCategory)
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('subCategory.html', productList=products, subCategory=subCategory, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current)
+    return render_template('subCategory.html', productList=products, subCategory=subCategory, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current, Items=Items)
 
 # Ribena(one of the products)
 @app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
 def IndItem(serialNo):
     db = shelve.open('storage.db','w')
-    current=""
+    current = ""
     try:
         products = db['Products']
     except:
         print("Error while retrieving products from storage.")
     try:
         current = db['Current User']
+        Items = len(current.get_shopping_cart())
     except:
         print("Unable to get the current dude!")
+        Items = 0
     IndItem = products[serialNo]
     IndItem.increase_views()
-    wishlist = current.get_wishlist()
-    taken = False
-    for serial_no in wishlist:
-        if serial_no == serialNo:
-            taken = True
-            break
+    try:
+        wishlist = current.get_wishlist()
+        taken = False
+        for serial_no in wishlist:
+            if serial_no == serialNo:
+                taken = True
+                break
+    except:
+        taken = False
+    # except AttributeError:
+    #     # because current string = no current user, current user has no access to cart or wish list
+    #     return redirect(url_for('login'))
     db['Products'] = products
     db.close()
     subCategory = IndItem.get_sub_category()
     mainCategory = get_main_category(subCategory)
-
+    relatedProducts = []
+    for serial_no in products:
+        if get_main_category(products[serial_no].get_sub_category()) == mainCategory:
+            relatedProducts.append(products[serial_no])
+    relatedProducts.remove(IndItem)
+    related = []
+    for i in range(4):
+        max = len(relatedProducts)
+        max -= 1
+        number = random.randint(0,max)
+        related.append(relatedProducts[number])
+        relatedProducts.pop(number)
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken)
+    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken, related=related, Items=Items)
 
 # Shopping Cart
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
+    Delivery = NoCollectForm(request.form)
+    Discount = DiscountForm(request.form)
     db = shelve.open('storage.db','r')
     try:
-        user = db['Current User']
         current = db['Current User']
     except:
         print('Error reading Current User.')
         current = False
 
-    cart = user.get_shopping_cart()
+    cart = current.get_shopping_cart()
+    codes = current.get_discount_codes()
     db.close()
     cartList = []
     totalCost = 0
@@ -392,11 +453,26 @@ def cart():
         totalCost += float(cart[product].get_price())
         cartList.append(cart[product])
     totalCost = '%.2f' %float(totalCost)
+    Items = len(cartList)
+
+    if request.method == "POST" and Delivery.validate():
+        NoCollect = Delivery.home_delivery.data
+        if NoCollect == True:
+            return redirect(url_for('checkout',delivery=NoCollect))
+        else:
+            searchForm = searchBar()
+            # if request.method == "POST" and searchForm.validate():
+            #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
+            return redirect(url_for('checkout', delivery=False))
+
+    if request.method == "POST" and Discount.validate():
+        code = Discount.discount_code.data
 
     searchForm = searchBar()
-    if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current)
+    discount = ''
+    # if request.method == "POST" and searchForm.validate():
+    #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, codes=codes, Items = Items, discount=discount)
 
 @app.route("/addToCart/<name>", methods=['GET', 'POST'])
 def addToCart(name):
@@ -422,7 +498,6 @@ def addToCart(name):
             break
 
     db['Current User'] = current_user
-    cart = current_user.get_shopping_cart()
     db.close()
 
     # searchForm = searchBar()
@@ -448,19 +523,12 @@ def deleteShoppingCartItem(serialNo):
     product = productsDict[serialNo]
     current_user.remove_from_cart(product)
     db["Current User"] = current_user
-    cart = current_user.get_shopping_cart()
     db.close()
-    cartList = []
-    totalCost = 0
-    for product in cart:
-        totalCost += float(cart[product].get_price())
-        cartList.append(cart[product])
-    totalCost ='%.2f' %float(totalCost)
 
-    searchForm = searchBar()
-    if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm)
+    # searchForm = searchBar()
+    # if request.method == "POST" and searchForm.validate():
+    #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
+    return redirect('/cart')
 
 @app.route('/moveToWishlist/<serialNo>', methods=['GET', 'POST'])
 def moveToWishlist(serialNo):
@@ -497,15 +565,15 @@ def wishlist(filter):
         if filter == key:
             filter_breadcrumb = filterDict[filter]
             break
-    current_user = ""
     db = shelve.open('storage.db', 'r')
     try:
-        current_user = db["Current User"]
         current = db["Current User"]
+        Items = len(current.get_shopping_cart())
     except:
         print('Error in retrieving current user from storage.db.')
+        Items = 0
 
-    wishlist = current_user.get_wishlist()
+    wishlist = current.get_wishlist()
 
     db.close()
 
@@ -518,7 +586,7 @@ def wishlist(filter):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm, filter_breadcrumb=filter_breadcrumb, current=current)
+    return render_template('wishlist.html', filtered_list=filtered_list, searchForm=searchForm, filter_breadcrumb=filter_breadcrumb, current=current, Items=Items)
 
 @app.route("/addToWishlist/<name>", methods=['GET', 'POST'])
 def addToWishlist(name):
@@ -600,8 +668,9 @@ def moveToCart(serialNo):
     return redirect('/wishlist/a-z')
 
 # Checkout
-@app.route('/checkout', methods=['GET', 'POST'])
-def checkout():
+@app.route('/checkout/<delivery>', methods=['GET', 'POST'])
+def checkout(delivery):
+    Delivery = delivery
     current = ""
     searchForm = searchBar()
     deliveryForm = DeliveryForm(request.form)
@@ -644,8 +713,31 @@ def checkout():
         deliveryId = deliveryInfo.get_id()
         transactions[deliveryId] = deliveryInfo
         db["Transactions"] = transactions
+        current.set_transactions(deliveryId)
+        db["Current User"] = current
         db.close()
         return redirect(url_for("summary", deliveryId= deliveryId))
+    if request.method == "POST" and collectionForm.validate():
+        db = shelve.open('storage.db','c')
+        transactions = {}
+        try:
+            transactions = db["Transactions"]
+        except:
+            print("Error in retrieving transactions")
+        try:
+            current = db["Current User"]
+        except:
+            print("Current dude for collection MIA")
+        collection = Collection(collectionForm.name.data, collectionForm.phone.data, current.get_email(), total, prodlist,
+        collectionForm.payment_mode.data, collectionForm.credit_card_number.data, collectionForm.credit_card_expiry.data, collectionForm.credit_card_cvv.data,
+        collectionForm.date.data, collectionForm.time.data)
+        collectionId = collection.get_id()
+        transactions[collectionId] = collection
+        db["Transactions"] = transactions
+        current.set_transactions(collectionId)
+        db["Current User"] = current
+        db.close()
+        return redirect(url_for("summary",collectionId=collectionId))
         # current_user.set_transactions(deliveryInfo.get_id())
         # transactions[deliveryInfo.get_id()] = deliveryInfo
         # db["Transactions"] = transactions
@@ -658,8 +750,8 @@ def checkout():
     subtotal = "%.2f" %float(subtotal)
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data)
+    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal, delivery = Delivery, Items = 0)
 
-    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal)
 
 # Summary page
 @app.route('/summary/<deliveryId>', methods= ["GET", "POST"])
@@ -687,7 +779,7 @@ def summary(deliveryId):
         return redirect("/checkout")
 
 
-    return render_template('summary.html', searchForm=searchForm, details=details)
+    return render_template('summary.html', searchForm=searchForm, details=details, Items = 0)
 
 # feedback page
 @app.route('/feedback', methods = ["GET", "POST"])
@@ -830,7 +922,7 @@ def products(category, order):
     return render_template('products.html', adminSearchForm = adminSearchForm, productList=productList, searchString='', searchCat='', currentPage='Catalog')
 
 @app.route('/products/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
-def adminSearch(searchCat, searchString):
+def productsSearch(searchCat, searchString):
     productDict = {}
     db = shelve.open('storage.db', 'c')
 
@@ -965,7 +1057,7 @@ def addProduct():
 
     return render_template('addProduct.html', form=createProductForm, currentPage='Catalog')
 
-@app.route('/stock/<category>/<order>/')
+@app.route('/stock/<category>/<order>/', methods=['GET', 'POST'])
 def stock(category, order):
     db = shelve.open('storage.db', 'c')
 
@@ -994,7 +1086,121 @@ def stock(category, order):
     midStockList = sort_by(midStockList, category, order)
     highStockList = sort_by(highStockList, category, order)
 
-    return render_template('stock.html', currentPage='Stock', lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList)
+    adminSearchForm = AdminSearch(request.form)
+    if request.method == "POST" and adminSearchForm.validate():
+        return redirect('/stock/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
+
+    return render_template('stock.html', currentPage='Stock', searchCat='', adminSearchForm=adminSearchForm, lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList)
+
+@app.route('/stock/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
+def stockSearch(searchCat, searchString):
+    productDict = {}
+    db = shelve.open('storage.db', 'c')
+
+    try:
+        productDict = db['Products']
+        db.close()
+    except:
+        print('Error in retrieving Products from storage.db.')
+
+    productList = []
+    for key in productDict:
+        product = productDict[key]
+        if searchCat=='name-brand':
+            if searchString in product.get_product_name().lower() or searchString in product.get_brand().lower():
+                productList.append(product)
+
+        elif searchCat=='sub-category':
+            if searchString in product.get_sub_category().lower():
+                productList.append(product)
+
+        elif searchCat=='serial-no':
+            if searchString in product.get_serial_no().lower():
+                productList.append(product)
+
+        else:
+            print('error')
+
+    lowStockList = []
+    midStockList = []
+    highStockList = []
+
+    for product in productList:
+        if product.get_quantity()<product.get_stock_threshold():
+            lowStockList.append(product)
+
+        elif product.get_quantity()<(product.get_stock_threshold()*1.25):
+            midStockList.append(product)
+
+        else:
+            highStockList.append(product)
+
+    adminSearchForm = AdminSearch(request.form)
+    if request.method == "POST" and adminSearchForm.validate():
+        return redirect('/stock/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
+
+    return render_template('stock.html', adminSearchForm = adminSearchForm, productList=productList, lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList, searchString=searchString, searchCat=searchCat, currentPage='Stock')
+
+@app.route('/addStock')
+def addStock():
+    db = shelve.open('storage.db', 'r')
+    productDict = {}
+    try:
+        productDict = db['Products']
+        db.close()
+    except:
+        print('Error in retrieving Products from storage.db.')
+
+    productList = []
+
+    for key in productDict:
+        productList.append(productDict[key])
+    productList = sort_by(productList, 'name', 'ascending')
+
+    # tupleList = [('', 'Select')]
+    # for product in productList:
+    #     field = [product.get_serial_no(), product.get_serial_no() + ' - ' + product.get_product_name()]
+    #     tupleList.append(tuple(field))
+
+    addStockForm = AddStockForm(request.form)
+
+    if request.method=='POST' and addStockForm.validate():
+        db = shelve.open('storage.db', 'c')
+        try:
+            products = db['Products']
+        except:
+            print('Error in retrieveing Products from db.')
+
+        db.close()
+
+    return render_template('addStock.html', form=addStockForm, currentPage='Stock')
+
+@app.route('/discount', methods=['GET', 'POST'])
+def disount():
+    AddDiscountAmount = AddDiscountAmountForm(request.form)
+    AddDiscountPercentage = AddDiscountPercentageForm(request.form)
+    db = shelve.open('storage.db', 'c')
+    valid_discounts = []
+    try:
+        valid_discounts = db['Valid Discounts']
+        print(valid_discounts)
+    except:
+        print(valid_discounts)
+        print('Error in retrieving valid discounts from storage.db.')
+    if request.method == "POST" and AddDiscountAmount.validate():
+            discount = AmountDiscount(AddDiscountAmount.discount_code.data, AddDiscountAmount.discount_condition.data, AddDiscountAmount.discount_start.data, AddDiscountAmount.discount_expiry.data, AddDiscountAmount.discount_amount.data)
+            valid_discounts.append(discount)
+            db['Valid Discounts'] = valid_discounts
+
+    elif request.method == "POST" and AddDiscountPercentage.validate():
+            discount = PercentageDiscount(AddDiscountPercentage.discount_code.data, AddDiscountPercentage.discount_condition.data, AddDiscountPercentage.discount_start.data,AddDiscountPercentage.discount_expiry.data, AddDiscountPercentage.discount_percentage.data)
+            valid_discounts.append(discount)
+            db['Valid Discounts'] = valid_discounts
+
+
+    db.close()
+
+    return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage)
 
 @app.route('/transactions')
 def transactions():
@@ -1004,7 +1210,7 @@ def transactions():
     db = shelve.open('storage.db', 'c')
 
     try:
-        productDict = db['Transactions']
+        transactionsDict = db['Transactions']
         db.close()
     except:
         print('Error in retrieving Transactions from storage.db.')
@@ -1063,7 +1269,7 @@ def download():
 def categories():
     return render_template('categories.html')
 
-@app.route('/deliveryInvoice/<email>/',  methods=['POST'])
+@app.route('/deliveryInvoice/<email>/',  methods=['get','POST'])
 def deliveryInvoice(email):
     print("hey!")
     current_user = ""
@@ -1074,7 +1280,8 @@ def deliveryInvoice(email):
         print('Error in retrieving current user from storage.db.')
 
     cart = current_user.get_shopping_cart()
-    order_ID = current_user.get_orders()
+    order_ID = current_user.get_transactions()
+
     cartList = []
     images = []
     for product in cart:
@@ -1109,7 +1316,7 @@ def deliveryInvoice(email):
                 print("attached")
 
         msg.body = "This ur e reciept"
-        msg.html = render_template('html_in_invoice.html',  cartList=cartList, current_user=current_user ,order_ID= order_ID)
+        msg.html = render_template('html_in_invoice.html',  cartList=cartList, current_user=current_user )
         print("testinggggggggggggggg")
         mail.send(msg)
         print("MAIL SENT")
@@ -1128,6 +1335,75 @@ def deliveryInvoice(email):
         print(searchForm.search_input.data)
     return redirect('/home')
 
+@app.route('/listOfBrands')
+def listOfBrands():
+    productsDict ={}
+    db = shelve.open('storage.db', 'c')
+    try:
+        productsDict = db["Products"]
+    except:
+        print("Error retrieving products from storage.db")
+
+    try:
+        current = db["Current User"]
+        Items = len(current.get_shopping_cart())
+    except:
+        print('Error in retrieving current user from storage.db.')
+        current = False
+        Items = 0
+
+    start_with_letter = []
+    start_with_other = []
+
+    brandsDict = {}
+    for letter in string.ascii_lowercase:
+        brandsDict[letter]=[]
+
+
+    for product in productsDict:
+        brand = productsDict[product].get_brand()
+        first_letter = brand[0].lower()
+        brandsDict[first_letter].append(brand)
+
+
+
+
+    db.close()
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        print(searchForm.search_input.data)
+    return render_template('listOfBrands.html', searchForm=searchForm, brandsDict=brandsDict, current=current, Items=Items)
+
+@app.route('/Brand/<brand>', methods=['GET', 'POST'])
+def brand(brand):
+    db = shelve.open('storage.db', 'r')
+    try:
+        Products = db["Products"]
+    except:
+        print("Error in retrieving products from shelve")
+
+    try:
+        current = db["Current User"]
+        Items = len(current.get_shopping_cart())
+
+    except:
+        print('Error in retrieving current user from storage.db.')
+        current = False
+        Items = 0
+
+    products = []
+    for id in Products:
+        product = Products[id]
+        if brand.lower() == product.get_brand().lower():
+            if product.get_activated() == True:
+                products.append(product)
+
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        return redirect('/search/' + searchForm.search_input.data)
+    return render_template('productByBrand.html', productList=products, productCount=len(products), searchForm=searchForm, brand=brand, current=current, Items = Items)
+
+app.jinja_env.filters['get_name_with_space'] = get_name_with_space
 if __name__=='__main__':
     excel.init_excel(app)
     app.run(debug=True)

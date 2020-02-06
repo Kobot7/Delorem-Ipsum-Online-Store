@@ -98,3 +98,67 @@ body {
 .sticky-top{
   border-bottom: solid 1px #84a220;
 }
+
+#coupon .container{
+  position: fixed;
+  bottom: 0;
+  /* background-color: blue; */
+
+}
+
+#coupon .row{
+  background-color: purple;
+}
+
+.well{
+  background-color: #e8e8e8 ;
+  border: 2px solid #84a220;
+
+}
+.idk{
+  background-color: white;
+}
+
+#coupon button{
+   background-color: white;
+   color: black;
+   border: 2px solid #e8e8e8;
+   padding: 10px ;
+   text-align: center;
+   text-decoration: none;
+   display: inline-block;
+   font-family: 'Josefin Sans', sans-serif;
+   width: 100%;
+}
+
+#coupon button:hover{
+   background-color: #84a220;
+}
+
+
+.collapse{
+  text-align: center;
+}
+
+.code{
+  border: 2px dotted #84a220;
+  padding: 10px 20px;
+  margin: 0 10px;
+}
+
+.dot {
+  height: 17px;
+  width: 17px;
+  background-color: rgba(132, 162 ,32,0.5);
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  bottom:8px;
+  right:5px;
+}
+
+.current_cart_number{
+  color: white;
+  font-size:12px;
+  font-weight: bold;
+}

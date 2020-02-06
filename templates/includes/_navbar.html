@@ -30,17 +30,29 @@
             </div>
           </div>
         </li>
+        {% if Items > 0 %}
+        <li class="nav-item">
+          <a class="nav-link" href="/cart"><i class="icon-shopping-cart"></i><span class="dot"><p class="current_cart_number">{{Items}}</p></span> Cart</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="/cart"><i class="icon-shopping-cart"></i> Cart</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="/wishlist/a-z"><i class="icon-heart"></i> Wish List</a>
+        </li>
         {% else %}
         <li class="nav-item">
           <a class="nav-link" href="/login"><i class="icon-user"></i> Login | Register</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/login"><i class="icon-shopping-cart"></i> Cart</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/login"><i class="icon-heart"></i> Wish List</a>
+        </li>
         {% endif %}
-        <li class="nav-item">
-          <a class="nav-link" href="/cart"><i class="icon-shopping-cart"></i> Cart</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/wishlist/a-z"><i class="icon-heart"></i> Wish List</a>
-        </li>
       </ul>
     </div>
   </nav>
@@ -118,6 +130,9 @@
           </div>
         </div>
       </li>
+      <li class="nav-item">
+        <button class="dropbtn"><a class="nav-link" href="/listOfBrands">Brands</a></button>
+      </li>
     </ul>
   </nav>
 </div>
@@ -159,6 +174,6 @@
   }
 
   .dropdown-user:hover .dropbtn-user {
-    background-color: #3e8e41;
+    background-color: #84a220;
   }
 </style>

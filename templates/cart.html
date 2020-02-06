@@ -3,6 +3,7 @@
 {% block style %}
 <link rel="stylesheet" href="/static/styles/cart.css">{% endblock %}
 {% block content %}
+{% from "includes/_formhelper.html" import render_field %}
 <div id="content">
 
   <div id="MyCart">
@@ -61,6 +62,18 @@
         <div class="price">SGD ${{ totalCost }}</div>
         <div>Sub-total</div>
       </div>
+      {% if discount != '' %}
+      <div id="discount" class="clearfix">
+        <div>
+          <button type="button" data-toggle="modal" data-target="#input-discount" class="mybutton">Edit</button>
+        </div>
+        <div>Discount Code: {{discount.get_code()}}</div>
+      </div>
+      <div id="discount-confirm">
+        <div style="float: right;">- ${{discount.get_discount_amount()}}</div>
+        <div>Discount</div>
+      </div>
+      {% else %}
       <div id="discount" class="clearfix">
         <div>
           <button type="button" data-toggle="modal" data-target="#input-discount" class="mybutton">click to<br>add</button>
@@ -71,6 +84,8 @@
         <div style="float: right;">- $9.15</div>
         <div>Discount</div>
       </div>
+      {% endif %}
+
 
 
     </div>
@@ -80,12 +95,14 @@
         <div>SGD $21.35</div>
         <div>NEW TOTAL</div>
       </div>
+      <form method="POST" action="{{url_for('cart')}}">
       <div id="delivery">
-        <input type="checkbox">Home Delivery</input>
+        {{render_field(NoCollectForm.home_delivery)}}
       </div>
       <div id="CHECKOUT">
-        <a href="/checkout" class="mybutton">CHECKOUT</a>
+        <button class="mybutton" value="submit">CHECKOUT</button>
       </div>
+      </form>
     </div>
   </div>
 </div>
@@ -102,12 +119,15 @@
         </div>
       </div>
       <div class="modal-body">
+      <form action="{{url_for('cart')}}" method="post">
         <div>Please enter your discount code</div>
-        <input type="text">
+        {{render_field(Discount.discount_code)}}
       </div>
       <div class="modal-footer">
-        <button type="button" data-dismiss="modal">Confirm</button>
+        <button type="button" data-dismiss="modal" value="submit">Confirm</button>
       </div>
+      </form>
+
     </div>
   </div>
 </div>

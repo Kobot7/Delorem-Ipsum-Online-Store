@@ -1,3 +1,5 @@
+import re
+
 def sort_by(list, category, order):
     if order=='ascending':
         order = False
@@ -70,6 +72,7 @@ def get_main_category(subCategory):
 
     return mainCategory
 
+
 # For wish list
 def filter_function(list, filter):
     #if order == "recent":
@@ -86,3 +89,8 @@ def filter_function(list, filter):
         filtered_list = sorted(list, key=keyDict['name'], reverse=True)
     #elif order =="stock":
     return filtered_list
+
+
+def get_name_with_space(name):
+    name = name.replace('&', ' & ')
+    return re.sub(r"(\w)([A-Z])", r"\1 \2", name)

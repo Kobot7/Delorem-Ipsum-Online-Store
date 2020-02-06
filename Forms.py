@@ -101,15 +101,19 @@ class RegistrationForm(Form):
     confirm = PasswordField('Repeat Password')
 
 class EditProfileForm(Form):
-    username = StringField('Username')
+    username = StringField('Username', [validators.Length(min=1, max=25), validators.DataRequired()])
     address = TextAreaField('Address')
-    phone = StringField('Contact Number')
-    email = StringField('Contact Email')
+    phone = IntegerField('Contact Number',[validators.NumberRange(min=80000000, max=99999999, message="Please enter a valid phone number")])
+    email = StringField('Contact Email', [validators.Length(min=6, max=35)])
     password = StringField("Password")
     newpassword = StringField('New Password')
 
+class NoCollectForm(Form):
+    home_delivery = BooleanField("Home Delivery")
+
+
 cardlist = [('visa','Visa'),
-            ('mastercard', 'Master card')]
+            ('mastercard', 'MasterCard')]
 
 class DeliveryForm(Form):
     name = StringField('Cardholder Name',[validators.DataRequired()])
@@ -131,7 +135,6 @@ class CollectionForm(Form):
     credit_card_cvv = IntegerField('CVV', [validators.DataRequired(), validators.NumberRange(min=100, max = 999)])
     date = DateField('Date',[validators.DataRequired()])
     time = IntegerField('Postal Code', [validators.NumberRange(min=10000, max=830000, message="Postal code is 6 digits")])
-    unit_no = StringField('Unit No',[validators.Length(min=5,max=7),validators.DataRequired()])
 
 
 agendaChoices = [('products', 'Products'),
@@ -159,5 +162,33 @@ admin_searchList = [('name-brand', 'Name/Brand')
                 , ('serial-no', 'Serial No.')]
 
 class AdminSearch(Form):
-    search_cat = SelectField('', choices=admin_searchList, default='name')
+    search_cat = SelectField('', choices=admin_searchList, default='name-brand')
     search_input = StringField('', [validators.DataRequired()])
+
+class DiscountForm(Form):
+    discount_code = StringField('Discount code')
+
+class AddDiscountAmountForm(Form):
+    discount_code = StringField('Discount code')
+    discount_condition =  DecimalField('Price at which disount is applicable', [validators.DataRequired(message='This is a required field.')
+                                , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
+    discount_start  = DateField('Date start', format = "%Y-%m-%d")
+    discount_expiry  = DateField('Date expiry', format = "%Y-%m-%d")
+    discount_amount = DecimalField('Discount Amount', [validators.DataRequired(message='This is a required field.')
+                                , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
+
+class AddDiscountPercentageForm(Form):
+    discount_code = StringField('Discount code')
+    discount_condition =  DecimalField('Price at which disount is applicable', [validators.DataRequired(message='This is a required field.')
+                                , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
+    # discount_expiry = DateField('Expiry Date', format = "%Y-%m-%d")
+    discount_start  = DateField('Date start', format = "%Y-%m-%d")
+    discount_expiry  = DateField('Date expiry', format = "%Y-%m-%d")
+    discount_percentage = DecimalField('Discount Percentage', [validators.DataRequired(message='This is a required field.')
+                                , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
+
+class AddStockForm(Form):
+    search_cat = SelectField('', choices=admin_searchList, default='name-brand')
+    search_input = StringField('', [validators.DataRequired()])
+    quantity = IntegerField('', [validators.DataRequired(message='This is a required field.')
+                                      , validators.NumberRange(min=0, message='Value has to be more than 0')])
