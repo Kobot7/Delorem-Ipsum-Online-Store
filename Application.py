@@ -201,14 +201,29 @@ def login():
                 namesDict = db['Usernames']
             except:
                 print("Error while retrieving namesDict")
-            U = User(registrationForm.username.data, registrationForm.password.data, registrationForm.email.data)
-            usersDict[U.get_user_id()] = U
-            namesDict[U.get_username()] = U.get_user_id()
-            db['Users'] = usersDict
-            db['Usernames'] = namesDict
-            db.close()
-            print("User created with name", U.get_username(), "id", U.get_user_id(),
-             "Password", U.get_password(), "and Email", U.get_email())
+
+            unique_email = True
+            for user in usersDict.values():
+                if registrationForm.email.data == user.get_email():
+                    unique_email = False
+                    print("Email in use, you cannot create an account with the same email.")
+                    break
+
+            if unique_email:
+                U = User(registrationForm.username.data, registrationForm.password.data, registrationForm.email.data)
+                usersDict[U.get_user_id()] = U
+                namesDict[U.get_username()] = U.get_user_id()
+                db['Users'] = usersDict
+                db['Usernames'] = namesDict
+                db.close()
+                print("User created with name", U.get_username(), "id", U.get_user_id(),
+                 "Password", U.get_password(), "and Email", U.get_email())
+
+            else:
+                searchForm = searchBar()
+                if request.method == "POST" and searchForm.validate():
+                    print(searchForm.search_input.data)
+                return render_template("login.html", unique_email=unique_email, form=loginForm, form2=registrationForm, searchForm=searchForm)
 
         if request.method =="POST" and loginForm.validate():
             usersDict = {}
@@ -252,25 +267,25 @@ def login():
                     if request.method == "POST" and searchForm.validate():
                         print(searchForm.search_input.data)
                     print("Credentials are incorrect.")
-                    return render_template('login.html', username_correct=False, form=loginForm, form2=registrationForm, searchForm=searchForm)
+                    return render_template('login.html', username_correct=False,  unique_email=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
             else:
                 searchForm = searchBar()
                 if request.method == "POST" and searchForm.validate():
                     print(searchForm.search_input.data)
                 print("User does not exist.")
-                return render_template('login.html', username_correct=False, form=loginForm, form2=registrationForm, searchForm=searchForm)
+                return render_template('login.html', username_correct=False,  unique_email=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
 
         else:
             searchForm = searchBar()
             if request.method == "POST" and searchForm.validate():
                 print(searchForm.search_input.data)
-            return render_template('login.html', username_correct=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
+            return render_template('login.html', username_correct=True,  unique_email=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
             print("Exception Error: navigating home.html to login.html")
 
         searchForm = searchBar()
         if request.method == "POST" and searchForm.validate():
             return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-        return render_template('login.html', username_correct=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
+        return render_template('login.html', username_correct=True,  unique_email=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
     else:
         return redirect(url_for("home"))
 
