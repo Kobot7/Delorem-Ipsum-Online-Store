@@ -1,6 +1,6 @@
 {% extends "admin_base.html" %}
 {% block title %}Add Product{% endblock %}
-{% block style %}<link rel="stylesheet" href="/static/styles/productStats.css">{% endblock %}
+{% block style %}<link rel="stylesheet" href="/static/styles/productSettings.css">{% endblock %}
 
 {% block content %}
 {% from "includes/_formhelper.html" import render_field %}
@@ -39,6 +39,35 @@
 
         <input type="submit" value="Submit" class="btn"/>
         </form>
+        <div class="table">
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th>Discount Code</th>
+              <th>Condition</th>
+              <th>Start</th>
+              <th>Expire</th>
+              <th>Percentage</th>
+              <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+              {%for code in percentage_discounts%}
+                <tr>
+                  <td>{{percentage_discounts[code].get_code()}}</td>
+                  <td>{{percentage_discounts[code].get_condition()}}</td>
+                  <td>{{percentage_discounts[code].get_start_date()}}</td>
+                  <td>{{percentage_discounts[code].get_expiry_date()}}</td>
+                  <td>{{percentage_discounts[code].get_discount_percentage()}}</td>
+                  <td><form action="{{url_for('deleteDiscount', code=percentage_discounts[code].get_code())}}" method="post">
+                    <input type="submit" value="Delete" class="btn btn-danger">
+                  </form></td>
+                </tr>
+
+                {%endfor%}
+            </tbody>
+            </table>
+          </div>
       </div>
 
 
@@ -66,8 +95,40 @@
 
           <input type="submit" value="Submit" class="btn"/>
           </form>
+          <div class="table">
+          <table class="table mt-4">
+            <thead>
+              <tr>
+                <th>Discount Code</th>
+                <th>Condition</th>
+                <th>Start</th>
+                <th>Expire</th>
+                <th>Amount</th>
+                <th>Delete</th>
+              </tr>
+              </thead>
+              <tbody>
+                {%for code in amount_discounts%}
+
+                  <tr>
+                    <td>{{amount_discounts[code].get_code()}}</td>
+                    <td>{{amount_discounts[code].get_condition()}}</td>
+                    <td>{{amount_discounts[code].get_start_date()}}</td>
+                    <td>{{amount_discounts[code].get_expiry_date()}}</td>
+                    <td>{{amount_discounts[code].get_discount_amount()}}</td>
+                    <td><form action="{{url_for('deleteDiscount', code = amount_discounts[code].get_code())}}" method="post">
+                      <input type="submit" value="Delete" class="btn btn-danger">
+                    </form></td>
+                  </tr>
+
+                  {%endfor%}
+              </tbody>
+              </table>
+            </div>
 
         </div>
+        </div>
+
         </div>
         </div>
         </div>

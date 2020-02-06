@@ -1304,26 +1304,115 @@ def discount():
     AddDiscountAmount = AddDiscountAmountForm(request.form)
     AddDiscountPercentage = AddDiscountPercentageForm(request.form)
     db = shelve.open('storage.db', 'c')
-    valid_discounts = []
+    amount_discounts = {}
+    percentage_discounts = {}
+    valid_discount = {}
     try:
-        valid_discounts = db['Valid Discounts']
-        print(valid_discounts)
+        valid_discount = db['Valid Discount']
+
     except:
-        print(valid_discounts)
         print('Error in retrieving valid discounts from storage.db.')
+
+    test = valid_discount.get('Amount')
+    if test:
+        amount_discounts = valid_discount['Amount']
+    else:
+        valid_discount['Amount'] = amount_discounts
+
+    test = valid_discount.get('Percentage')
+    if test:
+        percentage_discounts = valid_discount['Percentage']
+    else:
+        valid_discount['Percentage'] = percentage_discounts
+
+    print(valid_discount)
+
     if request.method == "POST" and AddDiscountAmount.validate():
-            discount = AmountDiscount(AddDiscountAmount.discount_code.data, AddDiscountAmount.discount_condition.data, AddDiscountAmount.discount_start.data, AddDiscountAmount.discount_expiry.data, AddDiscountAmount.discount_amount.data)
-            valid_discounts.append(discount)
-            db['Valid Discounts'] = valid_discounts
+        code=AddDiscountAmount.discount_code.data
+        discount = AmountDiscount(AddDiscountAmount.discount_code.data, AddDiscountAmount.discount_condition.data, AddDiscountAmount.discount_start.data, AddDiscountAmount.discount_expiry.data, AddDiscountAmount.discount_amount.data)
+            # empty = bool(valid_discount['Amount'])
+        test = valid_discount.get('Amount')
+        if test:
+            amount_discounts = valid_discount['Amount']
+            amount_discounts[AddDiscountAmount.discount_code.data] = discount
+            valid_discount['Amount'] = amount_discounts
+            db['Valid Discount'] = valid_discount
+        else:
+            valid_discount['Amount'] = amount_discounts
+            amount_discounts[AddDiscountAmount.discount_code.data] = discount
+            valid_discount['Amount'] = amount_discounts
+            db['Valid Discount'] = valid_discount
+
+        test = valid_discount.get('Percentage')
+        if test:
+            percentage_discounts =  valid_discount['Percentage']
+
+        else:
+            percentage_discounts = percentage_discounts
 
     elif request.method == "POST" and AddDiscountPercentage.validate():
-            discount = PercentageDiscount(AddDiscountPercentage.discount_code.data, AddDiscountPercentage.discount_condition.data, AddDiscountPercentage.discount_start.data,AddDiscountPercentage.discount_expiry.data, AddDiscountPercentage.discount_percentage.data)
-            valid_discounts.append(discount)
-            db['Valid Discounts'] = valid_discounts
+        code=AddDiscountPercentage.discount_code.data
+        discount = PercentageDiscount(AddDiscountPercentage.discount_code.data, AddDiscountPercentage.discount_condition.data, AddDiscountPercentage.discount_start.data,AddDiscountPercentage.discount_expiry.data, AddDiscountPercentage.discount_percentage.data)
+        test = valid_discount.get('Percentage')
+        if test:
+            percentage_discounts = valid_discount['Percentage']
+            percentage_discounts[AddDiscountPercentage.discount_code.data] = discount
+            valid_discount['Percentage'] = percentage_discounts
+            db['Valid Discount'] = valid_discount
+        else:
+            valid_discount['Percentage'] = percentage_discounts
+            percentage_discounts[AddDiscountPercentage.discount_code.data] = discount
+            valid_discount['Percentage'] = percentage_discounts
+            db['Valid Discount'] = valid_discount
+        test = valid_discount.get('Amount')
+
+        if test:
+            amount_discounts = valid_discount['Amount']
+        else:
+            amount_discounts = amount_discounts
+
+
+
+        return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage, valid_discount=valid_discount, amount_discounts=amount_discounts, percentage_discounts=percentage_discounts, code=code)
 
     db.close()
+    return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage, valid_discount=valid_discount, amount_discounts=amount_discounts, percentage_discounts=percentage_discounts)
 
-    return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage)
+@app.route('/deleteDiscount/<code>', methods=['POST'])
+def deleteDiscount(code):
+    valid_discount = {}
+    amount_discounts = {}
+    percentage_discounts = {}
+    db = shelve.open('storage.db', 'c')
+
+    try:
+        valid_discount = db['Valid Discount']
+    except:
+        print("Error retrieving valid discount from storage.db")
+
+    amount_discounts = valid_discount['Amount']
+    percentage_discounts = valid_discount["Percentage"]
+
+    found = False
+
+    for key in amount_discounts:
+        if key == code:
+            del amount_discounts[key]
+            valid_discount['Amount'] = amount_discounts
+            found = True
+            break
+
+    if found == False:
+        for key in percentage_discounts:
+            if key == code:
+                del percentage_discounts[key]
+                valid_discount['Percentage'] = percentage_discounts
+                found=True
+                break
+
+    db['Valid Discount'] = valid_discount
+
+    return redirect('/discount')
 
 @app.route('/categories')
 def categories():
