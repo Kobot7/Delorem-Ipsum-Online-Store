@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Feedback{% endblock %}
+{% block style %}<link rel="stylesheet" href="/static/styles/feedback.css">{% endblock %}
+{% block content %}
+
+{% from "includes/_formhelper.html" import render_field %}
+<form class="feedback">
+  <div class="form-group box">
+    <div class="form-group name">
+      <h2>Feedback</h2>
+      {{render_field(feedbackForm.name, class= "form-control")}}
+    </div>
+
+
+  <div class="form-group reason">
+        {{render_field(feedbackForm.agenda, class= "form-control")}}
+    </div>
+
+    <div class="form-group comment">
+      {{render_field(feedbackForm.comment, class= "form-control")}}
+    </div>
+
+    <div class="form-group rating">
+      <h2>Rating</h2>
+      <div class="star-rating">
+        {{render_field(feedbackForm.rating, class= "form-check, form-check-inline")}}
+      </div>
+    </div>
+
+      <input type="submit" class="btn btn-secondary" action="">
+  </div>
+</form>
+
+{% endblock %}

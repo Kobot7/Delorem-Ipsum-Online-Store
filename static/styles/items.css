@@ -349,3 +349,8 @@ outline: none;
 .row{
   justify-content: center;
 }
+
+article:hover {
+  transform: scale(1.2);
+  z-index: 99;
+}

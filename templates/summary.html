@@ -10,43 +10,69 @@
 
       <h4 class = "bold">Delivery details</h4>
 
-      <div>
-      <h3>Street Name</h3>
-      <div> {{details.get_street_name()}}</div>
-    </div>
-
-      <div class="form-group">
-        {{details.get_postal_code()}}
+      <div class = "form-group">
+        Street Name: {{details.get_street_name()}}
       </div>
 
       <div class="form-group">
-        {{details.get_unit_no()}}
+        Postal Code: {{details.get_postal_code()}}
+      </div>
+
+      <div class="form-group">
+        Unit Number: {{details.get_unit_no()}}
       </div>
   </div>
   <div class="payment box">
     <h4 class="bold">Payment details</h4>
       <div class="form-group">
-        {{details.get_name()}}
+        Name: {{details.get_name()}}
       </div>
 
       <div class="form-group">
-        {{details.get_phone()}}
+        Phone Number: {{details.get_phone()}}
       </div>
 
       <div class="form-group">
-        {{details.get_email()}}
+        Email Address: {{details.get_email()}}
       </div>
 
 
   </div>
 
   <div class="btn-group box">
-    <div class="edit">
-      <button type="button" class="btn btn-warning"><a href="/checkout">Edit</a></button>
-    </div>
+            <div class="edit">
+              <form action="" method="POST">
+                <button type="submit" class="btn btn-secondary">Edit</button>
+              </form>
+            </div>
 
-    <div class="confirm">
-      <button type="button" class="btn btn-success">Confirm</button>
+            <div class="confirm">
+              <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal"> Confirm</button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Success!!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Delivery Order has been confirmed! Do you want to fill in a feedback form?
+              </div>
+              <div class="modal-footer">
+
+                <a class="btn btn-success"  href="{{url_for('feedback')}}">Yes</a>
+
+
+                <a class="btn btn-danger" href="{{url_for('home')}}">No</a>
+
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
   </div>
 

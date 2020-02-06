@@ -750,8 +750,8 @@ def checkout(delivery):
     subtotal = "%.2f" %float(subtotal)
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data)
-
     return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal, delivery = Delivery, Items = 0)
+
 
 # Summary page
 @app.route('/summary/<deliveryId>', methods= ["GET", "POST"])
@@ -772,9 +772,24 @@ def summary(deliveryId):
     searchForm = searchBar()
         # if request.method == "POST" and searchForm.validate():
         #     return redirect('/search/' + searchForm.search_input.data)
+    if request.method == "POST":
+        print(str(transactions) + "\n\n\n")
+        transactions.pop(deliveryId)
+        transactions = ""
+        return redirect("/checkout")
+
 
     return render_template('summary.html', searchForm=searchForm, details=details, Items = 0)
 
+# feedback page
+@app.route('/feedback', methods = ["GET", "POST"])
+def feedback():
+    feedbackForm = FeedbackForm(request.form)
+    searchForm = searchBar()
+
+    if request.method == "POST" and feedbackForm.validate():
+        return redirect('/home')
+    return render_template('feedback.html', searchForm=searchForm, feedbackForm=feedbackForm)
 
 # Admin Side
 @app.route('/dashboard')
@@ -1105,6 +1120,60 @@ def stockSearch(searchCat, searchString):
 
         else:
             print('error')
+
+    lowStockList = []
+    midStockList = []
+    highStockList = []
+
+    for product in productList:
+        if product.get_quantity()<product.get_stock_threshold():
+            lowStockList.append(product)
+
+        elif product.get_quantity()<(product.get_stock_threshold()*1.25):
+            midStockList.append(product)
+
+        else:
+            highStockList.append(product)
+
+    adminSearchForm = AdminSearch(request.form)
+    if request.method == "POST" and adminSearchForm.validate():
+        return redirect('/stock/search/' + adminSearchForm.search_cat.data + '/' + adminSearchForm.search_input.data)
+
+    return render_template('stock.html', adminSearchForm = adminSearchForm, productList=productList, lowStockList=lowStockList, midStockList=midStockList, highStockList=highStockList, searchString=searchString, searchCat=searchCat, currentPage='Stock')
+
+@app.route('/addStock')
+def addStock():
+    db = shelve.open('storage.db', 'r')
+    productDict = {}
+    try:
+        productDict = db['Products']
+        db.close()
+    except:
+        print('Error in retrieving Products from storage.db.')
+
+    productList = []
+
+    for key in productDict:
+        productList.append(productDict[key])
+    productList = sort_by(productList, 'name', 'ascending')
+
+    # tupleList = [('', 'Select')]
+    # for product in productList:
+    #     field = [product.get_serial_no(), product.get_serial_no() + ' - ' + product.get_product_name()]
+    #     tupleList.append(tuple(field))
+
+    addStockForm = AddStockForm(request.form)
+
+    if request.method=='POST' and addStockForm.validate():
+        db = shelve.open('storage.db', 'c')
+        try:
+            products = db['Products']
+        except:
+            print('Error in retrieveing Products from db.')
+
+        db.close()
+
+    return render_template('addStock.html', form=addStockForm, currentPage='Stock')
 
 @app.route('/discount', methods=['GET', 'POST'])
 def disount():

@@ -137,6 +137,22 @@ class CollectionForm(Form):
     time = IntegerField('Postal Code', [validators.NumberRange(min=10000, max=830000, message="Postal code is 6 digits")])
 
 
+agendaChoices = [('products', 'Products'),
+                ('delivery', 'Delivery'),
+                ('app', 'Application'),
+                ('customer', 'Customer')]
+
+ratingChoice = [('1', '1'),
+                ('2', '2'),
+                ('3', '3'),
+                ('4', '4'),
+                ('5', '5')]
+class FeedbackForm(Form):
+    name = StringField("Name:", [validators.DataRequired()], render_kw={"placeholder": "e.g. Orion Raysher Lee"})
+    agenda = SelectField('What is your agenda?', choices= agendaChoices, default= "products")
+    comment = TextAreaField('Add a comment :)', [validators.DataRequired()], render_kw={"rows": 5})
+    rating = RadioField('Rate our delivery service!', [validators.DataRequired()], choices= ratingChoice)
+
 class SearchBar(Form):
     search_input = StringField('')
 
@@ -146,7 +162,7 @@ admin_searchList = [('name-brand', 'Name/Brand')
                 , ('serial-no', 'Serial No.')]
 
 class AdminSearch(Form):
-    search_cat = SelectField('', choices=admin_searchList, default='name')
+    search_cat = SelectField('', choices=admin_searchList, default='name-brand')
     search_input = StringField('', [validators.DataRequired()])
 
 class DiscountForm(Form):
@@ -170,3 +186,9 @@ class AddDiscountPercentageForm(Form):
     discount_expiry  = DateField('Date expiry', format = "%Y-%m-%d")
     discount_percentage = DecimalField('Discount Percentage', [validators.DataRequired(message='This is a required field.')
                                 , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
+
+class AddStockForm(Form):
+    search_cat = SelectField('', choices=admin_searchList, default='name-brand')
+    search_input = StringField('', [validators.DataRequired()])
+    quantity = IntegerField('', [validators.DataRequired(message='This is a required field.')
+                                      , validators.NumberRange(min=0, message='Value has to be more than 0')])

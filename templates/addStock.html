@@ -8,27 +8,31 @@
 {% endblock %}
 
 {% block content %}
-{% from "includes/_formhelper.html" import render_field %}
+{% from "includes/_admin_formhelper.html" import render_field %}
 <div class="row justify-content-center">
     <div class="col-md-8 pb-4">
         <h1 class="my-4">Add Stock</h1>
 
-        <form method="POST" action="" enctype="multipart/form-data" onsubmit="CheckImageSize();">
-          <div class="form-group">
-              {{ render_field(form.product, class="form-control") }}
-          </div>
+        <table class="table products">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
 
-          <div class="form-group">
-            <label>Thumbnail</label>
-            <div class="custom-file">
-              <input type="file" class="custom-file-input" name="image" id="image" accept=".jpg, .jpeg, .png" value="label">
-              <label class="custom-file-label" for="image">{{ label }}</label>
-            </div>
-          </div>
+          <tbody>
+            <form method="POST" action="">
+            <tr>
+              <td>
+                  {{ render_field(form.product, class="form-control") }}
+              </td>
 
-          <a href="/stock/name/ascending/" class="btn mr-2 grayButton">Cancel</a>
-          <input type="submit" value="Submit" class="btn"/>
-        </form>
+              <td>{{ render_field(form.quantity, class="form-control") }}</td>
+            </tr>
+          </form>
+          </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}
