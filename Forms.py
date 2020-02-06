@@ -105,7 +105,7 @@ class EditProfileForm(Form):
     address = TextAreaField('Address')
     phone = IntegerField('Contact Number',[validators.NumberRange(min=80000000, max=99999999, message="Please enter a valid phone number")])
     email = StringField('Contact Email', [validators.Length(min=6, max=35)])
-    password = StringField("Password")
+    password = StringField("Password", [validators.DataRequired(), validators.Regexp('^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$', message = "Password must be 8-20 characters, and contain at least 1 capital letter, 1 lowercase letter and a number.")])
     newpassword = StringField('New Password')
 
 class NoCollectForm(Form):
