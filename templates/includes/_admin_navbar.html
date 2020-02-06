@@ -22,18 +22,10 @@
       </li> <!--Catalog-->
 
       <li class="nav-item">
-        {% if currentPage=='Stock' %}
-          <a class="nav-link active" href="/stock/name/ascending">Stock</a>
-        {% else %}
-          <a class="nav-link" href="/stock/name/ascending">Stock</a>
-        {% endif %}
-      </li> <!--Transactions-->
-
-      <li class="nav-item">
         {% if currentPage=='Statistics' %}
-          <a class="nav-link active" href="/productStats/purchase/descending">Statistics</a>
+          <a class="nav-link active" href="/productStats/name/ascending">Statistics</a>
         {% else %}
-          <a class="nav-link" href="/productStats/purchase/descending">Statistics</a>
+          <a class="nav-link" href="/productStats/name/ascending">Statistics</a>
         {% endif %}
       </li> <!--Statistics-->
 
