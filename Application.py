@@ -6,6 +6,7 @@ from Functions import *
 from User import *
 from deliveryDetails import *
 from Discount import *
+from feedback import *
 
 # Image download
 from werkzeug.utils import secure_filename
@@ -670,7 +671,7 @@ def moveToCart(serialNo):
 # Checkout
 @app.route('/checkout/<delivery>', methods=['GET', 'POST'])
 def checkout(delivery):
-    Delivery = delivery
+    NotCollect = delivery
     current = ""
     searchForm = searchBar()
     deliveryForm = DeliveryForm(request.form)
@@ -705,11 +706,13 @@ def checkout(delivery):
             current = db["Current User"]
         except:
             print("Can't get user")
-
+        print(deliveryForm.unit_no.data)
         deliveryInfo = Delivery(deliveryForm.name.data, deliveryForm.phone.data,
                     current.get_email(),total, prodlist, deliveryForm.payment_mode.data,
                      deliveryForm.credit_card_number.data, deliveryForm.credit_card_expiry.data, deliveryForm.credit_card_cvv.data,
-                     deliveryForm.street_name.data,deliveryForm.postal_code.data,deliveryForm.unit_no.data)
+                     deliveryForm.street_name.data,
+                     deliveryForm.postal_code.data,
+                     deliveryForm.unit_no.data)
         deliveryId = deliveryInfo.get_id()
         transactions[deliveryId] = deliveryInfo
         db["Transactions"] = transactions
@@ -750,7 +753,7 @@ def checkout(delivery):
     subtotal = "%.2f" %float(subtotal)
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data)
-    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal, delivery = Delivery, Items = 0)
+    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal, delivery = NotCollect, Items = 0)
 
 
 # Summary page
@@ -788,8 +791,31 @@ def feedback():
     searchForm = searchBar()
 
     if request.method == "POST" and feedbackForm.validate():
+        db = shelve.open('db', 'c')
+        feedbacks = []
+        try:
+            feedbacks = db["Feedback"]
+        except:
+            print("error")
+
+        feedback = Feedback(feedbackForm.name.data, feedbackForm.agenda.data, feedbackForm.comment.data, feedbackForm.rating.data)
+        feedbacks.append(feedback)
+        db["Feedback"] = feedbacks
+        db.close()
+
         return redirect('/home')
+
     return render_template('feedback.html', searchForm=searchForm, feedbackForm=feedbackForm)
+
+@app.route('/displayFeedback')
+def displayFeedback():
+    db = shelve.open('db', 'c')
+    try:
+        feedbacks = db["Feedback"]
+    except:
+        print("error")
+
+    return render_template('adminFeedback.html', feedbackList = feedbacks)
 
 # Admin Side
 @app.route('/dashboard')
@@ -854,7 +880,6 @@ def dashboard():
             }
 
     viewsGraph = json.dumps(viewsData, cls=plotly.utils.PlotlyJSONEncoder)
-
     return render_template('dashboard.html', currentPage='Dashboard', viewsList = viewsList, purchasesGraph = purchasesGraph, viewsGraph = viewsGraph, lowStockList=lowStockList, midStockList=midStockList)
 
 @app.route('/productStats/<category>/<order>/')
