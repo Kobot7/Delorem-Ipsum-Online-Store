@@ -81,18 +81,16 @@
         <div>Discount Code</div>
       </div>
       <div id="discount-confirm">
-        <div style="float: right;">- $9.15</div>
+        <div style="float: right;">{{error_msgs}}</div>
         <div>Discount</div>
       </div>
       {% endif %}
-
-
 
     </div>
     <div id="hidden">
       <hr>
       <div id="new-total">
-        <div>SGD $21.35</div>
+        <div>SGD ${{new_total}}</div>
         <div>NEW TOTAL</div>
       </div>
       <form method="POST" action="{{url_for('cart')}}">
@@ -118,13 +116,14 @@
           <button type="button" class="close close-button" data-dismiss="modal">&times;</button>
         </div>
       </div>
-      <div class="modal-body">
-      <form action="{{url_for('cart')}}" method="post">
+
+      <form action="{{url_for('useDiscount')}}" method="post">
+        <div class="modal-body">
         <div>Please enter your discount code</div>
         {{render_field(Discount.discount_code)}}
       </div>
       <div class="modal-footer">
-        <button type="button" data-dismiss="modal" value="submit">Confirm</button>
+        <button class="mybutton" value="submit" >Confirm</button>
       </div>
       </form>
 
