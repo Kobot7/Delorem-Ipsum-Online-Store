@@ -1,10 +1,10 @@
 {% extends "admin_base.html" %}
 {% block title %}Edit Product{% endblock %}
-{% block style %}
-<link rel="stylesheet" href="/static/styles/productSettings.css">
-{% endblock %}
-
+{% block style %}<link rel="stylesheet" href="/static/styles/productSettings.css">{% endblock %}
 {% block headScript %}
+<script type="text/javascript">
+
+</script>
 {% endblock %}
 
 {% block content %}
@@ -13,21 +13,7 @@
     <div class="col-md-8">
         <h1 class="my-4">Add Stock</h1>
 
-        <form method="POST" action="">
-          <div class="form-row">
-            <div class="col-lg-8">
-                {{ render_field(form.product, class="form-control") }}
-            </div>
-            <div class="col-lg-3 mb-2">
-                {{ render_field(form.quantity, class="form-control", placeholder='Quantity') }}
-            </div>
-            <div class="col">
-                <input type="submit" value="Add" class="btn float-right">
-            </div>
-          </div> <!--Row Form Group-->
-        </form>
-
-        <table class="table mt-2">
+        <table class="table">
           <thead>
             <tr>
               <th>Product Name</th>
@@ -36,27 +22,29 @@
           </thead>
 
           <tbody>
-            {% for product in newStock %}
-              <tr>
-                <td>{{ productDict[product].get_serial_no() }} - {{ productDict[product].get_product_name() }}</td>
-                <td>{{ newStock[product] }}</td>
-              </tr>
-            {% endfor %}
+            <tr>
+              <td>test</td>
+              <td>test</td>
+            </tr>
           </tbody>
         </table>
+    </div>
 
-      <a href="/cancelAdditionOfStock" class="btn mr-2 grayButton">Cancel</a>
-      <a href="/processAdditionOfStock" class="btn">Submit</a>
+    <div class="col-md-8">
+      <form method="POST" action="">
+        <div class="row form-group">
+          <div class="col-md-8">
+              {{ render_field(form.product, class="form-control") }}
+          </div>
+          <div class="col-md-4">
+              {{ render_field(form.quantity, class="form-control", placeholder='Quantity') }}
+          </div>
+        </div> <!--Row Form Group-->
+      </form>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script>
-  $(document).ready(function () {
-    $('select').selectize({
-        sortField: 'text'
-    });
-});
-</script>
+
 {% endblock %}

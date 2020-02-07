@@ -4,32 +4,45 @@
 <link rel="stylesheet" href="/static/styles/cart.css">{% endblock %}
 {% block content %}
 {% from "includes/_formhelper.html" import render_field %}
-<div id="content" class="row justify-content-center">
-  <div id="MyCart" class="col-lg-7 col-md-12 mr-4">
+<div id="content">
+
+  <div id="MyCart">
+    <div id="cart_header">
       <h2>MY CART</h2>
       <hr>
+    </div>
 
     {% for product in cartList %}
-    <div class="item row">
-      <div class="col-md-8 row justify-content-between">
-        <div class="col-md-2">
-          <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}">
-            <img class="image" src="/static/images/{{product.get_thumbnail()}}">
-          </a>
+    <div class="item">
+      <div class="details ">
+        <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}">
+          <img class="image" src="/static/images/{{product.get_thumbnail()}}">
+        </a>
+        <div class="right">
+          <p class="price">SGD ${{product.get_price()}}</p>
+          <p class="item_name">{{product.get_product_name()}}</p>
+          <div class="qty">
+            Qty <select name="qty">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </div>
         </div>
-        <div class="d-inline-block col-md-9">
-          <p>SGD ${{product.get_price()}}</p>
-          <p>{{product.get_product_name()}}</p>
-          <p>Qty: {{product.get_quantity()}}</p>
-        </div>
-      </div> <!--item div-->
-
-      <div class="buttons col-md-4">
+      </div>
+      <div class="buttons">
         <form action="{{url_for('moveToWishlist', serialNo = product.get_serial_no())}}" method="post" onsubmit="return confirm('Are you sure you want to move this item to your wishlist?')">
           <button class="mybutton up move"><i class="icon-heart"></i> Move to wishlist</button>
         </form>
-        <form action="{{url_for('deleteShoppingCartItem', serialNo = product.get_serial_no())}}" class="remove" method="post" onsubmit="return confirm('Are you sure you want to remove this item from your cart?')">
-          <button class="icon-btn add-btn mt-2">
+        <form style="padding-top: 5px;"action="{{url_for('deleteShoppingCartItem', serialNo = product.get_serial_no())}}" class="remove" method="post" onsubmit="return confirm('Are you sure you want to remove this item from your cart?')">
+          <button class="icon-btn add-btn">
             <div class="btn-txt">Remove</div>
           </button>
         </form>
@@ -39,8 +52,7 @@
     {% endfor %}
 
   </div>
-
-  <div id="cost" class="col-lg-4 col-md-12">
+  <div id="cost" class="clearfix">
     <div id="total_header">
       <h2>TOTAL</h2>
       <hr>
@@ -69,20 +81,24 @@
         <div>Discount Code</div>
       </div>
       <div id="discount-confirm">
-        <div style="float: right;">{{error_msgs}}</div>
+        <div style="float: right;">- $9.15</div>
         <div>Discount</div>
       </div>
       {% endif %}
+
+
 
     </div>
     <div id="hidden">
       <hr>
       <div id="new-total">
-        <div>SGD ${{new_total}}</div>
+        <div>SGD $21.35</div>
         <div>NEW TOTAL</div>
       </div>
-      <form method="POST" action="{{url_for('cart')}}" class="text-center mt-2">
+      <form method="POST" action="{{url_for('cart')}}">
+      <div id="delivery">
         {{render_field(NoCollectForm.home_delivery)}}
+      </div>
       <div id="CHECKOUT">
         <button class="mybutton" value="submit">CHECKOUT</button>
       </div>
@@ -90,7 +106,6 @@
     </div>
   </div>
 </div>
-
 <!--Modal-->
 <div id="input-discount" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -103,14 +118,13 @@
           <button type="button" class="close close-button" data-dismiss="modal">&times;</button>
         </div>
       </div>
-
-      <form action="{{url_for('useDiscount')}}" method="post">
-        <div class="modal-body">
+      <div class="modal-body">
+      <form action="{{url_for('cart')}}" method="post">
         <div>Please enter your discount code</div>
         {{render_field(Discount.discount_code)}}
       </div>
       <div class="modal-footer">
-        <button class="mybutton" value="submit" >Confirm</button>
+        <button type="button" data-dismiss="modal" value="submit">Confirm</button>
       </div>
       </form>
 

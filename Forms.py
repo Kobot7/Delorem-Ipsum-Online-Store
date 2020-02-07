@@ -4,7 +4,7 @@ from wtforms_components import TimeField, DateRange
 from datetime import datetime,date
 import re
 
-subCatList = [('', 'Select')
+choicesList = [('', 'Select')
                 , ('BabyAccessories', 'Baby - Accessories')
                 , ('BabyVitamins', 'Baby - Baby Vitamins')
                 , ('Diapers', 'Baby - Diapers')
@@ -51,7 +51,7 @@ class EditProductForm(Form):
     brand = StringField('Brand', [validators.DataRequired(message='This is a required field.')
                                , validators.Length(min=1, max=50, message='Brand name is too long.')])
 
-    subCategory = SelectField('Sub-Category', [validators.DataRequired(message='This is a required field.')], choices=subCatList, default='')
+    subCategory = SelectField('Sub-Category', [validators.DataRequired(message='This is a required field.')], choices=choicesList, default='')
 
     price = DecimalField('Price', [validators.DataRequired(message='This is a required field.')
                                 , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
@@ -73,7 +73,7 @@ class CreateProductForm(Form):
     brand = StringField('Brand', [validators.DataRequired(message='This is a required field.')
                                , validators.Length(min=1, max=50, message='Brand name is too long.')])
 
-    subCategory = SelectField('Sub-Category', [validators.DataRequired(message='This is a required field.')], choices=subCatList, default='')
+    subCategory = SelectField('Sub-Category', [validators.DataRequired(message='This is a required field.')], choices=choicesList, default='')
 
     price = DecimalField('Price', [validators.DataRequired(message='This is a required field.')
                                 , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
@@ -164,7 +164,6 @@ admin_searchList = [('name-brand', 'Name/Brand')
 class AdminSearch(Form):
     search_cat = SelectField('', choices=admin_searchList, default='name-brand')
     search_input = StringField('', [validators.DataRequired()])
-    # search_subcat = SelectField('', choices=subCatList, default='Select')
 
 class DiscountForm(Form):
     discount_code = StringField('Discount code')
@@ -187,3 +186,8 @@ class AddDiscountPercentageForm(Form):
     discount_expiry  = DateField('Date expiry', format = "%Y-%m-%d")
     discount_percentage = DecimalField('Discount Percentage', [validators.DataRequired(message='This is a required field.')
                                 , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
+
+class AddStockForm(Form):
+    product = StringField('', [validators.DataRequired()])
+    quantity = IntegerField('', [validators.DataRequired(message='This is a required field.')
+                                      , validators.NumberRange(min=0, message='Value has to be more than 0')])

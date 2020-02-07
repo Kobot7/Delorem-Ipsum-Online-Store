@@ -122,10 +122,21 @@ class User:
         del wishlist[serial_no]
         self.set_wishlist(wishlist)
 
-    def add_to_cart(self, item, quantity):
+    def add_to_cart(self, item):
         cart = self.get_shopping_cart()
         serial_no = item.get_serial_no()
-        cart[serial_no] = quantity
+        if not bool(cart):
+            cart[serial_no] = item
+        else:
+            for key in cart:
+                same = False
+                if key == serial_no:
+                    same = True
+                    break
+                else:
+                    same = False
+            if same == False:
+                cart[serial_no] = item
         self.set_shopping_cart(cart)
 
     def remove_from_cart(self, item):

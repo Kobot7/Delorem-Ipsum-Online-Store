@@ -17,14 +17,11 @@ class Discount:
     def set_expiry_date(self, expiry_date):
         self.__expiry_date = expiry_date
 
-    def get_code(self):
+    def get_code(self,code):
         return self.__code
 
     def get_condition(self):
         return self.__condition
-
-    def get_start_date(self):
-        return self.__start_date
 
     def get_expiry_date(self):
         return self.__expiry_date
