@@ -905,6 +905,8 @@ def summary(deliveryId):
     deliveryId = int(deliveryId)
     db = shelve.open('storage.db','r')
     transactions = {}
+    D = ""
+
     try:
         transactions = db["Transactions"]
     except:
@@ -918,6 +920,13 @@ def summary(deliveryId):
     searchForm = searchBar()
         # if request.method == "POST" and searchForm.validate():
         #     return redirect('/search/' + searchForm.search_input.data)
+
+    type = details.get_type()
+    if type == "delivery":
+        D = True
+    else:
+        D = False
+
     if request.method == "POST":
         print(str(transactions) + "\n\n\n")
         transactions.pop(deliveryId)
@@ -925,7 +934,8 @@ def summary(deliveryId):
         return redirect("/checkout")
 
 
-    return render_template('summary.html', searchForm=searchForm, details=details, Items = 0)
+
+    return render_template('summary.html', searchForm=searchForm, details=details, Items = 0, type = D)
 
 # feedback page
 @app.route('/feedback', methods = ["GET", "POST"])

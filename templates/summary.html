@@ -6,6 +6,7 @@
 <header><h1>Overall details</h1></header>
 
 <div class="summary content">
+  {% if type %}
   <div class="delivery box">
 
       <h4 class = "bold">Delivery details</h4>
@@ -22,9 +23,6 @@
         Unit Number: {{details.get_unit_no()}}
       </div>
 
-      <div class="form-group">
-        Credit Card Number: {{details.get_credit_card_number()}}
-      </div>
   </div>
   <div class="payment box">
     <h4 class="bold">Payment details</h4>
@@ -40,11 +38,35 @@
         Email Address: {{details.get_email()}}
       </div>
 
+      <div class="form-group">
+        Credit Card Number: {{details.get_credit_card_number()}}
+      </div>
   </div>
+
+  {% else %}
+
+  <div class="collection box">
+
+      <h4 class = "bold">Delivery details</h4>
+
+      <div class="form-group">
+        Name: {{details.get_name()}}
+      </div>
+
+      <div class="form-group">
+        Credit Card Number: {{details.get_credit_card_number()}}
+      </div>
+
+      <div class="form-group">
+        Collection Date: {{details.get_date()}}
+      </div>
+  </div>
+
+  {% endif %}
 
   <div class="btn-group box">
             <div class="edit">
-              <form action="" method="POST">
+              <form action="{{url_for('summary', deliveryId = details.get_deliveryId )}}" >
                 <button type="submit" class="btn btn-secondary">Edit</button>
               </form>
             </div>
