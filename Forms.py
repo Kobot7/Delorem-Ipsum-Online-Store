@@ -136,7 +136,6 @@ class CollectionForm(Form):
     date = DateField('Date',validators = [DateRange(min = date.today(), format = '%Y-%m-%d', message="Please choose a valid date")])
     time = TimeField('Time')
 
-
 agendaChoices = [('products', 'Products'),
                 ('delivery', 'Delivery'),
                 ('app', 'Application'),
