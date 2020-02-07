@@ -86,3 +86,6 @@ class Product:
 
     def increase_purchases(self, amount):
         self.__purchases += int(amount)
+
+    def increase_quantity(self, quantity):
+        self.__quantity += quantity

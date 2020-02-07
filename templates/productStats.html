@@ -2,15 +2,39 @@
 {% block title %}Product Statistics{% endblock %}
 {% block style %}<link rel="stylesheet" href="/static/styles/productStats.css">{% endblock %}
 
-{% block headScript %}
-{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center mt-4">
-  <div class="col-md-11">
+{% from "includes/_admin_formHelper.html" import render_field %}
+<div class="row justify-content-center">
+  <div class="col-md-11 mt-4">
     <h1 class="d-inline">Product Statistics</h1>
+  </div>
 
-    <ul class="nav nav-tabs my-4">
+  <div class="col-md-11 mt-3">
+      <form method="POST" action="" id="searchform">
+        <div class="row form-group">
+          <div class="col-lg-2 col-md-3 mb-3">
+              {{ render_field(adminSearchForm.search_cat, class="form-control", id="SearchCat") }}
+          </div>
+          <div class="col-lg-3 col-md-4 mb-3">
+            {% if searchString!='' %}
+              {{ render_field(adminSearchForm.search_input, class="form-control", placeholder="Search...", id="SearchBar", value=searchString) }}
+            {% else %}
+              {{ render_field(adminSearchForm.search_input, class="form-control", placeholder="Search...", id="SearchBar") }}
+            {% endif %}
+          </div>
+          <div class="col-lg-3 col-md-6 col-sm-12">
+            <input type="submit" value="Search" class="btn mr-2">
+            <a href="/productStats/name/ascending" class="btn grayButton">Clear Filters</a>
+          </div>
+          <div class="col-lg-4 col-md-6 col-sm-12">
+            <a class="btn float-right mr-2" href="/downloadProducts"><i class="fa fa-download "></i> Download</a>          </div>
+        </div>
+      </form>
+  </div>
+
+  <div class="col-md-11">
+    <ul class="nav nav-tabs mb-4">
       <li class="nav-item active"><a class="nav-link active" href="#table" data-toggle="tab">Table</a></li>
       <li class="nav-item"><a class="nav-link" href="#bargraph" data-toggle="tab">Graph</a></li>
     </ul>
@@ -27,6 +51,12 @@
               <th>Serial No. <a href="/productStats/serial-no/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
                        <a href="/productStats/serial-no/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
               </th>
+              <th>Stock <a href="/productStats/quantity/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                           <a href="/productStats/quantity/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+              </th>
+              <th>Threshold <a href="/productStats/threshold/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                            <a href="/productStats/threshold/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+              </th>
               <th>Purchases <a href="/productStats/purchase/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
                        <a href="/productStats/purchase/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
               </th>
@@ -36,13 +66,39 @@
           </thead>
 
           <tbody>
-            {% for product in productList %}
-              <tr>
+            {% for product in lowStockList %}
+              <tr class="lowStock">
                 <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
-                <td>{{ product.get_product_name() }}</td>
-                <td>{{ product.get_serial_no() }}</td>
-                <td>{{ product.get_purchases() }}</td>
-                <td>{{ product.get_views() }}</td>
+                <td class="name">{{ product.get_product_name() }}</td>
+                <td class="serial-no">{{ product.get_serial_no() }}</td>
+                <td class="quantity">{{ product.get_quantity() }}</td>
+                <td class="threshold">{{ product.get_stock_threshold() }}</td>
+                <td class="purchases">{{ product.get_purchases() }}</td>
+                <td class="views">{{ product.get_views() }}</td>
+              </tr>
+            {% endfor %}
+
+            {% for product in midStockList %}
+              <tr class="midStock">
+                <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+                <td class="name">{{ product.get_product_name() }}</td>
+                <td class="serial-no">{{ product.get_serial_no() }}</td>
+                <td class="quantity">{{ product.get_quantity() }}</td>
+                <td class="threshold">{{ product.get_stock_threshold() }}</td>
+                <td class="purchases">{{ product.get_purchases() }}</td>
+                <td class="views">{{ product.get_views() }}</td>
+              </tr>
+            {% endfor %}
+
+            {% for product in highStockList %}
+              <tr class="highStock">
+                <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+                <td class="name">{{ product.get_product_name() }}</td>
+                <td class="serial-no">{{ product.get_serial_no() }}</td>
+                <td class="quantity">{{ product.get_quantity() }}</td>
+                <td class="threshold">{{ product.get_stock_threshold() }}</td>
+                <td class="purchases">{{ product.get_purchases() }}</td>
+                <td class="views">{{ product.get_views() }}</td>
               </tr>
             {% endfor %}
           </tbody>
@@ -62,7 +118,16 @@
             );
           }
           var graph = {{graphJSON | safe}};
-          var heightValue = {{ productList|length }}*60;
+          var heightValue;
+          if ({{ length}}==1) {
+            heightValue = {{ length }}*170;
+          }
+          else if ({{ length}}<=4) {
+            heightValue = {{ length }}*120;
+          }
+          else {
+            heightValue = {{ length }}*65;
+          }
           var widthValue = getWidth() - 200;
           graph.layout = { yaxis: {automargin: true}, margin: {t:50, b:50}, height: heightValue, width: widthValue};
           var chart = Plotly.plot("bargraph", graph.data, graph.layout, {responsive: true});
@@ -74,5 +139,9 @@
 {% endblock %}
 
 {% block scripts %}
-
+<script>
+  {% if searchCat!='' %}
+  document.getElementById("SearchCat").value = '{{ searchCat }}';
+  {% endif %}
+</script>
 {% endblock %}
