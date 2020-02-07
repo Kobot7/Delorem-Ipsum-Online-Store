@@ -515,13 +515,20 @@ def useDiscount():
         except:
             print("Error in retrieving valid discounts from storage.db")
 
+        try:
+            print("gettinng Products cuz we need em now")
+            products = db["Products"]
+        except:
+            print("Error in retrieving valid discounts from storage.db")
+
         cart = current.get_shopping_cart()
         codes = current.get_discount_codes()
         db.close()
         cartList = []
         totalCost = 0
         for product in cart:
-            totalCost += float(cart[product].get_price())
+            item = products[product]
+            totalCost += float(item.get_price()) * int(cart[product])
             cartList.append(cart[product])
         totalCost = '%.2f' %float(totalCost)
         Items = len(cartList)
@@ -812,12 +819,17 @@ def checkout(delivery):
     except:
         print("error in retrieving transaction information")
 
+    try:
+        products = db["Products"]
+    except:
+        print("Yo prods missin at checkout")
     cart = current.get_shopping_cart()
     prodlist = []
     subtotal = 0
     for key in cart:
-        prodlist.append(cart[key])
-        subtotal += float(cart[key].get_price())
+        product = products[key]
+        prodlist.append(product)
+        subtotal += float(product.get_price()) * int(cart[key])
     number = len(prodlist)
     total = subtotal + 12
     db.close()
