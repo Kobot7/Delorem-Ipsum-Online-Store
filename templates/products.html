@@ -95,5 +95,11 @@
   {% if searchCat!='' %}
   document.getElementById("SearchCat").value = '{{ searchCat }}';
   {% endif %}
+
+  $(document).ready(function () {
+    $('.selectize').selectize({
+        sortField: 'text'
+    });
+  });
 </script>
 {% endblock %}

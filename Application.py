@@ -1089,7 +1089,7 @@ def productsSearch(searchCat, searchString):
                 productList.append(product)
 
         elif searchCat=='sub-category':
-            if searchString in product.get_sub_category().lower():
+            if searchString.replace(' ','') in product.get_sub_category().lower():
                 productList.append(product)
 
         elif searchCat=='serial-no':
@@ -1298,7 +1298,7 @@ def statsSearch(searchCat, searchString):
                 productList.append(product)
 
         elif searchCat=='sub-category':
-            if searchString in product.get_sub_category().lower():
+            if searchString.replace(' ','') in product.get_sub_category().lower():
                 productList.append(product)
 
         elif searchCat=='serial-no':

@@ -9,6 +9,10 @@
     <div class="col-lg-10 dashboard-block p-4 mx-2 mt-3">
         <h2 class="d-inline">Low Stock</h2>
         <a class="btn d-inline float-right" href="/productStats/name/ascending">View All</a>
+
+        {% if stockList|length==0 %}
+          <p class="mt-4">&nbsp;&nbsp;None. All products have sufficient stock.</p>
+        {% else %}
         <table class="w-100 products mt-4 mb-2">
             <thead>
                 <tr>
@@ -22,7 +26,7 @@
             <tbody>
               {% for product in stockList %}
                 <tr
-                {% if product in lowStockList%}
+                {% if product in lowStockList %}
                 class="lowStock"
                 {% else %}
                 class="midStock"
@@ -38,6 +42,7 @@
               {% endfor %}
             </tbody>
         </table>
+        {% endif %}
 
         <a class="btn d-inline float-right" href="javascript:nextPage()" id="stock-page-next">Next  <i class="fa fa-angle-right "></i></a>
         <a class="btn d-inline float-right mr-2" href="javascript:prevPage()" id="stock-page-prev"><i class="fa fa-angle-left "></i>  Prev</a>
@@ -45,6 +50,39 @@
 </div> <!--Row 1, Stock-->
 
 <div class="row justify-content-center mt-2">
+    <div class="col-lg-10 dashboard-block p-4 mx-2 my-2">
+        <h2 class="d-inline">Pending Transactions</h2>
+        <a class="btn d-inline float-right mb-2" href="/transactions">View All</a>
+
+        {% if transactions|length==0 %}
+          <p class="mt-4">&nbsp;&nbsp;There are no pending Transactions.</p>
+        {% else %}
+        <table class="w-100" id="transactions">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Customer</th>
+                    <th>No. of Items</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+
+            <tbody>
+              {% for id in transactions %}
+                <tr>
+                  <td>{{ transactions[id].get_email() }}</td>
+                  <td>{{ transactions[id].get_name() }}</td>
+                  <td>{{ transactions[id].get_items()|length }}</td>
+                  <td>${{ transactions[id].get_total() }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+</div> <!--Row 3, Transactions-->
+
+<div class="row justify-content-center">
     <div class="col-lg-5 dashboard-block p-4 my-2 small-block-1">
         <h2 class="d-inline">Best-Sellers</h2>
         <a class="btn d-inline float-right mb-2" href="/productStats/purchase/descending">View All</a>
@@ -67,34 +105,6 @@
         </script>
     </div>
 </div> <!--Row 2, Stats-->
-
-<div class="row justify-content-center">
-    <div class="col-lg-10 dashboard-block p-4 mx-2 my-2">
-        <h2 class="d-inline">Pending Transactions</h2>
-        <a class="btn d-inline float-right mb-2" href="/transactions">View All</a>
-        <table class="w-100" id="transactions">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Customer</th>
-                    <th>No. of Items</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-
-            <tbody>
-              {% for id in transactions %}
-                <tr>
-                  <td>{{ transactions[id].get_date() }}</td>
-                  <td>{{ transactions[id].get_name() }}</td>
-                  <td>{{ transactions[id].get_items()|length }}</td>
-                  <td>${{ transactions[id].get_total() }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div> <!--Row 3, Transactions-->
 
 {% endblock %}
 
