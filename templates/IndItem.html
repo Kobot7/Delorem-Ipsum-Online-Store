@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Drug Store - Item{% endblock %}
+{% from "includes/_formhelper.html" import render_field %}
 {% block style %}
 <link rel="stylesheet" type="text/css" href="/static/styles/items.css">{% endblock %}
 {% block content %}
@@ -31,20 +32,21 @@
         {{product.get_description()}}
       </p>
 
-      {%if current == ''%}
-      <form action="{{url_for('login')}}" method="post" onsubmit="return confirm('Are you sure you want to move this item to your wishlist?')">
+      {% if current == ''%}
+      <form action="{{url_for('login')}}" method="post" onsubmit="return alert('Please login to continue shopping with us')">
         <button class="btn btn-success my-2" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
       </form>
       {% else %}
-      <form action="{{url_for('addToCart', name = product.get_product_name())}}" method="POST">
+      <form action="{{url_for('IndItem', serialNo = product.get_serial_no())}}" method="POST" class="form-inline">
+        {{ render_field(QuantityForm.quantity, class="form-control ml-2") }}
         <button class="btn btn-success my-2" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
       </form>
       {% endif %}
-      {%if current == ''%}
-      <form action="{{url_for('login')}}" method="post" onsubmit="return confirm('Are you sure you want to move this item to your wishlist?')">
+      {% if current == ''%}
+      <form action="{{url_for('login')}}" method="post" onsubmit="return alert('Please login to save item to wishlist')">
         <button value="submit" class="btn btn-danger"><i class="icon-heart"> Add to Wish List</i></button>
       </form>
-      {%else%}
+      {% else %}
       {% if taken == True %}
       <button value="submit" class="btn btn-danger" disabled><i class="icon-heart"> Already in Wish List</i></button>
       {% else %}

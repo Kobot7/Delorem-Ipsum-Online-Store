@@ -96,6 +96,9 @@ class Delivery(Transaction):
     def get_unit_no(self):
         return self.__unit_no
 
+    def get_type(self):
+        return self.__type
+
 class Collection(Transaction):
     def __init__(self,name, phone, email, total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv, date, time):
         super().__init__(name, phone, email, total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv)
@@ -114,3 +117,6 @@ class Collection(Transaction):
 
     def get_time(self):
         return self.__time
+
+    def get_type(self):
+        return self.__type
