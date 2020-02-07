@@ -13,9 +13,7 @@ import os
 from pathlib import Path
 
 # Graphing
-import json
-import plotly
-
+import json, plotly
 import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
@@ -792,13 +790,18 @@ def feedback():
     return render_template('feedback.html', searchForm=searchForm, feedbackForm=feedbackForm)
 
 # Admin Side
-@app.route('/dashboard')
-def dashboard():
+@app.route('/dashboard/<int:stockPage>')
+def dashboard(stockPage):
     productDict = {}
-    db = shelve.open('storage.db', 'c')
+    transactions = []
+    db = shelve.open('storage.db', 'r')
 
     try:
         productDict = db['Products']
+    except:
+        print('Error in retrieving Products from storage.db.')
+    try:
+        transactions = db['Transactions']
         db.close()
     except:
         print('Error in retrieving Products from storage.db.')
@@ -820,8 +823,15 @@ def dashboard():
         else:
             continue
 
+    stockList = lowStockList + midStockList
+    startCount = stockPage*3 - 3
+    endCount = stockPage*3
+    stockList = stockList[startCount:endCount]
+
     viewsList = sort_by(productList, 'view', 'descending')[:5]
     purchasesList = sort_by(productList, 'purchase', 'descending')[:5]
+    viewsList.reverse()
+    purchasesList.reverse()
 
     purchasesName = []
     purchasesSerial = []
@@ -855,7 +865,8 @@ def dashboard():
 
     viewsGraph = json.dumps(viewsData, cls=plotly.utils.PlotlyJSONEncoder)
 
-    return render_template('dashboard.html', currentPage='Dashboard', viewsList = viewsList, purchasesGraph = purchasesGraph, viewsGraph = viewsGraph, lowStockList=lowStockList, midStockList=midStockList)
+    return render_template('dashboard.html', currentPage='Dashboard', viewsList = viewsList, purchasesGraph = purchasesGraph
+    , viewsGraph = viewsGraph, lowStockList=lowStockList, midStockList=midStockList, transactions=transactions, stockPage=stockPage, stockList=stockList)
 
 @app.route('/products/<category>/<order>/', methods=['GET', 'POST'])
 def products(category, order):
@@ -1185,7 +1196,7 @@ def addStock():
         productList.append(productDict[key])
     productList = sort_by(productList, 'name', 'ascending')
 
-    tupleList = []
+    tupleList = [('', 'Select Product')]
     for product in productList:
         field = [product.get_serial_no(), product.get_serial_no() + ' - ' + product.get_product_name()]
         tupleList.append(tuple(field))
