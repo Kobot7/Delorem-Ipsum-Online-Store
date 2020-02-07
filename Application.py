@@ -902,7 +902,6 @@ def checkout(delivery):
 # Summary page
 @app.route('/summary/<deliveryId>', methods= ["GET", "POST"])
 def summary(deliveryId):
-    deliveryId = int(deliveryId)
     db = shelve.open('storage.db','r')
     transactions = {}
     D = ""
@@ -913,15 +912,18 @@ def summary(deliveryId):
         print("error in retrieving transaction information")
     for id in transactions:
         if id == deliveryId:
-            details = transactions[deliveryId]
+            details = transactions[id]
+            type = details.get_type()
+            print(type)
             break
+
         else:
             print(id)
     searchForm = searchBar()
         # if request.method == "POST" and searchForm.validate():
         #     return redirect('/search/' + searchForm.search_input.data)
 
-    type = details.get_type()
+
     if type == "delivery":
         D = True
     else:
@@ -932,8 +934,6 @@ def summary(deliveryId):
         transactions.pop(deliveryId)
         transactions = ""
         return redirect("/checkout")
-
-
 
     return render_template('summary.html', searchForm=searchForm, details=details, Items = 0, type = D)
 
