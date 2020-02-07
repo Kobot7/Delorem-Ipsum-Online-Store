@@ -8,8 +8,8 @@
 <div class="row justify-content-center">
     <div class="col-lg-10 dashboard-block p-4 mx-2 mt-3">
         <h2 class="d-inline">Low Stock</h2>
-        <a class="btn d-inline float-right" href="/productStats/name/ascending">View All</a>
-        <table class="w-100 products mt-4 mb-2">
+        <a class="btn d-inline float-right mt-1 mb-2" href="/stock/name/ascending">View All</a>
+        <table class="w-100 products">
             <thead>
                 <tr>
                     <th colspan="2">&nbsp;&nbsp;Product</th>
@@ -20,34 +20,34 @@
             </thead>
 
             <tbody>
-              {% for product in stockList %}
-                <tr
-                {% if product in lowStockList%}
-                class="lowStock"
-                {% else %}
-                class="midStock"
-                {% endif %}
-                >
+              {% for product in lowStockList %}
+                <tr class="lowStock">
                   <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
                   <td class="name">{{ product.get_product_name() }}</td>
                   <td class="serial-no">{{ product.get_serial_no() }}</td>
                   <td class="quantity">{{ product.get_quantity() }}</td>
                   <td class="threshold">{{ product.get_stock_threshold() }}</td>
                 </tr>
+              {% endfor %}
 
+              {% for product in midStockList %}
+                <tr class="midStock">
+                  <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+                  <td class="name">{{ product.get_product_name() }}</td>
+                  <td class="serial-no">{{ product.get_serial_no() }}</td>
+                  <td class="quantity">{{ product.get_quantity() }}</td>
+                  <td class="threshold">{{ product.get_stock_threshold() }}</td>
+                </tr>
               {% endfor %}
             </tbody>
         </table>
-
-        <a class="btn d-inline float-right" href="javascript:nextPage()" id="stock-page-next">Next  <i class="fa fa-angle-right "></i></a>
-        <a class="btn d-inline float-right mr-2" href="javascript:prevPage()" id="stock-page-prev"><i class="fa fa-angle-left "></i>  Prev</a>
     </div>
 </div> <!--Row 1, Stock-->
 
 <div class="row justify-content-center mt-2">
     <div class="col-lg-5 dashboard-block p-4 my-2 small-block-1">
         <h2 class="d-inline">Best-Sellers</h2>
-        <a class="btn d-inline float-right mb-2" href="/productStats/purchase/descending">View All</a>
+        <a class="btn d-inline float-right mt-1 mb-2" href="/productStats/purchase/descending">View All</a>
         <div class="col mt-4" id="purchasesGraph"></div>
         <script>
           var purchasesData = {{purchasesGraph | safe}};
@@ -58,7 +58,7 @@
 
     <div class="col-lg-5 dashboard-block p-4 my-2 small-block-2">
         <h2 class="d-inline">Most-Viewed Items</h2>
-        <a class="btn d-inline float-right mb-2" href="/productStats/view/descending">View All</a>
+        <a class="btn d-inline float-right mt-1 mb-2" href="/productStats/view/descending">View All</a>
         <div class="col mt-4" id="viewsGraph"></div>
         <script>
           var viewsData = {{viewsGraph | safe}};
@@ -70,12 +70,11 @@
 
 <div class="row justify-content-center">
     <div class="col-lg-10 dashboard-block p-4 mx-2 my-2">
-        <h2 class="d-inline">Pending Transactions</h2>
-        <a class="btn d-inline float-right mb-2" href="/transactions">View All</a>
+        <h2 class="d-inline">Transactions</h2>
+        <a class="btn d-inline float-right mt-1 mb-2" href="/transactions">View All</a>
         <table class="w-100" id="transactions">
             <thead>
                 <tr>
-                    <th>Date</th>
                     <th>Customer</th>
                     <th>No. of Items</th>
                     <th>Total</th>
@@ -83,57 +82,41 @@
             </thead>
 
             <tbody>
-              {% for id in transactions %}
                 <tr>
-                  <td>{{ transactions[id].get_date() }}</td>
-                  <td>{{ transactions[id].get_name() }}</td>
-                  <td>{{ transactions[id].get_items()|length }}</td>
-                  <td>${{ transactions[id].get_total() }}</td>
+                    <td>Tan Tok Seng</td>
+                    <td>100</td>
+                    <td>$300.00</td>
                 </tr>
-              {% endfor %}
+
+                <tr>
+                    <td>Jack Ho</td>
+                    <td>3</td>
+                    <td>$33.00</td>
+                </tr>
+                <tr>
+                    <td>Anna Koh</td>
+                    <td>2</td>
+                    <td>$9.90</td>
+                </tr>
+
+                <tr>
+                    <td>Lee Bin Bo</td>
+                    <td>50</td>
+                    <td>$90.00</td>
+                </tr>
+                <tr>
+                    <td>Patrick Star</td>
+                    <td>1</td>
+                    <td>$29.90</td>
+                </tr>
+                <tr>
+                    <td>Karen McKenzy</td>
+                    <td>5</td>
+                    <td>$30.50</td>
+                </tr>
             </tbody>
         </table>
     </div>
 </div> <!--Row 3, Transactions-->
 
-{% endblock %}
-
-{% block scripts %}
-<script>
-  var alertTotal = {{ lowStockList|length }} + {{ midStockList|length }};
-  var noOfPages = Math.ceil(alertTotal/3);
-  console.log('No. of Pages =', noOfPages);
-  var stockPage = {{ stockPage }};
-  console.log(stockPage);
-
-  if(alertTotal<4) {
-    document.getElementById("stock-page-prev").style.setProperty('display', 'none', 'important');
-    document.getElementById("stock-page-next").style.setProperty('display', 'none', 'important');
-  }
-  else {
-    if(stockPage==1) {
-      document.getElementById("stock-page-prev").style.setProperty('visibility', 'hidden', 'important');
-      document.getElementById("stock-page-next").style.setProperty('visibility', '', 'important');
-    }
-    else if(stockPage==noOfPages) {
-      document.getElementById("stock-page-prev").style.setProperty('visibility', '', 'important');
-      document.getElementById("stock-page-next").style.setProperty('visibility', 'hidden', 'important');
-    }
-    else {
-      document.getElementById("stock-page-prev").style.setProperty('visibility', '', 'important');
-      document.getElementById("stock-page-next").style.setProperty('visibility', '', 'important');
-    }
-  }
-
-  function prevPage() {
-    stockPage -= 1;
-    window.location.href = '/dashboard/' + stockPage;
-  }
-
-  function nextPage() {
-    stockPage += 1;
-    console.log(stockPage);
-    window.location.href = '/dashboard/' + stockPage;
-  }
-</script>
 {% endblock %}

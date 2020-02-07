@@ -2,190 +2,193 @@
 {% block title %}Checkout{% endblock %}
 {% block content %}
 {% from "includes/_formhelper.html" import render_field %}
-<header><h1>CHECKOUT</h1></header>
+<header>
+  <h1>CHECKOUT</h1>
+</header>
 <div id="content">
-    <div id="left">
-        <div id="email" class="box">
-            <div id="email_header">
-                <h4 class="bold">EMAIL ADDRESS</h4>
+  <div id="left">
+    <div id="email" class="box">
+      <div id="email_header">
+        <h4 class="bold">EMAIL ADDRESS</h4>
+      </div>
+      <div>
+        <span>{{current.get_email()}}</span>
+      </div>
+    </div>
+    {% if delivery == "True" %}
+    <div id="payment" class="box">
+      <div id="payment_header">
+        <h4 class="bold">PAYMENT DETAILS</h4>
+      </div>
+      <hr>
+      <div id="section2">
+        <div id="payment-details">
+          <form class="delivery" action="" method="POST">
+            <div class="form-group">
+              {{ render_field(deliveryform.name, class="form-control") }}
             </div>
-            <div>
-                <span>{{current.get_email()}}</span>
+            <div class="form-group form-inline">
+              {{ render_field(deliveryform.phone, class="form-control ml-2") }}
+            </div>
+            <div class="form-group">
+              {{ render_field(deliveryform.payment_mode) }}
+            </div>
+            <div class="form-group">
+              {{ render_field(deliveryform.credit_card_number, class="form-control") }}
+            </div>
+            <div class="form-group">
+              {{ render_field(deliveryform.credit_card_expiry) }}
+            </div>
+            <div class="form-group form-inline">
+              {{ render_field(deliveryform.credit_card_cvv, class="form-control ml-2") }}
             </div>
         </div>
-        {% if delivery == "True" %}
-        <div id="payment" class="box">
-                <div id="payment_header">
-                    <h4 class="bold">PAYMENT DETAILS</h4>
-                </div>
-            <hr>
-            <div id="section2">
-              <form class="delivery" action = "" method= "POST" >
-                    <div id="payment-details">
-                          <div class="form-group">
-                            {{ render_field(deliveryform.name, class="form-control") }}
-                          </div>
-                          <div class="form-group form-inline">
-                            {{ render_field(deliveryform.phone, class="form-control ml-2") }}
-                          </div>
-                          <div class="form-group">
-                            {{ render_field(deliveryform.payment_mode) }}
-                          </div>
-                          <div class="form-group">
-                            {{ render_field(deliveryform.credit_card_number, class="form-control") }}
-                          </div>
-                          <div class="form-group">
-                            {{ render_field(deliveryform.credit_card_expiry) }}
-                          </div>
-                          <div class="form-group form-inline">
-                            {{ render_field(deliveryform.credit_card_cvv, class="form-control ml-2") }}
-                          </div>
-                    </div>
-                </div>
-              </div>
-                <div id="delivery-option" class="box">
-                        <div id="delivery-option_header">
-                            <h4 class="bold">DELIVERY DETAILS</h4>
-                        </div>
-
-                          <div class="form-group">
-                            {{ render_field(deliveryform.street_name, class="form-control") }}
-                          </div>
-                          <div class="form-group form-inline">
-                            {{ render_field(deliveryform.postal_code, class="form-control ml-2") }}
-                          </div>
-                          <div class="form-group">
-                            {{ render_field(deliveryform.unit_no, class="form-control") }}
-                          </div>
-
-                          <div class="order">
-                              <button>Confirm</button>
-                          </form>
-                          </div>
-                          <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="POST">
-                              <button>Email</button>
-                          </form>
-
-                    </div>
-                    {% else %}
-                    <div id="payment" class="box">
-                            <div id="payment_header">
-                                <h4 class="bold">PAYMENT DETAILS</h4>
-                            </div>
-                        <hr>
-                        <div id="section2">
-                                <div id="payment-details">
-                                    <form class="delivery" action = "" method= "POST" >
-                                      <div class="form-group">
-                                        {{ render_field(collectionform.name, class="form-control") }}
-                                      </div>
-                                      <div class="form-group form-inline">
-                                        {{ render_field(collectionform.phone, class="form-control ml-2") }}
-                                      </div>
-                                      <div class="form-group">
-                                        {{ render_field(collectionform.payment_mode) }}
-                                      </div>
-                                      <div class="form-group">
-                                        {{ render_field(collectionform.credit_card_number, class="form-control") }}
-                                      </div>
-                                      <div class="form-group">
-                                        {{ render_field(collectionform.credit_card_expiry) }}
-                                      </div>
-                                      <div class="form-group form-inline">
-                                        {{ render_field(collectionform.credit_card_cvv, class="form-control ml-2") }}
-                                      </div>
-                                </div>
-                            </div>
-                          </div>
-                            <div id="delivery-option" class="box">
-                                    <div id="delivery-option_header">
-                                        <h4 class="bold">COLLECTION DETAILS</h4>
-                                    </div>
-
-                                      <div class="form-group">
-                                        {{ render_field(collectionform.date) }}
-                                      </div>
-                                      <div class="form-group form-inline">
-                                        {{ render_field(collectionform.time) }}
-                                      </div>
-
-                                      <div class="order">
-                                        <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="post">
-                                          <button>Confirm</button>
-                                        </form>
-                                      </form>
-                                      </div>
-                                      <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="POST">
-                                          <button>Email</button>
-                                      </form>
-
-                                </div>
-                                {% endif %}
+      </div>
     </div>
-    <div id="right-sticky">
-            <div class="inner-items">
-              <section class="bag">
-              <div class="bag-header">
-                <h2 id=item-number>{{number}} items</h2>
-                <a id="edit" href="/cart">Edit</a>
-            </div>
-            <hr id="header-line">
-            <div class="item-list">
-              <div class="item-wrapper">
-                <ul id="items">
-                  {% for product in cart %}
-                    <li class="item">
-                      <img src="/static/images/{{product.get_thumbnail()}}">
-                        <div class="details ">
-                          <span class="item-price">{{product.get_price()}}</span>
-                          <span class="item-name">{{product.get_product_name()}}</span>
-                          <div class="item-options-wrapper">
-                            <span class="item-brand">{{product.get_brand()}}</span>
-                            <span class="item-quantity">Qty: <strong>{{product.get_quantity()}}</strong></span>
-                          </div>
-                        </div>
-                  </li>
-                  <hr>
-                  {% endfor %}
-                </ul>
-                </div>
-              </div>
-            </section>
+    <div id="delivery-option" class="box">
+      <div id="delivery-option_header">
+        <h4 class="bold">DELIVERY DETAILS</h4>
+      </div>
 
-              <div id="sum">
-                  <hr>
-                  <table>
-                    <tfoot>
-                      <tr class="total">
-                        <td class="l-ltc">
-                          <div>Total to pay</div>
-                        </td>
-                        <td class="l-rtc">
-                          <div>${{total}}</div>
-                        </td>
-                      </tr>
-                    </tfoot>
-                    <tbody>
-                      <tr class="sub-total">
-                        <td class="l-ltc">
-                          <div>Subtotal</div>
-                        </td>
-                        <td class="l-rtc">
-                          <div>${{subtotal}}</div>
-                        </td>
-                      </tr>
-                      <tr class="delivery">
-                        <td class="l-ltc">
-                          <div>Delivery</div>
-                        </td>
-                        <td class="l-rtc">
-                          <div>$12.00</div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+      <div class="form-group">
+        {{ render_field(deliveryform.street_name, class="form-control") }}
+      </div>
+      <div class="form-group form-inline">
+        {{ render_field(deliveryform.postal_code, class="form-control ml-2") }}
+      </div>
+      <div class="form-group">
+        {{ render_field(deliveryform.unit_no, class="form-control") }}
+      </div>
+
+      <div class="order">
+        <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="post">
+          <button>Confirm</button>
+        </form>
+      </div>
+      <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="POST">
+        <button>Email</button>
+      </form>
+
+    </div>
+    {% else %}
+    <div id="payment" class="box">
+      <div id="payment_header">
+        <h4 class="bold">PAYMENT DETAILS</h4>
+      </div>
+      <hr>
+      <div id="section2">
+        <div id="payment-details">
+          <form class="delivery" action="" method="POST">
+            <div class="form-group">
+              {{ render_field(collectionform.name, class="form-control") }}
+            </div>
+            <div class="form-group form-inline">
+              {{ render_field(collectionform.phone, class="form-control ml-2") }}
+            </div>
+            <div class="form-group">
+              {{ render_field(collectionform.payment_mode) }}
+            </div>
+            <div class="form-group">
+              {{ render_field(collectionform.credit_card_number, class="form-control") }}
+            </div>
+            <div class="form-group">
+              {{ render_field(collectionform.credit_card_expiry) }}
+            </div>
+            <div class="form-group form-inline">
+              {{ render_field(collectionform.credit_card_cvv, class="form-control ml-2") }}
+            </div>
+        </div>
+      </div>
+    </div>
+    <div id="delivery-option" class="box">
+      <div id="delivery-option_header">
+        <h4 class="bold">COLLECTION DETAILS</h4>
+      </div>
+
+      <div class="form-group">
+        {{ render_field(collectionform.date) }}
+      </div>
+      <div class="form-group form-inline">
+        {{ render_field(collectionform.time) }}
+      </div>
+
+      <div class="order">
+        <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="post">
+          <button>Confirm</button>
+        </form>
+      </div>
+      <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="POST">
+        <button>Email</button>
+      </form>
+
+    </div>
+    {% endif %}
+  </div>
+  <div id="right-sticky">
+    <div class="inner-items">
+      <section class="bag">
+        <div class="bag-header">
+          <h2 id=item-number>{{number}} items</h2>
+          <a id="edit" href="/cart">Edit</a>
+        </div>
+        <hr id="header-line">
+        <div class="item-list">
+          <div class="item-wrapper">
+            <ul id="items">
+              {% for product in cart %}
+              <li class="item">
+                <img src="/static/images/{{product.get_thumbnail()}}">
+                <div class="details ">
+                  <span class="item-price">{{product.get_price()}}</span>
+                  <span class="item-name">{{product.get_product_name()}}</span>
+                  <div class="item-options-wrapper">
+                    <span class="item-brand">{{product.get_brand()}}</span>
+                    <span class="item-quantity">Qty: <strong>1</strong></span>
+                  </div>
                 </div>
-              </div>
+              </li>
+              <hr>
+              {% endfor %}
+            </ul>
           </div>
-{%endblock%}
-{% block style %}<link rel="stylesheet" href="/static/styles/checkout.css">{% endblock %}
+        </div>
+      </section>
+
+      <div id="sum">
+        <hr>
+        <table>
+          <tfoot>
+            <tr class="total">
+              <td class="l-ltc">
+                <div>Total to pay</div>
+              </td>
+              <td class="l-rtc">
+                <div>${{total}}</div>
+              </td>
+            </tr>
+          </tfoot>
+          <tbody>
+            <tr class="sub-total">
+              <td class="l-ltc">
+                <div>Subtotal</div>
+              </td>
+              <td class="l-rtc">
+                <div>${{subtotal}}</div>
+              </td>
+            </tr>
+            <tr class="delivery">
+              <td class="l-ltc">
+                <div>Delivery</div>
+              </td>
+              <td class="l-rtc">
+                <div>$12.00</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {%endblock%}
+  {% block style %}
+  <link rel="stylesheet" href="/static/styles/checkout.css">{% endblock %}
