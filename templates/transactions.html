@@ -33,14 +33,12 @@
           <br><br>
           <b>Credit Card no.:</b> {{ transaction.get_credit_card_number() }}
           <br><br>
-          {% if 1==2 %}
           <b>Street Name:</b> {{ transaction.get_street_name() }}, #{{ transaction.get_unit_no() }}, S{{ transaction.get_postal_code() }}
           <br><br>
-          {% endif %}
           <b>Items:</b>
             <ol>
               {% for item in transaction.get_items() %}
-                <li>{{ item.get_product_name() }} ({{ item.get_serial_no() }}) - Quantity: {{ item.get_quantity() }}<br>
+                <li>{{ item.get_product_name() }} ({{item.get_serial_no()}})<br>
               {% endfor %}
             </ol>
           <br>

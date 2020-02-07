@@ -321,7 +321,7 @@ outline: none;
     transition: 0.25s;
   }
   .move:hover, .move:focus {
-    border: none;
+    border-color: rgb(184, 15, 10);
     color: white;
   }
 

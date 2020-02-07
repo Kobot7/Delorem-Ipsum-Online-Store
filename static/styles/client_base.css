@@ -99,14 +99,16 @@ body {
   border-bottom: solid 1px #84a220;
 }
 
-#coupon{
+#coupon .container{
   position: fixed;
   bottom: 0;
-  left: 30px;
   /* background-color: blue; */
 
 }
 
+#coupon .row{
+  background-color: purple;
+}
 
 .well{
   background-color: #e8e8e8 ;

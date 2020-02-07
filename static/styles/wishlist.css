@@ -330,8 +330,8 @@ a.button:hover{
     transition: 0.25s;
   }
   .move:hover, .move:focus {
+    border-color: rgb(184, 15, 10);
     color: white;
-    border-color: green;
   }
 
   .up:hover,

@@ -43,40 +43,12 @@
               {{ render_field(deliveryform.credit_card_cvv, class="form-control ml-2") }}
             </div>
         </div>
-        {% if delivery == "True" %}
-        <div id="payment" class="box">
-                <div id="payment_header">
-                    <h4 class="bold">PAYMENT DETAILS</h4>
-                </div>
-            <hr>
-            <div id="section2">
-              <form class="delivery" action = "" method= "POST" >
-                    <div id="payment-details">
-                          <div class="form-group">
-                            {{ render_field(deliveryform.name, class="form-control") }}
-                          </div>
-                          <div class="form-group form-inline">
-                            {{ render_field(deliveryform.phone, class="form-control ml-2") }}
-                          </div>
-                          <div class="form-group">
-                            {{ render_field(deliveryform.payment_mode) }}
-                          </div>
-                          <div class="form-group">
-                            {{ render_field(deliveryform.credit_card_number, class="form-control") }}
-                          </div>
-                          <div class="form-group">
-                            {{ render_field(deliveryform.credit_card_expiry) }}
-                          </div>
-                          <div class="form-group form-inline">
-                            {{ render_field(deliveryform.credit_card_cvv, class="form-control ml-2") }}
-                          </div>
-                    </div>
-                </div>
-              </div>
-                <div id="delivery-option" class="box">
-                        <div id="delivery-option_header">
-                            <h4 class="bold">DELIVERY DETAILS</h4>
-                        </div>
+      </div>
+    </div>
+    <div id="delivery-option" class="box">
+      <div id="delivery-option_header">
+        <h4 class="bold">DELIVERY DETAILS</h4>
+      </div>
 
       <div class="form-group">
         {{ render_field(deliveryform.street_name, class="form-control") }}
@@ -150,68 +122,29 @@
       </form>
 
     </div>
-    <div id="right-sticky">
-            <div class="inner-items">
-              <section class="bag">
-              <div class="bag-header">
-                <h2 id=item-number>{{number}} items</h2>
-                <a id="edit" href="/cart">Edit</a>
-            </div>
-            <hr id="header-line">
-            <div class="item-list">
-              <div class="item-wrapper">
-                <ul id="items">
-                  {% for product in cart %}
-                    <li class="item">
-                      <img src="/static/images/{{product.get_thumbnail()}}">
-                        <div class="details ">
-                          <span class="item-price">{{product.get_price()}}</span>
-                          <span class="item-name">{{product.get_product_name()}}</span>
-                          <div class="item-options-wrapper">
-                            <span class="item-brand">{{product.get_brand()}}</span>
-                            <span class="item-quantity">Qty: <strong>{{product.get_quantity()}}</strong></span>
-                          </div>
-                        </div>
-                  </li>
-                  <hr>
-                  {% endfor %}
-                </ul>
-                </div>
-              </div>
-            </section>
-
-              <div id="sum">
-                  <hr>
-                  <table>
-                    <tfoot>
-                      <tr class="total">
-                        <td class="l-ltc">
-                          <div>Total to pay</div>
-                        </td>
-                        <td class="l-rtc">
-                          <div>${{total}}</div>
-                        </td>
-                      </tr>
-                    </tfoot>
-                    <tbody>
-                      <tr class="sub-total">
-                        <td class="l-ltc">
-                          <div>Subtotal</div>
-                        </td>
-                        <td class="l-rtc">
-                          <div>${{subtotal}}</div>
-                        </td>
-                      </tr>
-                      <tr class="delivery">
-                        <td class="l-ltc">
-                          <div>Delivery</div>
-                        </td>
-                        <td class="l-rtc">
-                          <div>$12.00</div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+    {% endif %}
+  </div>
+  <div id="right-sticky">
+    <div class="inner-items">
+      <section class="bag">
+        <div class="bag-header">
+          <h2 id=item-number>{{number}} items</h2>
+          <a id="edit" href="/cart">Edit</a>
+        </div>
+        <hr id="header-line">
+        <div class="item-list">
+          <div class="item-wrapper">
+            <ul id="items">
+              {% for product in cart %}
+              <li class="item">
+                <img src="/static/images/{{product.get_thumbnail()}}">
+                <div class="details ">
+                  <span class="item-price">{{product.get_price()}}</span>
+                  <span class="item-name">{{product.get_product_name()}}</span>
+                  <div class="item-options-wrapper">
+                    <span class="item-brand">{{product.get_brand()}}</span>
+                    <span class="item-quantity">Qty: <strong>1</strong></span>
+                  </div>
                 </div>
               </li>
               <hr>
@@ -220,6 +153,7 @@
           </div>
         </div>
       </section>
+
       <div id="sum">
         <hr>
         <table>
