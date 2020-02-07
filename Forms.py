@@ -1,6 +1,6 @@
 from wtforms import Form, StringField, SelectField, validators, BooleanField, PasswordField, FileField, DecimalField, IntegerField, TextAreaField, RadioField
 from wtforms.fields.html5 import DateField
-from wtforms_components import TimeField, DateRange
+from wtforms_components import TimeField, DateRange, TimeRange
 from datetime import datetime,date
 import re
 
@@ -133,8 +133,8 @@ class CollectionForm(Form):
     credit_card_number = IntegerField('Credit Card Number', [validators.DataRequired(), validators.NumberRange(min=3000000000000, max=9999999999999999,message="Please enter a valid Credit Card Number")])
     credit_card_expiry = DateField('Credit Card Expiry Date', format = "%Y-%m-%d")
     credit_card_cvv = IntegerField('CVV', [validators.DataRequired(), validators.NumberRange(min=100, max = 999)])
-    date = DateField('Date',[validators.DataRequired()])
-    time = IntegerField('Postal Code', [validators.NumberRange(min=10000, max=830000, message="Postal code is 6 digits")])
+    date = DateField('Date',validators = [DateRange(min = date.today(), format = '%Y-%m-%d', message="Please choose a valid date")])
+    time = TimeField('Time')
 
 
 agendaChoices = [('products', 'Products'),
