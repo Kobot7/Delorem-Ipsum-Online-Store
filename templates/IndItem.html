@@ -32,7 +32,7 @@
       </p>
 
       {%if current == ''%}
-      <form action="{{url_for('login')}}" method="post" onsubmit="return confirm('Are you sure you want to move this item to your wishlist?')">
+      <form action="{{url_for('login')}}" method="post" onsubmit="return confirm('Create an account to add items to cart')">
         <button class="btn btn-success my-2" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
       </form>
       {% else %}
@@ -41,7 +41,7 @@
       </form>
       {% endif %}
       {%if current == ''%}
-      <form action="{{url_for('login')}}" method="post" onsubmit="return confirm('Are you sure you want to move this item to your wishlist?')">
+      <form action="{{url_for('login')}}" method="post" onsubmit="return confirm('Create an account to add items to wishlist')">
         <button value="submit" class="btn btn-danger"><i class="icon-heart"> Add to Wish List</i></button>
       </form>
       {%else%}
