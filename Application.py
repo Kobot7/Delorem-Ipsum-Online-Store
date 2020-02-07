@@ -831,6 +831,7 @@ def checkout(delivery):
     subtotal = 0
     for key in cart:
         product = products[key]
+        product.set_quantity(int(cart[key]))
         prodlist.append(product)
         subtotal += float(product.get_price()) * int(cart[key])
     number = len(prodlist)
