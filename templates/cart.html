@@ -4,34 +4,32 @@
 <link rel="stylesheet" href="/static/styles/cart.css">{% endblock %}
 {% block content %}
 {% from "includes/_formhelper.html" import render_field %}
-<div id="content">
-
-  <div id="MyCart">
-    <div id="cart_header">
+<div id="content" class="row justify-content-center">
+  <div id="MyCart" class="col-lg-7 col-md-12 mr-4">
       <h2>MY CART</h2>
       <hr>
-    </div>
 
     {% for product in cartList %}
-    <div class="item">
-      <div class="details ">
-        <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}">
-          <img class="image" src="/static/images/{{product.get_thumbnail()}}">
-        </a>
-        <div class="right">
-          <p class="price">SGD ${{product.get_price()}}</p>
-          <p class="item_name">{{product.get_product_name()}}</p>
-          <div class="qty">
-            Qty: {{product.get_quantity()}}
-          </div>
+    <div class="item row">
+      <div class="col-md-8 row justify-content-between">
+        <div class="col-md-2">
+          <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}">
+            <img class="image" src="/static/images/{{product.get_thumbnail()}}">
+          </a>
         </div>
-      </div>
-      <div class="buttons">
+        <div class="d-inline-block col-md-9">
+          <p>SGD ${{product.get_price()}}</p>
+          <p>{{product.get_product_name()}}</p>
+          <p>Qty: {{product.get_quantity()}}</p>
+        </div>
+      </div> <!--item div-->
+
+      <div class="buttons col-md-4">
         <form action="{{url_for('moveToWishlist', serialNo = product.get_serial_no())}}" method="post" onsubmit="return confirm('Are you sure you want to move this item to your wishlist?')">
           <button class="mybutton up move"><i class="icon-heart"></i> Move to wishlist</button>
         </form>
-        <form style="padding-top: 5px;"action="{{url_for('deleteShoppingCartItem', serialNo = product.get_serial_no())}}" class="remove" method="post" onsubmit="return confirm('Are you sure you want to remove this item from your cart?')">
-          <button class="icon-btn add-btn">
+        <form action="{{url_for('deleteShoppingCartItem', serialNo = product.get_serial_no())}}" class="remove" method="post" onsubmit="return confirm('Are you sure you want to remove this item from your cart?')">
+          <button class="icon-btn add-btn mt-2">
             <div class="btn-txt">Remove</div>
           </button>
         </form>
@@ -41,7 +39,8 @@
     {% endfor %}
 
   </div>
-  <div id="cost" class="clearfix">
+
+  <div id="cost" class="col-lg-4 col-md-12">
     <div id="total_header">
       <h2>TOTAL</h2>
       <hr>
@@ -82,10 +81,8 @@
         <div>SGD ${{new_total}}</div>
         <div>NEW TOTAL</div>
       </div>
-      <form method="POST" action="{{url_for('cart')}}">
-      <div id="delivery">
+      <form method="POST" action="{{url_for('cart')}}" class="text-center mt-2">
         {{render_field(NoCollectForm.home_delivery)}}
-      </div>
       <div id="CHECKOUT">
         <button class="mybutton" value="submit">CHECKOUT</button>
       </div>
@@ -93,6 +90,7 @@
     </div>
   </div>
 </div>
+
 <!--Modal-->
 <div id="input-discount" class="modal fade" role="dialog">
   <div class="modal-dialog">

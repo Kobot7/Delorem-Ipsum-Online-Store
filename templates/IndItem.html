@@ -32,21 +32,21 @@
         {{product.get_description()}}
       </p>
 
-      {%if current == ''%}
+      {% if current == ''%}
       <form action="{{url_for('login')}}" method="post" onsubmit="return alert('Please login to continue shopping with us')">
         <button class="btn btn-success my-2" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
       </form>
       {% else %}
-      <form action="{{url_for('IndItem', serialNo = product.get_serial_no())}}" method="POST">
-        {{ render_field(QuantityForm.quantity) }}
+      <form action="{{url_for('IndItem', serialNo = product.get_serial_no())}}" method="POST" class="form-inline">
+        {{ render_field(QuantityForm.quantity, class="form-control ml-2") }}
         <button class="btn btn-success my-2" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
       </form>
       {% endif %}
-      {%if current == ''%}
+      {% if current == ''%}
       <form action="{{url_for('login')}}" method="post" onsubmit="return alert('Please login to save item to wishlist')">
         <button value="submit" class="btn btn-danger"><i class="icon-heart"> Add to Wish List</i></button>
       </form>
-      {%else%}
+      {% else %}
       {% if taken == True %}
       <button value="submit" class="btn btn-danger" disabled><i class="icon-heart"> Already in Wish List</i></button>
       {% else %}

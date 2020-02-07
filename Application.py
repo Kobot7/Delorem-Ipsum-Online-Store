@@ -240,7 +240,7 @@ def login():
                 print("Error while retrieving namesDict")
 
             if loginForm.username.data == "admin" and loginForm.password.data == "admin":
-                return redirect('/dashboard')
+                return redirect('/dashboard/1')
 
             username_exist = False
             login_correct = False
@@ -1694,9 +1694,6 @@ def listOfBrands():
         brand = productsDict[product].get_brand()
         first_letter = brand[0].lower()
         brandsDict[first_letter].append(brand)
-
-
-
 
     db.close()
     searchForm = searchBar()

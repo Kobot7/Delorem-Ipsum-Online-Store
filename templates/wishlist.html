@@ -34,13 +34,13 @@
              <div class="item-caption-box">
                  <div class="item-caption">
                      <div>
-                             <p class="item-description"><!--Natures Aid Chewable Vitamin C 500 mg, Sugar Free, 100 Tablets-->{{ product.get_product_name() }}</p>
-                         </div>
+                         <p class="item-description">{{ product.get_product_name() }}</p>
                      </div>
                  </div>
-                 <p class="price-box">
-                     <span class="price-small">${{ product.get_price() }}</span>
-                 </p>
+             </div>
+             <p class="price-box">
+                 <span class="price-small">${{ product.get_price() }}</span>
+             </p>
              <!-- </a> -->
                   <form  action="{{url_for('moveToCart', serialNo = product.get_serial_no() )}}" method="POST" onsubmit="return confirmMove()">
                     <button class="mybutton move up"><i class="icon-shopping-cart"></i>   Move to Cart</button>
