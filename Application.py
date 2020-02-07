@@ -579,10 +579,6 @@ def useDiscount():
             discount = discount_in_storage
             print(discount)
             print(users_codes)
-            totalCost = 0
-            for product in cart:
-                totalCost += float(cart[product].get_price())
-                cartList.append(cart[product])
             totalCost = '%.2f' %float(totalCost)
             # totalCost = totalCost
             condition = discount.get_condition()
