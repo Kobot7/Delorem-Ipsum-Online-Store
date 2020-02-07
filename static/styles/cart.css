@@ -1,5 +1,6 @@
 #MyCart, #cost{
     background-color: white;
+    border-right: 10px solid #e8e8e8;
 }
 
 #content{
@@ -12,33 +13,16 @@
 #MyCart{
     width: 65%;
     padding: 20px 20px;
-
     box-sizing: border-box;
-    height: 900px;
-}
-.details{
-    display: flex;
-    max-width: 500px;
-}
-.details .right{
-    /* background-color: aqua; */
-    margin-right: 90px;
-    padding-left: 20px ;
+    min-height: 700px;
 }
 
 .image{
   height: 100px;
   width: 100px;
+  vertical-align: baseline;
 }
 
-.item{
-  display: flex;
-}
-
-.buttons{
-  position: absolute;
-  left:600px;
-}
 /* button{
     background-color: white;
     color: black;
@@ -159,8 +143,8 @@ a.mybutton, .mybutton{
   transition: 0.25s;
 }
 .move:hover, .move:focus {
-  border-color: green;
   color: white;
+  border-color: rgb(184, 15, 10);
 }
 
 .up:hover,
@@ -200,9 +184,6 @@ a.mybutton, .mybutton{
     font-weight: bold;
 }
 
-#delivery{
-    text-align:center;
-}
 
 #discount div:first-child{
     float: right;
@@ -210,9 +191,7 @@ a.mybutton, .mybutton{
 /* #discount{
     background-color: aqua;
 } */
-.clearfix{
-    overflow: auto;
-}
+
 
 #new-total{
     font-weight: bold;
@@ -220,9 +199,6 @@ a.mybutton, .mybutton{
 #new-total div:first-child{
     float: right;
 }
-/* #hidden{
-    display: none;
-} */
 
 .modal-header>div{
 margin-left: 0 !important;

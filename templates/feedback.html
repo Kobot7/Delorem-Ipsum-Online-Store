@@ -4,7 +4,7 @@
 {% block content %}
 
 {% from "includes/_formhelper.html" import render_field %}
-<form class="feedback">
+<form class="feedback" method="POST">
   <div class="form-group box">
     <div class="form-group name">
       <h2>Feedback</h2>
@@ -27,7 +27,7 @@
       </div>
     </div>
 
-      <input type="submit" class="btn btn-secondary" action="">
+      <input type="submit" class="btn btn-secondary" onclick="alert('Your feedback has been submitted!!')">
   </div>
 </form>
 
