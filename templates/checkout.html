@@ -20,8 +20,8 @@
                 </div>
             <hr>
             <div id="section2">
+              <form class="delivery" action = "" method= "POST" >
                     <div id="payment-details">
-                        <form class="delivery" action = "" method= "POST" >
                           <div class="form-group">
                             {{ render_field(deliveryform.name, class="form-control") }}
                           </div>
@@ -59,9 +59,7 @@
                           </div>
 
                           <div class="order">
-                            <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="post">
                               <button>Confirm</button>
-                            </form>
                           </form>
                           </div>
                           <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="POST">

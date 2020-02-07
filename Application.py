@@ -384,6 +384,9 @@ def IndItem(serialNo):
         Items = 0
     IndItem = products[serialNo]
     IndItem.increase_views()
+    class QuantityForm(Form):
+        quantity = IntegerField("Quantity", [validators.NumberRange(min=0, max=IndItem.get_quantity(), message="Please select a valid quantity. There are only " + str(IndItem.get_quantity()) + " of this product currently."), validators.DataRequired()])
+    Quantity = QuantityForm(request.form)
     try:
         wishlist = current.get_wishlist()
         taken = False
@@ -393,9 +396,6 @@ def IndItem(serialNo):
                 break
     except:
         taken = False
-    # except AttributeError:
-    #     # because current string = no current user, current user has no access to cart or wish list
-    #     return redirect(url_for('login'))
     db['Products'] = products
     db.close()
     subCategory = IndItem.get_sub_category()
@@ -413,9 +413,12 @@ def IndItem(serialNo):
         related.append(relatedProducts[number])
         relatedProducts.pop(number)
     searchForm = searchBar()
-    if request.method == "POST" and searchForm.validate():
-        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken, related=related, Items=Items)
+    # if request.method == "POST" and searchForm.validate():
+    #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
+    if request.method == "POST" and Quantity.validate():
+        quantity = Quantity.quantity.data
+        return redirect(url_for('addToCart', name = IndItem.get_product_name(), quantity = quantity))
+    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken, related=related, Items=Items, QuantityForm = Quantity)
 
 # Shopping Cart
 @app.route('/cart', methods=['GET', 'POST'])
@@ -425,18 +428,22 @@ def cart():
     db = shelve.open('storage.db','r')
     try:
         current = db['Current User']
+        products = db["Products"]
     except:
         print('Error reading Current User.')
         current = False
+        products = {}
 
     cart = current.get_shopping_cart()
     codes = current.get_discount_codes()
     db.close()
     cartList = []
     totalCost = 0
-    for product in cart:
-        totalCost += float(cart[product].get_price())
-        cartList.append(cart[product])
+    for serial_no in cart:
+        product = products[serial_no]
+        totalCost += float(product.get_price())*int(cart[serial_no])
+        product.set_quantity(cart[serial_no])
+        cartList.append(product)
     totalCost = '%.2f' %float(totalCost)
     Items = len(cartList)
 
@@ -459,8 +466,8 @@ def cart():
     #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
     return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, codes=codes, Items = Items, discount=discount)
 
-@app.route("/addToCart/<name>", methods=['GET', 'POST'])
-def addToCart(name):
+@app.route("/addToCart/<name>/<quantity>", methods=['GET', 'POST'])
+def addToCart(name, quantity):
     current_user = ""
     productsDict= {}
     db = shelve.open('storage.db', 'c')
@@ -476,19 +483,19 @@ def addToCart(name):
         print('Error in retrieving current products from storage.db.')
 
     for thing in productsDict:
-        product = ""
         if productsDict[thing].get_product_name() == name:
             product = productsDict[thing]
-            current_user.add_to_cart(product)
             break
-
+    print("Form submitted")
+    current_user.add_to_cart(product, quantity)
     db['Current User'] = current_user
     db.close()
+    serial_no = product.get_serial_no()
+    return redirect(url_for("IndItem",serialNo = serial_no ))
 
     # searchForm = searchBar()
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return redirect("/cart")
 
 @app.route('/deleteShoppingCartItem/<serialNo>', methods=['GET', 'POST'])
 def deleteShoppingCartItem(serialNo):
@@ -655,7 +662,7 @@ def moveToCart(serialNo):
 # Checkout
 @app.route('/checkout/<delivery>', methods=['GET', 'POST'])
 def checkout(delivery):
-    Delivery = delivery
+    NoCollect = delivery
     current = ""
     searchForm = searchBar()
     deliveryForm = DeliveryForm(request.form)
@@ -722,7 +729,7 @@ def checkout(delivery):
         current.set_transactions(collectionId)
         db["Current User"] = current
         db.close()
-        return redirect(url_for("summary",collectionId=collectionId))
+        return redirect(url_for("summary",deliveryId=collectionId))
         # current_user.set_transactions(deliveryInfo.get_id())
         # transactions[deliveryInfo.get_id()] = deliveryInfo
         # db["Transactions"] = transactions
@@ -736,7 +743,7 @@ def checkout(delivery):
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data)
 
-    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal, delivery = Delivery, Items = 0)
+    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal, delivery = NoCollect, Items = 0)
 
 # Summary page
 @app.route('/summary/<deliveryId>', methods= ["GET", "POST"])
