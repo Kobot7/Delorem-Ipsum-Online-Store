@@ -528,7 +528,7 @@ def useDiscount():
         for product in cart:
             item = products[product]
             totalCost += float(item.get_price()) * int(cart[product])
-            cartList.append(cart[product])
+            cartList.append(item)
         totalCost = '%.2f' %float(totalCost)
         Items = len(cartList)
 
@@ -901,30 +901,39 @@ def checkout(delivery):
 # Summary page
 @app.route('/summary/<deliveryId>', methods= ["GET", "POST"])
 def summary(deliveryId):
-    deliveryId = int(deliveryId)
     db = shelve.open('storage.db','r')
     transactions = {}
+    D = ""
+
     try:
         transactions = db["Transactions"]
     except:
         print("error in retrieving transaction information")
     for id in transactions:
-        if id == deliveryId:
-            details = transactions[deliveryId]
+        if str(id) == deliveryId:
+            details = transactions[id]
+            print("Got em")
             break
+
         else:
+            print("Cant find the below id")
             print(id)
     searchForm = searchBar()
         # if request.method == "POST" and searchForm.validate():
         #     return redirect('/search/' + searchForm.search_input.data)
+
+    type = details.get_type()
+    if type == "delivery":
+        D = True
+    else:
+        D = False
+
     if request.method == "POST":
         print(str(transactions) + "\n\n\n")
-        transactions.pop(deliveryId)
-        transactions = ""
-        return redirect("/checkout")
+        transactions.pop(int(deliveryId))
+        return redirect(url_for("checkout", delivery = D))
 
-
-    return render_template('summary.html', searchForm=searchForm, details=details, Items = 0)
+    return render_template('summary.html', searchForm=searchForm, details=details, Items = 0, type = D)
 
 # feedback page
 @app.route('/feedback', methods = ["GET", "POST"])
