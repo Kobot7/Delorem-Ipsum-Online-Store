@@ -181,6 +181,26 @@ def view_profile(username):
         db.close()
         return render_template('my-account.html', current=current, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm, Items=Items)
 
+@app.route('/my-account/delete_account')
+def deleteUser():
+    db = shelve.open("storage.db", "c")
+    try:
+        usersDict = db["Users"]
+        namesDict = db["Usernames"]
+        current = db["Current User"]
+    except:
+        print("Error while retrieving usersDict")
+    current_id = current.get_user_id()
+    print(f"{usersDict[current_id].get_username()} is deleted.")
+    del usersDict[current_id]
+    db["Users"] = usersDict
+    del namesDict[current.get_username()]
+    db["Usernames"] = namesDict
+    db["Current User"] = ""
+    db.close()
+    return redirect(url_for("home"))
+
+
 # Login/Register
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -227,18 +247,23 @@ def login():
                 if len(registrationForm.password.data) < 6:
                     print('length should be at least 6')
                     secure_pwd= False
+                    break
                 if not any(char.isdigit() for char in registrationForm.password.data):
                     print('Password should have at least one numeral')
                     secure_pwd = False
+                    break
                 if not any(char.isupper() for char in registrationForm.password.data):
                     print('Password should have at least one uppercase letter')
                     secure_pwd = False
+                    break
                 if not any(char.islower() for char in registrationForm.password.data):
                     print('Password should have at least one lowercase letter')
                     secure_pwd = False
+                    break
                 if not any(char in SpecialSym for char in registrationForm.password.data):
                     print('Password should have at least one of the symbols $@#')
                     secure_pwd = False
+                    break
 
             if unique_email and valid_email_registration:
                 U = User(registrationForm.username.data, registrationForm.password.data, registrationForm.email.data)
