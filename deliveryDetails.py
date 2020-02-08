@@ -62,10 +62,10 @@ class Transaction:
         return self.__credit_card_number
 
     def get_credit_card_expiry(self):
-        return self.__credit_card_expiry
+        return self.__expiry
 
     def get_credit_card_cvv(self):
-        return self.__credit_card_cvv
+        return self.__cvv
 
     def get_id(self):
         return self.__id
