@@ -794,13 +794,12 @@ def moveToCart(serialNo):
     cart = current_user.get_shopping_cart()
 
     product = productsDict[serialNo]
-    cart[serialNo] = product
+    cart[serialNo] = 1
     current_user.set_shopping_cart(cart)
     current_user.remove_from_wishlist(product)
     db["Current User"] = current_user
     db.close()
     return redirect('/wishlist/a-z')
-
 # Checkout
 @app.route('/checkout/<delivery>', methods=['GET', 'POST'])
 def checkout(delivery):
