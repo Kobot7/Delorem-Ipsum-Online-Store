@@ -10,82 +10,83 @@
   </div>
 
   <div class="col-sm-12 col-md-11 mt-3">
-      <form method="POST" action="" id="searchform">
-        <div class="row form-group">
-          <div class="col-lg-2 col-md-3 mb-3">
-              {{ render_field(adminSearchForm.search_cat, class="form-control", id="SearchCat") }}
-          </div>
-          <div class="col-lg-3 col-md-4 mb-3">
-            {% if searchString!='' %}
-              {{ render_field(adminSearchForm.search_input, class="form-control", placeholder="Search...", id="SearchBar", value=searchString) }}
-            {% else %}
-              {{ render_field(adminSearchForm.search_input, class="form-control", placeholder="Search...", id="SearchBar") }}
-            {% endif %}
-          </div>
-          <div class="col-lg-3 col-md-6 col-sm-12">
-            <input type="submit" value="Search" class="btn mr-2">
-            <a href="/products/name/ascending" class="btn grayButton">Clear</a>
-          </div>
-          <div class="col-lg-4 col-md-6 col-sm-12">
-            <a class="btn float-right" href="/addStock">+ Add Stock</a>
-            <a class="btn float-right mr-2" href="/addProduct">+ Add Product</a>
-            <a class="btn float-right mr-2" href="/downloadProducts"><i class="fa fa-download "></i> Export</a>          </div>
+    <form method="POST" action="" id="searchform">
+      <div class="row form-group">
+        <div class="col-lg-2 col-md-3 mb-3">
+            {{ render_field(adminSearchForm.search_cat, class="form-control", id="SearchCat") }}
         </div>
-      </form>
+        <div class="col-lg-3 col-md-4 mb-3">
+          {% if searchString!='' %}
+            {{ render_field(adminSearchForm.search_input, class="form-control", placeholder="Search...", id="SearchBar", value=searchString) }}
+          {% else %}
+            {{ render_field(adminSearchForm.search_input, class="form-control", placeholder="Search...", id="SearchBar") }}
+          {% endif %}
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <input type="submit" value="Search" class="btn mr-2">
+          <a href="/products/name/ascending" class="btn grayButton">Clear</a>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12">
+          <a class="btn float-right" href="/addStock">+ Add Stock</a>
+          <a class="btn float-right mr-2" href="/addProduct">+ Add Product</a>
+          <a class="btn float-right mr-2" href="/downloadProducts"><i class="fa fa-download "></i> Export</a>
+        </div>
+      </div>
+    </form>
   </div>
 
   <div class="col-sm-12 col-md-11">
-        {% if productList|length==0 %}
-          <p>&nbsp;&nbsp;No match found.</p>
-        {% else %}
-          <table class="table products">
-            <thead>
-              <tr>
-                <th>Thumbnail</th>
-                <th>Name <a href="/products/name/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                         <a href="/products/name/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-                </th>
-                <th>Sub-Category <a href="/products/sub-category/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                                 <a href="/products/sub-category/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-                </th>
-                <th>Serial No. <a href="/products/serial-no/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                               <a href="/products/serial-no/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-                </th>
-                <th>Price <a href="/products/price/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                          <a href="/products/price/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-                </th>
-                <th>Stock <a href="/products/quantity/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                             <a href="/products/quantity/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-                </th>
-                <th>Show/Hide <a href="/products/activated/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                              <a href="/products/activated/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-                </th>
-                <th></th>
-              </tr>
-            </thead>
+    {% if productList|length==0 %}
+      <p>&nbsp;&nbsp;No match found.</p>
+    {% else %}
+      <table class="table products">
+        <thead>
+          <tr>
+            <th>Thumbnail</th>
+            <th>Name <a href="/products/name/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                     <a href="/products/name/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+            </th>
+            <th>Sub-Category <a href="/products/sub-category/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                             <a href="/products/sub-category/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+            </th>
+            <th>Serial No. <a href="/products/serial-no/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                           <a href="/products/serial-no/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+            </th>
+            <th>Price <a href="/products/price/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                      <a href="/products/price/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+            </th>
+            <th>Stock <a href="/products/quantity/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                         <a href="/products/quantity/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+            </th>
+            <th>Show/Hide <a href="/products/activated/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                          <a href="/products/activated/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+            </th>
+            <th></th>
+          </tr>
+        </thead>
 
-            <tbody id="table-body">
-            {% for product in productList %}
-              <tr>
-                <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
-                <td class="name">{{ product.get_product_name() }}</td>
-                <td class="sub-category">{{ product.get_sub_category() | get_name_with_space }}</td>
-                <td class="serial-no">{{ product.get_serial_no() }}</td>
-                <td class="price">${{ product.get_price() }}</td>
-                <td class="quantity">{{ product.get_quantity() }}
+        <tbody id="table-body">
+        {% for product in productList %}
+          <tr>
+            <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+            <td class="name">{{ product.get_product_name() }}</td>
+            <td class="sub-category">{{ product.get_sub_category() | get_name_with_space }}</td>
+            <td class="serial-no">{{ product.get_serial_no() }}</td>
+            <td class="price">${{ product.get_price() }}</td>
+            <td class="quantity">{{ product.get_quantity() }}
 
-                {% if product.get_activated()==True %}
-                <td>Show</td>
-                {% else %}
-                <td>Hide</td>
-                {% endif %}
+            {% if product.get_activated()==True %}
+            <td>Show</td>
+            {% else %}
+            <td>Hide</td>
+            {% endif %}
 
-                <td><a href="/productSettings/{{ product.get_serial_no() }}">Edit</a></td>
-              </tr>
-            {% endfor %}
-            </tbody>
-          </table>
-        {% endif %}
+            <td><a href="/productSettings/{{ product.get_serial_no() }}">Edit</a></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

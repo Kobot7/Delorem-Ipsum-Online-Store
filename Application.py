@@ -40,7 +40,7 @@ app.config.update(
     MAIL_USE_TLS= True,
     MAIL_USE_SSL= False,
 	MAIL_USERNAME = 'deloremipsumonlinestore@outlook.com',
-	# MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
+	MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
 	MAIL_DEBUG = True,
 	MAIL_SUPPRESS_SEND = False,
     MAIL_ASCII_ATTACHMENTS = True
@@ -101,8 +101,9 @@ def searchBar():
 
 def testing():
     productDict = {}
-    db = shelve.open('storage.db', 'a')
+    db = shelve.open('storage.db', 'c')
     productDict = db['Products']
+    print(productDict)
     for product in productDict:
         productDict[product].increase_purchases(random.randint(1,50))
         for x in range(random.randint(40,150)):
@@ -737,7 +738,7 @@ def useDiscount():
                     print("its here")
                     amount = discount.get_discount_amount()
                     deducted = amount
-                    new_total = totalCost - float(amount)
+                    new_total = totalCost - Decimal(format(float(amount), '.2f'))
                     current_discount["amt_after"] = Decimal(format(new_total, '.2f'))
                     current_discount["deducted"] = amount
                 else:
@@ -1018,16 +1019,11 @@ def checkout(delivery):
     currentDate = today.strftime("%d %B %Y")
     if request.method == "POST" and deliveryForm.validate():
         db = shelve.open('storage.db','c')
-        products = db["Products"]
         current = db["Current User"]
         transactions = db["Transactions"]
-        for key in cart:
-            product = products[key]
-            product.set_quantity(product.get_quantity() - int(cart[key]))
-            products[key] = product
 
         print(deliveryForm.unit_no.data)
-        deliveryInfo = Delivery(deliveryForm.name.data, deliveryForm.phone.data,
+        deliveryInfo = Delivery(currentDate, deliveryForm.name.data, deliveryForm.phone.data,
                     current.get_email(),total, deducted, discount, prodlist, deliveryForm.payment_mode.data,
                      deliveryForm.credit_card_number.data, deliveryForm.credit_card_expiry.data, deliveryForm.credit_card_cvv.data,
                      deliveryForm.street_name.data,
@@ -1039,22 +1035,13 @@ def checkout(delivery):
         db["Transactions"] = transactions
         current.set_transactions(deliveryId)
         db["Current User"] = current
-        db["Products"] = products
-        print("prods deleted")
         db.close()
         return redirect(url_for("summary", deliveryId= deliveryId))
     if request.method == "POST" and collectionForm.validate():
         db = shelve.open('storage.db','c')
-        products = db["Products"]
         current = db["Current User"]
         transactions = db["Transactions"]
-        for key in cart:
-            product = products[key]
-            print(product.get_quantity())
-            product.set_quantity(product.get_quantity() - int(cart[key]))
-            products[key] = product
-            print(product.get_quantity(),"prods left")
-        collection = Collection(collectionForm.name.data, collectionForm.phone.data, current.get_email(), total, deducted, discount, prodlist,
+        collection = Collection(currentDate, collectionForm.name.data, collectionForm.phone.data, current.get_email(), total, deducted, discount, prodlist,
         collectionForm.payment_mode.data, collectionForm.credit_card_number.data, collectionForm.credit_card_expiry.data, collectionForm.credit_card_cvv.data,
         collectionForm.date.data, collectionForm.time.data)
         collectionId = collection.get_id()
@@ -1062,7 +1049,6 @@ def checkout(delivery):
         db["Transactions"] = transactions
         current.set_transactions(collectionId)
         db["Current User"] = current
-        db["Products"] = products
         db.close()
         return redirect(url_for("summary",deliveryId=collectionId))
          # current_user.set_transactions(deliveryInfo.get_id())
@@ -1139,6 +1125,32 @@ def summary(deliveryId):
 
     return render_template('summary.html', searchForm=searchForm, details=details, Items = 0, type = D)
 
+@app.route('/confirm/<type>', methods = ["GET", "POST"])
+def confirm(type):
+    print("Velai seiyuthu")
+    db = shelve.open('storage.db','c')
+    try:
+        current = db["Current User"]
+        products = db["Products"]
+    except:
+        print("Nah man this can't be happenin")
+    cart = current.get_shopping_cart()
+    for key in cart:
+        product = products[key]
+        print(product.get_quantity())
+        product.set_quantity(product.get_quantity() - int(cart[key]))
+        products[key] = product
+        print(product.get_quantity(),"prods left")
+    db["Products"] = products
+    current.set_shopping_cart({})
+    db["Current User"] = current
+    print("Resetted shopping cart")
+    db.close()
+    print("Prods successfully deleted")
+    if type == "feedback":
+        return redirect(url_for('feedback'))
+    else:
+        return redirect(url_for('home'))
 # feedback page
 @app.route('/feedback', methods = ["GET", "POST"])
 def feedback():
@@ -1630,7 +1642,7 @@ def cancelAdditionOfStock():
 
     return redirect('/products/name/ascending')
 
-@app.route('/transactions')
+@app.route('/transactions', methods=['GET', 'POST'])
 def transactions():
     transactionsDict = {}
     deliveryCompleteList = []
@@ -1642,28 +1654,52 @@ def transactions():
 
     try:
         transactionsDict = db['Transactions']
-        db.close()
     except:
         print('Error in retrieving Transactions from storage.db.')
 
     for key in transactionsDict:
         if transactionsDict[key].get_type()=='delivery':
-            if transactionsDict[key].get_completion==True:
+            if transactionsDict[key].get_completion()==True:
                 deliveryCompleteList.append(transactionsDict[key])
             else:
                 deliveryNotCompleteList.append(transactionsDict[key])
         else:
-            if transactionsDict[key].get_completion==True:
+            if transactionsDict[key].get_completion()==True:
                 collectionCompleteList.append(transactionsDict[key])
             else:
                 collectionNotCompleteList.append(transactionsDict[key])
+
+    if request.method=="POST":
+        d_mark_complete_transactions = request.form.getlist("dMarkAsComplete")
+        for sn in d_mark_complete_transactions:
+            transactionsDict[int(sn)].set_completion(True)
+            print(d_mark_complete_transactions)
+
+        d_mark_incomplete_transactions = request.form.getlist("dMarkAsIncomplete")
+        for sn in d_mark_incomplete_transactions:
+            transactionsDict[int(sn)].set_completion(False)
+            print(d_mark_incomplete_transactions)
+
+        c_mark_complete_transactions = request.form.getlist("cMarkAsComplete")
+        for sn in c_mark_complete_transactions:
+            transactionsDict[int(sn)].set_completion(True)
+            print(c_mark_complete_transactions)
+
+        c_mark_incomplete_transactions = request.form.getlist("cMarkAsIncomplete")
+        for sn in c_mark_incomplete_transactions:
+            transactionsDict[int(sn)].set_completion(False)
+            print(c_mark_incomplete_transactions)
+
+        db['Transactions'] = transactionsDict
+        db.close()
+        return redirect('/transactions')
 
     return render_template('transactions.html', currentPage='Transactions'
     , deliveryCompleteList=deliveryCompleteList, deliveryNotCompleteList=deliveryNotCompleteList
     , collectionCompleteList=collectionCompleteList, collectionNotCompleteList=collectionNotCompleteList)
 
 @app.route('/downloadProducts', methods=['GET'])
-def download():
+def downloadProducts():
     db = shelve.open('storage.db', 'c')
 
     try:
@@ -1681,7 +1717,6 @@ def download():
                     , 'Activated'
                     , 'Quantity'
                     , 'Stock Threshold']]
-
 
     for key in productDict:
         product = productDict[key]
@@ -1704,6 +1739,52 @@ def download():
         productArray.append(data)
 
     return excel.make_response_from_array(productArray, file_type='xls', file_name='Delorem Ipsum product records')
+
+@app.route('/downloadTransactions', methods=['GET'])
+def downloadTransactions():
+    db = shelve.open('storage.db', 'c')
+
+    try:
+        transactionDict = db['Transactions']
+        db.close()
+    except:
+        print('Error in retrieving Transactions from storage.db.')
+
+    transactionArray = [['Delivery Type'
+                    , 'Name'
+                    , 'Phone'
+                    , 'Email'
+                    , ''
+                    , ''
+                    , ''
+                    , ''
+                    , ''
+                    , ''
+                    , ''
+                    , '']]
+
+
+    for key in productDict:
+        product = productDict[key]
+
+        if product.get_completion():
+            activated = 'Show'
+        else:
+            activated = 'Hide'
+
+        data = [product.get_product_name()
+                , product.get_brand()
+                , product.get_sub_category()
+                , product.get_serial_no()
+                , product.get_price()
+                , product.get_description()
+                , activated
+                , product.get_quantity()
+                , product.get_stock_threshold()]
+
+        transactionArray.append(data)
+
+    return excel.make_response_from_array(productArray, file_type='xls', file_name='Delorem Ipsum transaction records')
 
 
 # Other stuff
@@ -1828,25 +1909,38 @@ def deleteDiscount(code):
 def categories():
     return render_template('categories.html')
 
-@app.route('/deliveryInvoice/<email>/',  methods=['get','POST'])
+@app.route('/deliveryInvoice/<email>/')
 def deliveryInvoice(email):
     print("hey!")
     current_user = ""
+    products = {}
+    transactions = {}
     db = shelve.open('storage.db', 'r')
     try:
         current_user = db["Current User"]
     except:
         print('Error in retrieving current user from storage.db.')
+    try:
+        products = db["Products"]
+    except:
+        print('Error in retrieving products from storage.db.')
+    try:
+        transactions = db["Transactions"]
+    except:
+        print('Error in retrieving transactions from storage.db.')
 
+
+    # cart = current_user.get_shopping_cart()
+    # order_ID = current_user.get_transactions()
+    order_ID = current_user.get_transactions()[-1]
+    transaction = transactions[order_ID ]
     cart = current_user.get_shopping_cart()
-    order_ID = current_user.get_transactions()
-
-    cartList = []
+    productList = []
+    # cartList = []
     images = []
-    for product in cart:
-        cartList.append(cart[product])
-        images.append(cart[product].get_thumbnail())
-
+    for object in transaction.get_items() :
+        productList.append(object)
+        images.append(object.get_thumbnail())
     # try:
     #     deliveryDetails = db["deliveryDetails"]
     #
@@ -1857,6 +1951,8 @@ def deliveryInvoice(email):
     # order_ID = orders[-1]
     # deliveryInfo = deliveryDetails[order_ID]
     # date = deliveryInfo.get_date()
+    total = Decimal(format(float(transaction.get_total()), '.2f'))
+    deducted = Decimal(format(float(transaction.get_deducted()), '.2f'))
 
     try:
         msg = Message("Delorem Ipsum Pharmacy",
@@ -1875,7 +1971,7 @@ def deliveryInvoice(email):
                 print("attached")
 
         msg.body = "This ur e reciept"
-        msg.html = render_template('html_in_invoice.html',  cartList=cartList, current_user=current_user )
+        msg.html = render_template('html_in_invoice.html',  productList=productList, current_user=current_user, transaction=transaction, cart=cart, products=products, total = total, deducted = deducted )
         print("testinggggggggggggggg")
         mail.send(msg)
         print("MAIL SENT")
