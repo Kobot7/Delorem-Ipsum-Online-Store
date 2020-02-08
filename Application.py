@@ -241,6 +241,7 @@ def deleteUser():
         print("Error while retrieving usersDict")
     current_id = current.get_user_id()
     print(f"{usersDict[current_id].get_username()} is deleted.")
+    print("\n\n\n\n")
     del usersDict[current_id]
     db["Users"] = usersDict
     del namesDict[current.get_username()]
@@ -308,13 +309,13 @@ def login():
                 if not any(char.islower() for char in registrationForm.password.data):
                     print('Password should have at least one lowercase letter')
                     secure_pwd = False
-                    break
-                if not any(char in SpecialSym for char in registrationForm.password.data):
-                    print('Password should have at least one of the symbols $@#')
-                    secure_pwd = False
+                #     break
+                # if not any(char in SpecialSym for char in registrationForm.password.data):
+                #     print('Password should have at least one of the symbols $@#')
+                #     secure_pwd = False
                     break
 
-            if unique_email and valid_email_registration:
+            if unique_email and valid_email_registration and secure_pwd:
                 U = User(registrationForm.username.data, registrationForm.password.data, registrationForm.email.data)
                 usersDict[U.get_user_id()] = U
                 namesDict[U.get_username()] = U.get_user_id()

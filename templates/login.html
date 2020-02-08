@@ -87,6 +87,9 @@
           </div>
           <div class="form-group">
             {{ render_field(form2.password, class="form-control") }}
+            {% if not secure_pwd %}
+              <p style="color:#dc3545"> Please enter a password containing at least 6 letters, 1 numeral, an 1 uppercase letter. </p>
+            {% endif %}
           </div>
           <div class="form-group">
             {{ render_field(form2.confirm, class="form-control") }}
