@@ -1,6 +1,17 @@
 {% extends "admin_base.html" %}
 {% block title %}Transactions{% endblock %}
-{% block style %}{% endblock %}
+{% block style %}
+<style>
+  table tbody tr:hover {
+      background-color: inherit;
+  }
+
+  .internal-product-table thead tr th {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
@@ -16,103 +27,362 @@
 
     <div class="tab-content">
       <div class="tab-pane active in" id="deliveries">
-        {% for transaction in deliveryList %}
+        <h2>Not Delivered</h2>
+        {% for transaction in deliveryNotCompleteList %}
           <div id="accordion">
-          <div class="card">
-            <div class="card-header" id="headingOne">
-              <h5 class="mb-0">
-                <a data-toggle="collapse" data-target="#s{{ transaction.get_id() }}" aria-expanded="true" aria-controls="collapseOne">
-                  {{ transaction.get_id() }}
-                </a>
-              </h5>
-            </div>
+            <div class="card">
+              <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                  <a data-toggle="collapse" data-target="#s{{ transaction.get_id() }}" aria-expanded="true" aria-controls="collapseOne">
+                    {{ transaction.get_date_of_order() }} - ID {{ transaction.get_id() }}
+                </h5>
+              </div> <!--Card Header-->
 
-            <div id="s{{ transaction.get_id() }}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-              <div class="card-body">
-                <table class="table w-50">
-                  <tbody>
-                    <tr>
-                      <th>Name</th>
-                      <td colspan="3">{{ transaction.get_name() }}</td>
-                    </tr>
+              <div id="s{{ transaction.get_id() }}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                  <table class="table">
+                    <tbody>
+                      <tr>
+                        <th>Status</th>
+                        <td colspan="5">{% if transaction.get_completion()==True %}Delivered{% else %}Undelivered{% endif %}</td>
+                      </tr>
 
-                    <tr>
-                      <th>Phone</th>
-                      <td>{{ transaction.get_phone() }}</td>
-                      <th>Email</th>
-                      <td>{{ transaction.get_email() }}</td>
-                    </tr>
+                      <tr>
+                        <th>Name</th>
+                        <td colspan="5">{{ transaction.get_name() }}</td>
+                      </tr>
 
-                    <tr>
-                      <th>Payment Mode</th>
-                      <td>{{ transaction.get_payment_mode() }}</td>
-                    </tr>
+                      <tr>
+                        <th>Contact No.</th>
+                        <td>{{ transaction.get_phone() }}</td>
+                        <th>Email</th>
+                        <td>{{ transaction.get_email() }}</td>
+                        <td colspan="2"></td>
+                      </tr>
 
-                    <tr>
-                      <th>Credit Card no.</th>
-                      <td>{{ transaction.get_credit_card_number() }}</td>
-                    </tr>
+                      <tr>
+                        <th>Payment Mode</th>
+                        <td>{{ transaction.get_payment_mode() }}</td>
+                        <td colspan="4"></td>
+                      </tr>
 
-                    <tr>
-                      <th>CVV</th>
-                      <td> {{ transaction.get_credit_card_cvv() }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-                <br><br>
-                <b>Address:</b> {{ transaction.get_street_name() }}, #{{ transaction.get_unit_no() }} (S{{ transaction.get_postal_code() }})
-                <br><br>
-                <b>Items:</b>
-                  <ol>
-                    {% for item in transaction.get_items() %}
-                      <li>{{ item.get_product_name() }} ({{ item.get_serial_no() }}) - Quantity: {{ item.get_quantity() }}<br>
-                    {% endfor %}
-                  </ol>
-                <br>
-                <b>Total:</b> ${{ transaction.get_total() }}
-              </div>
-            </div>
-          </div>
-          </div>
+                      <tr>
+                        <th>Credit Card No.</th>
+                        <td>{{ transaction.get_credit_card_number() }}</td>
+                        <th>Expiry Date</th>
+                        <td>{{ transaction.get_credit_card_expiry() }}</td>
+                        <th>CVV</th>
+                        <td> {{ transaction.get_credit_card_cvv() }}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Address</th>
+                        <td colspan="5">{{ transaction.get_street_name() }}, #{{ transaction.get_unit_no() }} (S{{ transaction.get_postal_code() }})</td>
+                      </tr>
+
+                      <tr>
+                        <th>Items</th>
+                        <td colspan="5">
+                          <table class="internal-product-table">
+                            <thead>
+                              <tr>
+                                <th>Product Name (Serial No.)</th>
+                                <th>Quantity</th>
+                              </tr>
+                            </thead>
+                            {% for item in transaction.get_items() %}
+                            <tbody>
+                              <tr>
+                                <td>{{ item.get_product_name() }} ({{ item.get_serial_no() }})</td>
+                                <td>{{ item.get_quantity() }}</td>
+                              </tr>
+                            </tbody>
+                            {% endfor %}
+                          </table>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th>Total</th>
+                        <td>${{ transaction.get_total() }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div> <!--Card Body-->
+              </div> <!--Drop Content-->
+            </div> <!--Card-->
+          </div> <!--Accordion-->
+        {% endfor %}
+
+        <br><br>
+        <h2>Delivered</h2>
+        {% for transaction in deliveryCompleteList %}
+          <div id="accordion">
+            <div class="card">
+              <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                  <a data-toggle="collapse" data-target="#s{{ transaction.get_id() }}" aria-expanded="true" aria-controls="collapseOne">
+                    {{ transaction.get_date_of_order() }} - ID {{ transaction.get_id() }}
+                </h5>
+              </div> <!--Card Header-->
+
+              <div id="s{{ transaction.get_id() }}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                  <table class="table">
+                    <tbody>
+                      <tr>
+                        <th>Status</th>
+                        <td colspan="5">{% if transaction.get_completion()==True %}Delivered{% else %}Undelivered{% endif %}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Name</th>
+                        <td colspan="5">{{ transaction.get_name() }}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Contact No.</th>
+                        <td>{{ transaction.get_phone() }}</td>
+                        <th>Email</th>
+                        <td>{{ transaction.get_email() }}</td>
+                        <td colspan="2"></td>
+                      </tr>
+
+                      <tr>
+                        <th>Payment Mode</th>
+                        <td>{{ transaction.get_payment_mode() }}</td>
+                        <td colspan="4"></td>
+                      </tr>
+
+                      <tr>
+                        <th>Credit Card No.</th>
+                        <td>{{ transaction.get_credit_card_number() }}</td>
+                        <th>Expiry Date</th>
+                        <td>{{ transaction.get_credit_card_expiry() }}</td>
+                        <th>CVV</th>
+                        <td> {{ transaction.get_credit_card_cvv() }}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Address</th>
+                        <td colspan="5">{{ transaction.get_street_name() }}, #{{ transaction.get_unit_no() }} (S{{ transaction.get_postal_code() }})</td>
+                      </tr>
+
+                      <tr>
+                        <th>Items</th>
+                        <td colspan="5">
+                          <table class="internal-product-table">
+                            <thead>
+                              <tr>
+                                <th>Product Name (Serial No.)</th>
+                                <th>Quantity</th>
+                              </tr>
+                            </thead>
+                            {% for item in transaction.get_items() %}
+                            <tbody>
+                              <tr>
+                                <td>{{ item.get_product_name() }} ({{ item.get_serial_no() }})</td>
+                                <td>{{ item.get_quantity() }}</td>
+                              </tr>
+                            </tbody>
+                            {% endfor %}
+                          </table>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th>Total</th>
+                        <td>${{ transaction.get_total() }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div> <!--Card Body-->
+              </div> <!--Drop Content-->
+            </div> <!--Card-->
+          </div> <!--Accordion-->
         {% endfor %}
       </div> <!--Tab Pane - Delivery -->
 
       <div class="tab-pane fade pb-4" id="collections">
-        {% for transaction in collectionList %}
+        <h2>Not Collected</h2>
+        {% for transaction in collectionNotCompleteList %}
           <div id="accordion">
-          <div class="card">
-            <div class="card-header" id="headingOne">
-              <h5 class="mb-0">
-                <a data-toggle="collapse" data-target="#s{{ transaction.get_id() }}" aria-expanded="true" aria-controls="collapseOne">
-                  {{ transaction.get_id() }}
-                </a>
-              </h5>
-            </div>
-
-            <div id="s{{ transaction.get_id() }}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-              <div class="card-body">
-                <b>Name:</b> {{ transaction.get_name() }}
-                <br><br>
-                <b>Phone:</b> {{ transaction.get_phone() }}
-                <br><br>
-                <b>Email:</b> {{ transaction.get_email() }}
-                <br><br>
-                <b>Payment Mode:</b> {{ transaction.get_payment_mode() }}
-                <br><br>
-                <b>Credit Card no.:</b> {{ transaction.get_credit_card_number() }}
-                <br><br>
-                <b>Items:</b>
-                  <ol>
-                    {% for item in transaction.get_items() %}
-                      <li>{{ item.get_product_name() }} ({{ item.get_serial_no() }}) - Quantity: {{ item.get_quantity() }}<br>
-                    {% endfor %}
-                  </ol>
-                <br>
-                <b>Total:</b> ${{ transaction.get_total() }}
+            <div class="card">
+              <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                  <a data-toggle="collapse" data-target="#s{{ transaction.get_id() }}" aria-expanded="true" aria-controls="collapseOne">
+                    {{ transaction.get_date_of_order() }} - ID {{ transaction.get_id() }}
+                  </a>
+                </h5>
               </div>
-            </div>
-          </div>
-          </div>
+
+              <div id="s{{ transaction.get_id() }}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                  <table class="table">
+                    <tbody>
+                      <tr>
+                        <th>Status</th>
+                        <td colspan="5">{% if transaction.get_completion()==True %}Collected{% else %}Uncollected{% endif %}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Name</th>
+                        <td colspan="5">{{ transaction.get_name() }}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Contact No.</th>
+                        <td>{{ transaction.get_phone() }}</td>
+                        <th>Email</th>
+                        <td>{{ transaction.get_email() }}</td>
+                        <td colspan="2"></td>
+                      </tr>
+
+                      <tr>
+                        <th>Payment Mode</th>
+                        <td>{{ transaction.get_payment_mode() }}</td>
+                        <td colspan="4"></td>
+                      </tr>
+
+                      <tr>
+                        <th>Credit Card No.</th>
+                        <td>{{ transaction.get_credit_card_number() }}</td>
+                        <th>Expiry Date</th>
+                        <td>{{ transaction.get_credit_card_expiry() }}</td>
+                        <th>CVV</th>
+                        <td> {{ transaction.get_credit_card_cvv() }}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Collection Date</th>
+                        <td>{{ transaction.get_date() }}</td>
+                        <th>Time</th>
+                        <td>{{ transaction.get_time() }}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Items</th>
+                        <td colspan="5">
+                          <table class="internal-product-table">
+                            <thead>
+                              <tr>
+                                <th>Product Name (Serial No.)</th>
+                                <th>Quantity</th>
+                              </tr>
+                            </thead>
+                            {% for item in transaction.get_items() %}
+                            <tbody>
+                              <tr>
+                                <td>{{ item.get_product_name() }} ({{ item.get_serial_no() }})</td>
+                                <td>{{ item.get_quantity() }}</td>
+                              </tr>
+                            </tbody>
+                            {% endfor %}
+                          </table>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th>Total</th>
+                        <td>${{ transaction.get_total() }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div> <!--Card Body-->
+              </div> <!--Drop Content-->
+            </div> <!--Card-->
+          </div> <!--Accordion-->
+        {% endfor %}
+
+        <br><br>
+        <h2>Collected</h2>
+        {% for transaction in collectionCompleteList %}
+          <div id="accordion">
+            <div class="card">
+              <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                  <a data-toggle="collapse" data-target="#s{{ transaction.get_id() }}" aria-expanded="true" aria-controls="collapseOne">
+                    {{ transaction.get_date_of_order() }} - ID {{ transaction.get_id() }}
+                  </a>
+                </h5>
+              </div>
+
+              <div id="s{{ transaction.get_id() }}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                  <table class="table">
+                    <tbody>
+                      <tr>
+                        <th>Status</th>
+                        <td colspan="5">{% if transaction.get_completion()==True %}Collected{% else %}Uncollected{% endif %}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Name</th>
+                        <td colspan="5">{{ transaction.get_name() }}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Contact No.</th>
+                        <td>{{ transaction.get_phone() }}</td>
+                        <th>Email</th>
+                        <td>{{ transaction.get_email() }}</td>
+                        <td colspan="2"></td>
+                      </tr>
+
+                      <tr>
+                        <th>Payment Mode</th>
+                        <td>{{ transaction.get_payment_mode() }}</td>
+                        <td colspan="4"></td>
+                      </tr>
+
+                      <tr>
+                        <th>Credit Card No.</th>
+                        <td>{{ transaction.get_credit_card_number() }}</td>
+                        <th>Expiry Date</th>
+                        <td>{{ transaction.get_credit_card_expiry() }}</td>
+                        <th>CVV</th>
+                        <td> {{ transaction.get_credit_card_cvv() }}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Collection Date</th>
+                        <td>{{ transaction.get_date() }}</td>
+                        <th>Time</th>
+                        <td>{{ transaction.get_time() }}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Items</th>
+                        <td colspan="5">
+                          <table class="internal-product-table">
+                            <thead>
+                              <tr>
+                                <th>Product Name (Serial No.)</th>
+                                <th>Quantity</th>
+                              </tr>
+                            </thead>
+                            {% for item in transaction.get_items() %}
+                            <tbody>
+                              <tr>
+                                <td>{{ item.get_product_name() }} ({{ item.get_serial_no() }})</td>
+                                <td>{{ item.get_quantity() }}</td>
+                              </tr>
+                            </tbody>
+                            {% endfor %}
+                          </table>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th>Total</th>
+                        <td>${{ transaction.get_total() }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div> <!--Card Body-->
+              </div> <!--Drop Content-->
+            </div> <!--Card-->
+          </div> <!--Accordion-->
         {% endfor %}
       <div>
   </div>

@@ -8,6 +8,8 @@ from deliveryDetails import *
 from Discount import *
 from feedback import *
 from datetime import date
+import re
+
 
 # Image download
 from werkzeug.utils import secure_filename
@@ -227,13 +229,40 @@ def login():
                 print("Error while retrieving namesDict")
 
             unique_email = True
+            valid_email_registration = True
+            secure_pwd = True
+            regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
+            SpecialSym =['$', '@', '#', '%']
+
             for user in usersDict.values():
+                #check email is correct format
+                if not(re.search(regex, registrationForm.email.data)):
+                    print("Invalid Email")
+                    valid_email_registration = False
+                    break
+                    #check for registered email in system
                 if registrationForm.email.data == user.get_email():
                     unique_email = False
                     print("Email in use, you cannot create an account with the same email.")
                     break
+                    #check password meets minimum requirement for strong pwd
+                if len(registrationForm.password.data) < 6:
+                    print('length should be at least 6')
+                    secure_pwd= False
+                if not any(char.isdigit() for char in registrationForm.password.data):
+                    print('Password should have at least one numeral')
+                    secure_pwd = False
+                if not any(char.isupper() for char in registrationForm.password.data):
+                    print('Password should have at least one uppercase letter')
+                    secure_pwd = False
+                if not any(char.islower() for char in registrationForm.password.data):
+                    print('Password should have at least one lowercase letter')
+                    secure_pwd = False
+                if not any(char in SpecialSym for char in registrationForm.password.data):
+                    print('Password should have at least one of the symbols $@#')
+                    secure_pwd = False
 
-            if unique_email:
+            if unique_email and valid_email_registration:
                 U = User(registrationForm.username.data, registrationForm.password.data, registrationForm.email.data)
                 usersDict[U.get_user_id()] = U
                 namesDict[U.get_username()] = U.get_user_id()
@@ -247,7 +276,7 @@ def login():
                 searchForm = searchBar()
                 if request.method == "POST" and searchForm.validate():
                     print(searchForm.search_input.data)
-                return render_template("login.html", unique_email=unique_email, form=loginForm, form2=registrationForm, searchForm=searchForm)
+                return render_template("login.html", unique_email=unique_email, valid_email_registration=valid_email_registration, secure_pwd = secure_pwd, form=loginForm, form2=registrationForm, searchForm=searchForm)
 
         if request.method =="POST" and loginForm.validate():
             usersDict = {}
@@ -291,25 +320,25 @@ def login():
                     if request.method == "POST" and searchForm.validate():
                         print(searchForm.search_input.data)
                     print("Credentials are incorrect.")
-                    return render_template('login.html', username_correct=False,  unique_email=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
+                    return render_template('login.html', username_correct=False,  unique_email=True, valid_email_registration=True, secure_pwd = True, form=loginForm, form2=registrationForm, searchForm=searchForm)
             else:
                 searchForm = searchBar()
                 if request.method == "POST" and searchForm.validate():
                     print(searchForm.search_input.data)
                 print("User does not exist.")
-                return render_template('login.html', username_correct=False,  unique_email=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
+                return render_template('login.html', username_correct=False,  unique_email=True, valid_email_registration=True, secure_pwd = True, form=loginForm, form2=registrationForm, searchForm=searchForm)
 
         else:
             searchForm = searchBar()
             if request.method == "POST" and searchForm.validate():
                 print(searchForm.search_input.data)
-            return render_template('login.html', username_correct=True,  unique_email=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
+            return render_template('login.html', username_correct=True,  unique_email=True, valid_email_registration=True, secure_pwd = True, form=loginForm, form2=registrationForm, searchForm=searchForm)
             print("Exception Error: navigating home.html to login.html")
 
         searchForm = searchBar()
         if request.method == "POST" and searchForm.validate():
             return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-        return render_template('login.html', username_correct=True,  unique_email=True, form=loginForm, form2=registrationForm, searchForm=searchForm)
+        return render_template('login.html', username_correct=True,  unique_email=True, valid_email_registration=True, secure_pwd = True, form=loginForm, form2=registrationForm, searchForm=searchForm)
     else:
         return redirect(url_for("home"))
 
@@ -1466,8 +1495,10 @@ def cancelAdditionOfStock():
 @app.route('/transactions')
 def transactions():
     transactionsDict = {}
-    deliveryList = []
-    collectionList = []
+    deliveryCompleteList = []
+    deliveryNotCompleteList = []
+    collectionCompleteList = []
+    collectionNotCompleteList = []
 
     db = shelve.open('storage.db', 'c')
 
@@ -1479,11 +1510,19 @@ def transactions():
 
     for key in transactionsDict:
         if transactionsDict[key].get_type()=='delivery':
-            deliveryList.append(transactionsDict[key])
+            if transactionsDict[key].get_completion==True:
+                deliveryCompleteList.append(transactionsDict[key])
+            else:
+                deliveryNotCompleteList.append(transactionsDict[key])
         else:
-            collectionList.append(transactionsDict[key])
+            if transactionsDict[key].get_completion==True:
+                collectionCompleteList.append(transactionsDict[key])
+            else:
+                collectionNotCompleteList.append(transactionsDict[key])
 
-    return render_template('transactions.html', currentPage='Transactions', deliveryList=deliveryList, collectionList=collectionList)
+    return render_template('transactions.html', currentPage='Transactions'
+    , deliveryCompleteList=deliveryCompleteList, deliveryNotCompleteList=deliveryNotCompleteList
+    , collectionCompleteList=collectionCompleteList, collectionNotCompleteList=collectionNotCompleteList)
 
 @app.route('/downloadProducts', methods=['GET'])
 def download():
