@@ -68,7 +68,7 @@ class Transaction:
         return self.__email
 
     def get_total(self):
-        return self.__total
+        return '%.2f' %float(self.__total)
 
     def get_deducted(self):
         return self.__deducted
