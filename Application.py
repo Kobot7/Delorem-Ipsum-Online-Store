@@ -1950,6 +1950,8 @@ def deliveryInvoice(email):
     # order_ID = orders[-1]
     # deliveryInfo = deliveryDetails[order_ID]
     # date = deliveryInfo.get_date()
+    total = Decimal(format(float(transaction.get_total()), '.2f'))
+    deducted = Decimal(format(float(transaction.get_deducted()), '.2f'))
 
     try:
         msg = Message("Delorem Ipsum Pharmacy",
@@ -1968,7 +1970,7 @@ def deliveryInvoice(email):
                 print("attached")
 
         msg.body = "This ur e reciept"
-        msg.html = render_template('html_in_invoice.html',  productList=productList, current_user=current_user, transaction=transaction, cart=cart, products=products )
+        msg.html = render_template('html_in_invoice.html',  productList=productList, current_user=current_user, transaction=transaction, cart=cart, products=products, total = total, deducted = deducted )
         print("testinggggggggggggggg")
         mail.send(msg)
         print("MAIL SENT")
