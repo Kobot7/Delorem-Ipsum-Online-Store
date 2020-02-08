@@ -992,13 +992,8 @@ def checkout(delivery):
     currentDate = today.strftime("%d %B %Y")
     if request.method == "POST" and deliveryForm.validate():
         db = shelve.open('storage.db','c')
-        products = db["Products"]
         current = db["Current User"]
         transactions = db["Transactions"]
-        for key in cart:
-            product = products[key]
-            product.set_quantity(product.get_quantity() - int(cart[key]))
-            products[key] = product
 
         print(deliveryForm.unit_no.data)
         deliveryInfo = Delivery(deliveryForm.name.data, deliveryForm.phone.data,
@@ -1013,21 +1008,12 @@ def checkout(delivery):
         db["Transactions"] = transactions
         current.set_transactions(deliveryId)
         db["Current User"] = current
-        db["Products"] = products
-        print("prods deleted")
         db.close()
         return redirect(url_for("summary", deliveryId= deliveryId))
     if request.method == "POST" and collectionForm.validate():
         db = shelve.open('storage.db','c')
-        products = db["Products"]
         current = db["Current User"]
         transactions = db["Transactions"]
-        for key in cart:
-            product = products[key]
-            print(product.get_quantity())
-            product.set_quantity(product.get_quantity() - int(cart[key]))
-            products[key] = product
-            print(product.get_quantity(),"prods left")
         collection = Collection(collectionForm.name.data, collectionForm.phone.data, current.get_email(), total, deducted, discount, prodlist,
         collectionForm.payment_mode.data, collectionForm.credit_card_number.data, collectionForm.credit_card_expiry.data, collectionForm.credit_card_cvv.data,
         collectionForm.date.data, collectionForm.time.data)
@@ -1036,7 +1022,6 @@ def checkout(delivery):
         db["Transactions"] = transactions
         current.set_transactions(collectionId)
         db["Current User"] = current
-        db["Products"] = products
         db.close()
         return redirect(url_for("summary",deliveryId=collectionId))
          # current_user.set_transactions(deliveryInfo.get_id())
@@ -1113,6 +1098,32 @@ def summary(deliveryId):
 
     return render_template('summary.html', searchForm=searchForm, details=details, Items = 0, type = D)
 
+@app.route('/confirm/<type>', methods = ["GET", "POST"])
+def confirm(type):
+    print("Velai seiyuthu")
+    db = shelve.open('storage.db','c')
+    try:
+        current = db["Current User"]
+        products = db["Products"]
+    except:
+        print("Nah man this can't be happenin")
+    cart = current.get_shopping_cart()
+    for key in cart:
+        product = products[key]
+        print(product.get_quantity())
+        product.set_quantity(product.get_quantity() - int(cart[key]))
+        products[key] = product
+        print(product.get_quantity(),"prods left")
+    db["Products"] = products
+    current.set_shopping_cart({})
+    db["Current User"] = current
+    print("Resetted shopping cart")
+    db.close()
+    print("Prods successfully deleted")
+    if type == "feedback":
+        return redirect(url_for('feedback'))
+    else:
+        return redirect(url_for('home'))
 # feedback page
 @app.route('/feedback', methods = ["GET", "POST"])
 def feedback():

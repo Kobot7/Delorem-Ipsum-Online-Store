@@ -25,7 +25,7 @@
 
   </div>
   <div class="payment box">
-    <h4 class="bold">Payment details</h4>
+    <h4 class="bold">PAYMENT DETAILS</h4>
       <div class="form-group">
         Name: {{details.get_name()}}
       </div>
@@ -72,7 +72,8 @@
             </div>
 
             <div class="confirm">
-              <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal"> Confirm</button>
+              <button class="btn btn-secondary" type="button" data-toggle = "modal" data-target = "#exampleModal"> Confirm</button>
+          </div>
 
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -88,10 +89,12 @@
                 Delivery Order has been confirmed! Do you want to fill in a feedback form?
               </div>
               <div class="modal-footer">
-
-                <a class="btn btn-success"  href="{{url_for('feedback')}}">Yes</a>
-
-                <a class="btn btn-danger" href="{{url_for('home')}}">No</a>
+                <form action="{{url_for('confirm', type = 'feedback')}}" method="POST">
+                <button class="btn btn-success"  value="submit">Yes</button>
+              </form>
+              <form action="{{url_for('confirm', type='home')}}" method="POST">
+                <button class="btn btn-danger" value="submit">No</button>
+              </form>
 
               </div>
             </div>
