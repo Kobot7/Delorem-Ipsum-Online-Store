@@ -9,6 +9,7 @@ from Discount import *
 from feedback import *
 from datetime import date
 import re
+from decimal import Decimal
 
 
 # Image download
