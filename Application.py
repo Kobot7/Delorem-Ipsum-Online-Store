@@ -40,7 +40,7 @@ app.config.update(
     MAIL_USE_TLS= True,
     MAIL_USE_SSL= False,
 	MAIL_USERNAME = 'deloremipsumonlinestore@outlook.com',
-	# MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
+	MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
 	MAIL_DEBUG = True,
 	MAIL_SUPPRESS_SEND = False,
     MAIL_ASCII_ATTACHMENTS = True
@@ -711,7 +711,7 @@ def useDiscount():
                     print("its here")
                     amount = discount.get_discount_amount()
                     deducted = amount
-                    new_total = totalCost - float(amount)
+                    new_total = totalCost - Decimal(format(float(amount), '.2f'))
                     current_discount["amt_after"] = Decimal(format(new_total, '.2f'))
                     current_discount["deducted"] = amount
                 else:
@@ -1802,25 +1802,38 @@ def deleteDiscount(code):
 def categories():
     return render_template('categories.html')
 
-@app.route('/deliveryInvoice/<email>/',  methods=['get','POST'])
+@app.route('/deliveryInvoice/<email>/')
 def deliveryInvoice(email):
     print("hey!")
     current_user = ""
+    products = {}
+    transactions = {}
     db = shelve.open('storage.db', 'r')
     try:
         current_user = db["Current User"]
     except:
         print('Error in retrieving current user from storage.db.')
+    try:
+        products = db["Products"]
+    except:
+        print('Error in retrieving products from storage.db.')
+    try:
+        transactions = db["Transactions"]
+    except:
+        print('Error in retrieving transactions from storage.db.')
 
+
+    # cart = current_user.get_shopping_cart()
+    # order_ID = current_user.get_transactions()
+    order_ID = current_user.get_transactions()[-1]
+    transaction = transactions[order_ID ]
     cart = current_user.get_shopping_cart()
-    order_ID = current_user.get_transactions()
-
-    cartList = []
+    productList = []
+    # cartList = []
     images = []
-    for product in cart:
-        cartList.append(cart[product])
-        images.append(cart[product].get_thumbnail())
-
+    for object in transaction.get_items() :
+        productList.append(object)
+        images.append(object.get_thumbnail())
     # try:
     #     deliveryDetails = db["deliveryDetails"]
     #
@@ -1849,7 +1862,7 @@ def deliveryInvoice(email):
                 print("attached")
 
         msg.body = "This ur e reciept"
-        msg.html = render_template('html_in_invoice.html',  cartList=cartList, current_user=current_user )
+        msg.html = render_template('html_in_invoice.html',  productList=productList, current_user=current_user, transaction=transaction, cart=cart, products=products )
         print("testinggggggggggggggg")
         mail.send(msg)
         print("MAIL SENT")
