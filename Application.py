@@ -529,11 +529,13 @@ def IndItem(serialNo):
 # Shopping Cart
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
-    discount=  ''
-    new_total = ''
+    deducted=0
+    discount= ''
+    new_total = 0
     Delivery = NoCollectForm(request.form)
     Discount = DiscountForm(request.form)
     db = shelve.open('storage.db','r')
+    current_discount = ''
     try:
         current = db['Current User']
         products = db["Products"]
@@ -543,7 +545,6 @@ def cart():
         products = {}
 
     cart = current.get_shopping_cart()
-    codes = current.get_discount_codes()
     db.close()
     cartList = []
     totalCost = 0
@@ -555,11 +556,24 @@ def cart():
     totalCost = '%.2f' %float(totalCost)
     Items = len(cartList)
 
+    current_discount = current.get_current_discount()
+    print(current_discount)
+
+    empty = not bool(current_discount)
+
+    if empty == False:
+        print("vcgashjkl")
+        deducted = current_discount["deducted"]
+        discount = current_discount["discount"]
+        new_total = float(current_discount["amt_after"])
+
     if request.method == "POST" and Delivery.validate():
+        print("HIIIIIIIIII")
         NoCollect = Delivery.home_delivery.data
         if NoCollect == True:
             return redirect(url_for('checkout',delivery=NoCollect))
         else:
+
             searchForm = searchBar()
             # if request.method == "POST" and searchForm.validate():
             #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
@@ -573,19 +587,22 @@ def cart():
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data + '/view/descending')
     # return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, codes=codes, Items = Items, discount=discount)
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, Items = Items, discount=discount, new_total= new_total)
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, Items = Items, discount=discount, new_total= new_total, current_discount=current_discount, deducted = deducted)
+
 
 @app.route('/useDiscount',  methods=['POST'])
 def useDiscount():
     searchForm = searchBar()
     Delivery = NoCollectForm(request.form)
     Discount = DiscountForm(request.form)
-    discount= ""
+    discount= ''
     current = ""
     valid_discount = {}
     users_codes = []
     new_total =0
+    deducted = 0
     error_msg=''
+    current_discount = ''
 
     if request.method == "POST" and Discount.validate():
         print("YOOOOOOOOOOOOOOOOOOOOO")
@@ -613,8 +630,9 @@ def useDiscount():
             print("Error in retrieving valid discounts from storage.db")
 
         cart = current.get_shopping_cart()
-        codes = current.get_discount_codes()
-        db.close()
+        users_codes = current.get_discount_codes()
+        print(users_codes)
+
         cartList = []
         totalCost = 0
         for product in cart:
@@ -625,7 +643,6 @@ def useDiscount():
         Items = len(cartList)
 
         #check use
-        valid = False
         check_used = False
         empty = not bool(users_codes)
 
@@ -633,71 +650,101 @@ def useDiscount():
             print("check empty")
             check_used = False
         else:
-            for used in users_codes:
-                if used == code:
+            for object in users_codes:
+                if object.get_code() == code:
+                    print(object.get_code())
                     check_used = True
-                    error_msg = "You have already used this code!"
-                    break
-                    return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount, new_total=new_total , searchForm=searchForm)
+                    error_msg = "You have already used " + code+ "!"
+
+                    return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount, new_total=new_total , searchForm=searchForm, current_discount = current_discount, deducted = deducted)
                     # return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, Items = Items)
 
         amount_discounts = {}
         percentage_discounts = {}
-        test_amount = valid_discount.get("Amount")
-        if test_amount:
+        amount_empty = not bool(valid_discount["Amount"])
+        percentage_empty = not bool(valid_discount["Percentage"])
+        valid = False
+
+        if amount_empty is False:
             amount_discounts = valid_discount["Amount"]
             for key in amount_discounts:
                 if key == code:
                     valid = True
                     type = "amount"
+                    condition = float(amount_discounts[key].get_condition())
                     discount_in_storage = amount_discounts[key]
                     break
-        else:
-            valid_discount["Amount"] = amount_discounts
 
-        test_percentage = valid_discount.get("Percentage")
-        if test_percentage:
+
+        if percentage_empty is False:
             percentage_discounts = valid_discount["Percentage"]
             for key in percentage_discounts:
                 if key == code:
                     valid = True
                     type = "percentage"
+                    condition = float(percentage_discounts[key].get_condition())
                     discount_in_storage = percentage_discounts[key]
                     break
-        else:
-            valid_discount["Amount"] = amount_discounts
-
-
-        # for key in valid_discount["Amount"]:
-        #     if valid_discount[key].get_code() == code:
-        #         valid = True
-        #         discount_in_strorage = valid_discount[key]
-        #         break
+            error_msg = "Invalid discount code."
 
         if valid == False:
-            print("Code deosnt exist")
-            error_msg = "This code doesn't exist."
-            return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount, new_total=new_total, searchForm=searchForm)
+            error_msg = "Invalid discount code."
+            return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount, new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted)
 
-        if valid is True and check_used==False:
+        if valid is True and check_used==False and float(totalCost) >= condition:
             print("TRUUUUU")
             discount = discount_in_storage
             print(discount)
             print(users_codes)
+            current_discount = current.get_current_discount()
+            current_discount["discount"] = discount
             totalCost = '%.2f' %float(totalCost)
+            current_discount["amt_before"] = totalCost
             # totalCost = totalCost
             condition = discount.get_condition()
             if float(totalCost) >= (condition):
-                # if isinstance(discount, AmountDiscount):
-                if type == "amount":
+                totalCost = Decimal(format(float(totalCost), '.2f'))
+                if isinstance(discount, AmountDiscount):
+                    print("its here")
                     amount = discount.get_discount_amount()
-                    new_total = float(totalCost) - float(amount)
-
+                    deducted = amount
+                    new_total = totalCost - float(amount)
+                    current_discount["amt_after"] = Decimal(format(new_total, '.2f'))
+                    current_discount["deducted"] = amount
                 else:
-                    percentage = float(discount.get_discount_percentage())
-                    new_total = totalCost - (totalCost * percentage/100)
+                    percentage = discount.get_discount_percentage()
+                    new_total = totalCost - totalCost * (percentage /100)
+                    current_discount["amt_after"] = Decimal(format(new_total, '.2f'))
+                    current_discount["deducted"] = Decimal(format(totalCost * percentage/100 , '.2f'))
+                    deducted = current_discount["deducted"]
+                totalCost = '%.2f' %float(totalCost)
+                new_total = Decimal(format(new_total, '.2f'))
+                current.set_current_discount(current_discount)
+                db["Current User"] = current
+                db.close()
 
-                return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount,new_total=new_total, searchForm=searchForm)
+                return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount,new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted)
+        else:
+            error_msg = code + " not applicable"
+            print(error_msg)
+            return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount,new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted)
+
+@app.route("/removeUseDiscount", methods=["POST"])
+def removeUseDiscount():
+    print("remocve")
+    current = ''
+    db = shelve.open('storage.db', 'c')
+    try:
+        current = db["Current User"]
+    except:
+        print('Error in retrieving current user from storage.db.')
+
+    empty = {}
+    current.set_current_discount(empty)
+    db["Current User"] = current
+    db.close()
+
+    return redirect(url_for('cart'))
 
 @app.route("/addToCart/<name>/<quantity>", methods=['GET', 'POST'])
 def addToCart(name, quantity):
@@ -999,11 +1046,18 @@ def summary(deliveryId):
     db = shelve.open('storage.db','r')
     transactions = {}
     D = ""
-
+    current = ""
+    discount=""
+    users_codes=""
     try:
         transactions = db["Transactions"]
     except:
         print("error in retrieving transaction information")
+    try:
+        current = db["Current User"]
+    except:
+        print("Error in retrieving current user from storage")
+
     for id in transactions:
         if str(id) == deliveryId:
             details = transactions[id]
@@ -1014,6 +1068,21 @@ def summary(deliveryId):
             print("Cant find the below id")
             print(id)
     searchForm = searchBar()
+
+    test = details.get_discount()
+    if test:
+        discount = test
+        users_codes = current.get_discount_codes()
+        users_codes.append(discount)
+        # current.set_current_discount(current_discount)
+        current.set_discount_codes(users_codes)
+        current_discount = current.get_current_discount()
+        current_discount.clear()
+        current.set_current_discount(current_discount)
+        db["Current User"] = current
+    else:
+        print("Oop no discount used")
+
         # if request.method == "POST" and searchForm.validate():
         #     return redirect('/search/' + searchForm.search_input.data)
 
@@ -1649,7 +1718,7 @@ def discount():
         else:
             percentage_discounts = percentage_discounts
 
-    elif request.method == "POST" and AddDiscountPercentage.validate():
+    if request.method == "POST" and AddDiscountPercentage.validate():
         code=AddDiscountPercentage.discount_code.data
         discount = PercentageDiscount(AddDiscountPercentage.discount_code.data, AddDiscountPercentage.discount_condition.data, AddDiscountPercentage.discount_start.data,AddDiscountPercentage.discount_expiry.data, AddDiscountPercentage.discount_percentage.data)
         test = valid_discount.get('Percentage')
@@ -1676,6 +1745,7 @@ def discount():
 
     db.close()
     return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage, valid_discount=valid_discount, amount_discounts=amount_discounts, percentage_discounts=percentage_discounts)
+
 
 @app.route('/deleteDiscount/<code>', methods=['POST'])
 def deleteDiscount(code):
@@ -1712,6 +1782,7 @@ def deleteDiscount(code):
     db['Valid Discount'] = valid_discount
 
     return redirect('/discount')
+
 
 @app.route('/categories')
 def categories():
