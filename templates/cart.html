@@ -55,10 +55,11 @@
         <div>
           <button type="button" data-toggle="modal" data-target="#input-discount" class="mybutton">Edit</button>
         </div>
-        <div>Discount Code: {{discount.get_code()}}</div>
+        <div>Discount Code: {{current_discount["discount"].get_code()}}</div>
       </div>
       <div id="discount-confirm">
-        <div style="float: right;">- ${{discount.get_discount_amount()}}</div>
+        <div style="float: right;">- ${{deducted}}</div>
+        <form action="{{url_for('removeUseDiscount')}}", method="post"><div>Discount<button class="remove_discount" value="submit" >Remove</button></div></form>
         <div>Discount</div>
       </div>
       {% else %}
@@ -69,18 +70,24 @@
         <div>Discount Code</div>
       </div>
       <div id="discount-confirm">
-        <div style="float: right;">{{error_msgs}}</div>
+        <div style="float: right;">{{error_msg}}</div>
         <div>Discount</div>
       </div>
       {% endif %}
+
 
     </div>
     <div id="hidden">
       <hr>
       <div id="new-total">
+        {%if discount != ''%}
         <div>SGD ${{new_total}}</div>
-        <div>NEW TOTAL</div>
+        {%else%}
+        <div>SGD ${{totalCost}}</div>
+        {%endif%}
+        <div>TOTAL</div>
       </div>
+
       <form method="POST" action="{{url_for('cart')}}" class="text-center mt-2">
         {{render_field(NoCollectForm.home_delivery)}}
       <div id="CHECKOUT">

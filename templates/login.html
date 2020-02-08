@@ -39,8 +39,8 @@
         <form method="POST" action="{{url_for('login')}}">
           <div class="form-group">
             {{ render_field(form2.email, class="form-control") }}
-            {% if not unique_email %}
-            <p style="color:#dc3545"> Email in use, you cannot create an account with the same email. </p>
+            {% if not valid_email_registration %}
+            <p style="color:#dc3545"> Email format incorrect, please try again. </p>
             {% endif %}
           </div>
           <div class="form-group">
@@ -77,8 +77,9 @@
         <form method="POST" action="{{url_for('login')}}">
           <div class="form-group">
             {{ render_field(form2.email, class="form-control") }}
-            {% if not unique_email %}
             <p style="color:#dc3545"> Email in use, you cannot create an account with the same email. </p>
+            {% if not valid_email_registration %}
+            <p style="color:#dc3545"> Email format incorrect, please try again. </p>
             {% endif %}
           </div>
           <div class="form-group">

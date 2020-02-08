@@ -207,3 +207,11 @@ margin-left: 0 !important;
 .modal-header div{
 margin-right: 0;
 }
+
+.remove_discount{
+  background-color: white;
+  border: white;
+  font-size: 10px;
+  text-decoration: underline;
+  color: blue;
+}
