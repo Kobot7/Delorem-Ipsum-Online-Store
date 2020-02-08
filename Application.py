@@ -50,8 +50,9 @@ def searchBar():
 
 def testing():
     productDict = {}
-    db = shelve.open('storage.db', 'a')
+    db = shelve.open('storage.db', 'c')
     productDict = db['Products']
+    print(productDict)
     for product in productDict:
         productDict[product].increase_purchases(random.randint(1,50))
         for x in range(random.randint(40,150)):
@@ -1428,7 +1429,7 @@ def cancelAdditionOfStock():
 
     return redirect('/products/name/ascending')
 
-@app.route('/transactions')
+@app.route('/transactions', methods=['GET', 'POST'])
 def transactions():
     transactionsDict = {}
     deliveryCompleteList = []
@@ -1440,21 +1441,45 @@ def transactions():
 
     try:
         transactionsDict = db['Transactions']
-        db.close()
     except:
         print('Error in retrieving Transactions from storage.db.')
 
     for key in transactionsDict:
         if transactionsDict[key].get_type()=='delivery':
-            if transactionsDict[key].get_completion==True:
+            if transactionsDict[key].get_completion()==True:
                 deliveryCompleteList.append(transactionsDict[key])
             else:
                 deliveryNotCompleteList.append(transactionsDict[key])
         else:
-            if transactionsDict[key].get_completion==True:
+            if transactionsDict[key].get_completion()==True:
                 collectionCompleteList.append(transactionsDict[key])
             else:
                 collectionNotCompleteList.append(transactionsDict[key])
+
+    if request.method=="POST":
+        d_mark_complete_transactions = request.form.getlist("dMarkAsComplete")
+        for sn in d_mark_complete_transactions:
+            transactionsDict[int(sn)].set_completion(True)
+            print(d_mark_complete_transactions)
+
+        d_mark_incomplete_transactions = request.form.getlist("dMarkAsIncomplete")
+        for sn in d_mark_incomplete_transactions:
+            transactionsDict[int(sn)].set_completion(False)
+            print(d_mark_incomplete_transactions)
+
+        c_mark_complete_transactions = request.form.getlist("cMarkAsComplete")
+        for sn in c_mark_complete_transactions:
+            transactionsDict[int(sn)].set_completion(True)
+            print(c_mark_complete_transactions)
+
+        c_mark_incomplete_transactions = request.form.getlist("cMarkAsIncomplete")
+        for sn in c_mark_incomplete_transactions:
+            transactionsDict[int(sn)].set_completion(False)
+            print(c_mark_incomplete_transactions)
+
+        db['Transactions'] = transactionsDict
+        db.close()
+        return redirect('/transactions')
 
     return render_template('transactions.html', currentPage='Transactions'
     , deliveryCompleteList=deliveryCompleteList, deliveryNotCompleteList=deliveryNotCompleteList
