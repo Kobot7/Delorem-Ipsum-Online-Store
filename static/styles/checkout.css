@@ -17,7 +17,7 @@ h1{
 }
 
 .box, #right-sticky{
-    background-color: white;
+    background-color: rgba(46, 139, 87, 0.35);
 }
 
 #content{
@@ -135,7 +135,7 @@ a.mybutton:hover{
 }
 #right-sticky a{
     float: right;
-    color: gray;
+    color: black;
 }
 .details{
     display: flex;
@@ -359,6 +359,7 @@ tbody .l-ltc{
 
 .item-list{
   overflow: auto;
+  background-color: lightgray;
 }
 
 .item-wrapper{
