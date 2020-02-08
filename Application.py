@@ -43,6 +43,28 @@ app.config.update(
     MAIL_ASCII_ATTACHMENTS = True
 	)
 
+# Getting valid discount codes and checking if they are expired
+db = shelve.open('storage.db','c')
+try:
+    valid_discount = db["Valid Discount"]
+except:
+    print("Either we got none or like we can't get discounts stuffy")
+AmountDiscount = valid_discount["Amount"]
+PercentageDiscount = valid_discount["Percentage"]
+amount_discount = {}
+percentage_discount = {}
+updated_discount = {}
+for code in AmountDiscount:
+    if AmountDiscount[code].get_start_date() < date.today() and AmountDiscount[code].get_expiry_date() > date.today():
+        amount_discount[code] = AmountDiscount[code]
+for code in PercentageDiscount:
+    if PercentageDiscount[code].get_start_date() < date.today() and PercentageDiscount[code].get_expiry_date() > date.today():
+        percentage_discount[code] = PercentageDiscount[code]
+updated_discount["Amount"] = amount_discount
+updated_discount["Percentage"] = percentage_discount
+db["Valid Discount"] = updated_discount
+db.close()
+
 mail = Mail(app)
 
 def searchBar():
@@ -411,6 +433,15 @@ def IndItem(serialNo):
                 break
     except:
         taken = False
+    try:
+        cart = current.get_shopping_cart()
+        bought = False
+        for serial_no in cart:
+            if serial_no == serialNo:
+                bought = True
+                break
+    except:
+        bought = False
     db['Products'] = products
     db.close()
     subCategory = IndItem.get_sub_category()
@@ -423,6 +454,8 @@ def IndItem(serialNo):
     related = []
     for i in range(4):
         max = len(relatedProducts)
+        if max <= 1:
+            break
         max -= 1
         number = random.randint(0,max)
         related.append(relatedProducts[number])
@@ -433,7 +466,7 @@ def IndItem(serialNo):
     if request.method == "POST" and Quantity.validate():
         quantity = Quantity.quantity.data
         return redirect(url_for('addToCart', name = IndItem.get_product_name(), quantity = quantity))
-    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken, related=related, Items=Items, QuantityForm = Quantity)
+    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken, related=related, Items=Items, QuantityForm = Quantity, Bought = bought)
 
 # Shopping Cart
 @app.route('/cart', methods=['GET', 'POST'])
@@ -839,15 +872,14 @@ def checkout(delivery):
     currentDate = today.strftime("%d %B %Y")
     if request.method == "POST" and deliveryForm.validate():
         db = shelve.open('storage.db','c')
-        transactions = {}
-        try:
-            transactions = db["Transactions"]
-        except:
-            print("error in retrieving transaction information")
-        try:
-            current = db["Current User"]
-        except:
-            print("Can't get user")
+        products = db["Products"]
+        current = db["Current User"]
+        transactions = db["Transactions"]
+        for key in cart:
+            product = products[key]
+            product.set_quantity(product.get_quantity() - int(cart[key]))
+            products[key] = product
+
         print(deliveryForm.unit_no.data)
         deliveryInfo = Delivery(currentDate, deliveryForm.name.data, deliveryForm.phone.data,
                     current.get_email(),total, prodlist, deliveryForm.payment_mode.data,
@@ -860,19 +892,21 @@ def checkout(delivery):
         db["Transactions"] = transactions
         current.set_transactions(deliveryId)
         db["Current User"] = current
+        db["Products"] = products
+        print("prods deleted")
         db.close()
         return redirect(url_for("summary", deliveryId= deliveryId))
     if request.method == "POST" and collectionForm.validate():
         db = shelve.open('storage.db','c')
-        transactions = {}
-        try:
-            transactions = db["Transactions"]
-        except:
-            print("Error in retrieving transactions")
-        try:
-            current = db["Current User"]
-        except:
-            print("Current dude for collection MIA")
+        products = db["Products"]
+        current = db["Current User"]
+        transactions = db["Transactions"]
+        for key in cart:
+            product = products[key]
+            print(product.get_quantity())
+            product.set_quantity(product.get_quantity() - int(cart[key]))
+            products[key] = product
+            print(product.get_quantity(),"prods left")
         collection = Collection(currentDate, collectionForm.name.data, collectionForm.phone.data, current.get_email(), total, prodlist,
         collectionForm.payment_mode.data, collectionForm.credit_card_number.data, collectionForm.credit_card_expiry.data, collectionForm.credit_card_cvv.data,
         collectionForm.date.data, collectionForm.time.data)
@@ -881,6 +915,7 @@ def checkout(delivery):
         db["Transactions"] = transactions
         current.set_transactions(collectionId)
         db["Current User"] = current
+        db["Products"] = products
         db.close()
         return redirect(url_for("summary",deliveryId=collectionId))
         # current_user.set_transactions(deliveryInfo.get_id())
