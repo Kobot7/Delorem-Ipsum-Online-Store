@@ -109,7 +109,7 @@ class EditProfileForm(Form):
     newpassword = StringField('New Password')
 
 class NoCollectForm(Form):
-    home_delivery = BooleanField("Home Delivery")
+    home_delivery = BooleanField("Home Delivery (+$12)")
 
 
 cardlist = [('visa','Visa'),
