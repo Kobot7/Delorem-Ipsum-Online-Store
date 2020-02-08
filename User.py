@@ -17,6 +17,7 @@ class User:
         self.__wishlist = {}
         self.__transactions = []
         self.__discount_codes = []
+        self.__current_discount = {} #contains discount object, amt after, amt before and deducted
 
     def set_user_id(self):
         user_id = random.randint(0, 9999999999999999999999999)
@@ -68,6 +69,9 @@ class User:
     def set_discount_codes(self, discount_codes):
         self.__discount_codes = discount_codes
 
+    def set_current_discount(self, current_discount):
+        self.__current_discount = current_discount
+
     def get_user_id(self):
         return self.__user_id
 
@@ -97,6 +101,9 @@ class User:
 
     def get_discount_codes(self):
         return self.__discount_codes
+
+    def get_current_discount(self):
+        return self.__current_discount
 
     def add_to_wishlist(self, item):
         wishlist = self.get_wishlist()
