@@ -14,9 +14,9 @@
     <div class="row justify-content-center">
       <div class="col-md-10">
         <h3 class="">{{ mainCategory }}</h3>
-        <form action="">
-            <p class="float-left">Sort By:</p>
-            <select id="filterSelect">
+        <form action="" class="form-inline">
+            <label for="filterSelect" class="float-left">Sort By:&nbsp;</label>
+            <select id="filterSelect" class="form-control d-inline">
                 <option value="/view/descending">Popularity</option>
                 <option value="/name/ascending">A-Z</option>
                 <option value="/name/descending">Z-A</option>
@@ -24,6 +24,7 @@
                 <option value="/price/descending">Price: High to Low</option>
             </select>
         </form>
+
 
           <div class="tertiary-body">
               <p class="results-number">{{ productCount }} results found</p>
@@ -58,7 +59,7 @@
 <script>
   var pathname = window.location.pathname.split('/');
   document.getElementById("filterSelect").value = '/' + pathname[3] + '/' + pathname[4];
-  
+
   document.getElementById('filterSelect').addEventListener("change", function() {
     var filter = document.getElementById('filterSelect').value;
     window.location.href = '/' + pathname[1] + '/' + pathname[2] + filter;

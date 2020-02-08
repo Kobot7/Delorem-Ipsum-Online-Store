@@ -1460,8 +1460,10 @@ def cancelAdditionOfStock():
 @app.route('/transactions')
 def transactions():
     transactionsDict = {}
-    deliveryList = []
-    collectionList = []
+    deliveryCompleteList = []
+    deliveryNotCompleteList = []
+    collectionCompleteList = []
+    collectionNotCompleteList = []
 
     db = shelve.open('storage.db', 'c')
 
@@ -1473,11 +1475,19 @@ def transactions():
 
     for key in transactionsDict:
         if transactionsDict[key].get_type()=='delivery':
-            deliveryList.append(transactionsDict[key])
+            if transactionsDict[key].get_completion==True:
+                deliveryCompleteList.append(transactionsDict[key])
+            else:
+                deliveryNotCompleteList.append(transactionsDict[key])
         else:
-            collectionList.append(transactionsDict[key])
+            if transactionsDict[key].get_completion==True:
+                collectionCompleteList.append(transactionsDict[key])
+            else:
+                collectionNotCompleteList.append(transactionsDict[key])
 
-    return render_template('transactions.html', currentPage='Transactions', deliveryList=deliveryList, collectionList=collectionList)
+    return render_template('transactions.html', currentPage='Transactions'
+    , deliveryCompleteList=deliveryCompleteList, deliveryNotCompleteList=deliveryNotCompleteList
+    , collectionCompleteList=collectionCompleteList, collectionNotCompleteList=collectionNotCompleteList)
 
 @app.route('/downloadProducts', methods=['GET'])
 def download():
