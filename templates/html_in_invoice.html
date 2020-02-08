@@ -24,7 +24,7 @@
 </tbody>
 </table>
 
-<p>Total : ${{transaction.get_total() - transaction.get_deducted()}}</p>
+<p>Total : ${{total - deducted}}</p>
 
 {%for product in cartList%}
 <img src="/static/images/{{product.get_thumbnail()}}" alt="">
