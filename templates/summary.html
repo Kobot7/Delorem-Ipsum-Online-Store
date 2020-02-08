@@ -72,8 +72,10 @@
             </div>
 
             <div class="confirm">
-              <button class="btn btn-secondary" type="button" data-toggle = "modal" data-target = "#exampleModal"> Confirm</button>
-          </div>
+
+              <a href="{{url_for('deliveryInvoice', email=details.get_email())}}">
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal" > Confirm</button>
+              </a>
 
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

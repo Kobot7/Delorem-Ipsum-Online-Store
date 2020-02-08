@@ -62,9 +62,9 @@
                               <button>Confirm</button>
                           </form>
                           </div>
-                          <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="POST">
+                          <!-- <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="POST">
                               <button>Email</button>
-                          </form>
+                          </form> -->
 
                     </div>
                     {% else %}
@@ -115,9 +115,9 @@
                                         </form>
                                       </form>
                                       </div>
-                                      <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="POST">
+                                      <!-- <form action="{{url_for('deliveryInvoice', email=current.get_email())}}" method="POST">
                                           <button>Email</button>
-                                      </form>
+                                      </form> -->
 
                                 </div>
                                 {% endif %}
