@@ -60,7 +60,7 @@
         <table class="w-100" id="transactions">
             <thead>
                 <tr>
-                    <th>Email</th>
+                    <th>Collection Type</th>
                     <th>Customer</th>
                     <th>No. of Items</th>
                     <th>Total</th>
@@ -70,7 +70,7 @@
             <tbody>
               {% for id in transactions %}
                 <tr>
-                  <td>{{ transactions[id].get_email() }}</td>
+                  <td>{{ transactions[id].get_type() }}</td>
                   <td>{{ transactions[id].get_name() }}</td>
                   <td>{{ transactions[id].get_items()|length }}</td>
                   <td>${{ transactions[id].get_total() }}</td>

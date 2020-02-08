@@ -1429,7 +1429,8 @@ def cancelAdditionOfStock():
 @app.route('/transactions')
 def transactions():
     transactionsDict = {}
-    transactionsList = []
+    deliveryList = []
+    collectionList = []
 
     db = shelve.open('storage.db', 'c')
 
@@ -1440,9 +1441,12 @@ def transactions():
         print('Error in retrieving Transactions from storage.db.')
 
     for key in transactionsDict:
-        transactionsList.append(transactionsDict[key])
+        if transactionsDict[key].get_type()=='delivery':
+            deliveryList.append(transactionsDict[key])
+        else:
+            collectionList.append(transactionsDict[key])
 
-    return render_template('transactions.html', currentPage='Transactions', transactionsList=transactionsList)
+    return render_template('transactions.html', currentPage='Transactions', deliveryList=deliveryList, collectionList=collectionList)
 
 @app.route('/downloadProducts', methods=['GET'])
 def download():
