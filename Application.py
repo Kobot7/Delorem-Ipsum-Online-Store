@@ -1027,7 +1027,7 @@ def checkout(delivery):
             products[key] = product
 
         print(deliveryForm.unit_no.data)
-        deliveryInfo = Delivery(deliveryForm.name.data, deliveryForm.phone.data,
+        deliveryInfo = Delivery(currentDate, deliveryForm.name.data, deliveryForm.phone.data,
                     current.get_email(),total, deducted, discount, prodlist, deliveryForm.payment_mode.data,
                      deliveryForm.credit_card_number.data, deliveryForm.credit_card_expiry.data, deliveryForm.credit_card_cvv.data,
                      deliveryForm.street_name.data,
@@ -1054,7 +1054,7 @@ def checkout(delivery):
             product.set_quantity(product.get_quantity() - int(cart[key]))
             products[key] = product
             print(product.get_quantity(),"prods left")
-        collection = Collection(collectionForm.name.data, collectionForm.phone.data, current.get_email(), total, deducted, discount, prodlist,
+        collection = Collection(currentDate, collectionForm.name.data, collectionForm.phone.data, current.get_email(), total, deducted, discount, prodlist,
         collectionForm.payment_mode.data, collectionForm.credit_card_number.data, collectionForm.credit_card_expiry.data, collectionForm.credit_card_cvv.data,
         collectionForm.date.data, collectionForm.time.data)
         collectionId = collection.get_id()
@@ -1687,7 +1687,7 @@ def transactions():
     , collectionCompleteList=collectionCompleteList, collectionNotCompleteList=collectionNotCompleteList)
 
 @app.route('/downloadProducts', methods=['GET'])
-def download():
+def downloadProducts():
     db = shelve.open('storage.db', 'c')
 
     try:
@@ -1705,7 +1705,6 @@ def download():
                     , 'Activated'
                     , 'Quantity'
                     , 'Stock Threshold']]
-
 
     for key in productDict:
         product = productDict[key]
@@ -1728,6 +1727,52 @@ def download():
         productArray.append(data)
 
     return excel.make_response_from_array(productArray, file_type='xls', file_name='Delorem Ipsum product records')
+
+@app.route('/downloadTransactions', methods=['GET'])
+def downloadTransactions():
+    db = shelve.open('storage.db', 'c')
+
+    try:
+        transactionDict = db['Transactions']
+        db.close()
+    except:
+        print('Error in retrieving Transactions from storage.db.')
+
+    transactionArray = [['Delivery Type'
+                    , 'Name'
+                    , 'Phone'
+                    , 'Email'
+                    , ''
+                    , ''
+                    , ''
+                    , ''
+                    , ''
+                    , ''
+                    , ''
+                    , '']]
+
+
+    for key in productDict:
+        product = productDict[key]
+
+        if product.get_completion():
+            activated = 'Show'
+        else:
+            activated = 'Hide'
+
+        data = [product.get_product_name()
+                , product.get_brand()
+                , product.get_sub_category()
+                , product.get_serial_no()
+                , product.get_price()
+                , product.get_description()
+                , activated
+                , product.get_quantity()
+                , product.get_stock_threshold()]
+
+        transactionArray.append(data)
+
+    return excel.make_response_from_array(productArray, file_type='xls', file_name='Delorem Ipsum transaction records')
 
 
 # Other stuff

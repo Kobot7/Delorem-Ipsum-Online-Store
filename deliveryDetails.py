@@ -1,6 +1,8 @@
 import random
 class Transaction:
-    def __init__(self, name, phone, email, total, deducted, discount, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv ):
+    def __init__(self, dateOfOrder, name, phone, email, total, deducted, discount, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv ):
+        self.__completed = False
+        self.__date_of_order = dateOfOrder
         self.set_name(name)
         self.set_phone(phone)
         self.set_email(email)
@@ -13,6 +15,9 @@ class Transaction:
         self.set_credit_card_expiry(credit_card_expiry)
         self.set_credit_card_cvv(credit_card_cvv)
         self.__id = random.randint(100000, 999999)
+
+    def set_completion(self, status):
+        self.__completed = status
 
     def set_name(self, name):
         self.__name = name
@@ -47,6 +52,12 @@ class Transaction:
     def set_credit_card_cvv(self, cvv):
         self.__cvv = cvv
 
+    def get_completion(self):
+        return self.__completed
+
+    def get_date_of_order(self):
+        return self.__date_of_order
+
     def get_name(self):
         return self.__name
 
@@ -75,18 +86,18 @@ class Transaction:
         return self.__credit_card_number
 
     def get_credit_card_expiry(self):
-        return self.__credit_card_expiry
+        return self.__expiry
 
     def get_credit_card_cvv(self):
-        return self.__credit_card_cvv
+        return self.__cvv
 
     def get_id(self):
         return self.__id
 
 
 class Delivery(Transaction):
-    def __init__(self,name, phone, email, total, deducted, discount, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv, street_name, postal_code, unit_no):
-        super().__init__(name, phone, email, total, deducted, discount, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv)
+    def __init__(self, dateOfOrder, name, phone, email, total, deducted, discount, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv, street_name, postal_code, unit_no):
+        super().__init__(dateOfOrder, name, phone, email, total, deducted, discount, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv)
         self.__street_name = street_name
         self.__postal_code = postal_code
         self.__unit_no = unit_no
@@ -114,8 +125,8 @@ class Delivery(Transaction):
         return self.__type
 
 class Collection(Transaction):
-    def __init__(self,name, phone, email, total, deducted, discount, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv, date, time):
-        super().__init__(name, phone, email, total, deducted, discount, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv)
+    def __init__(self, dateOfOrder, name, phone, email, total, deducted, discount, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv, date, time):
+        super().__init__(dateOfOrder, name, phone, email, total, deducted, discount, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv)
         self.__date = date
         self.__time = time
         self.__type = "collection"
