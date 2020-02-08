@@ -101,8 +101,9 @@ def searchBar():
 
 def testing():
     productDict = {}
-    db = shelve.open('storage.db', 'a')
+    db = shelve.open('storage.db', 'c')
     productDict = db['Products']
+    print(productDict)
     for product in productDict:
         productDict[product].increase_purchases(random.randint(1,50))
         for x in range(random.randint(40,150)):
@@ -230,6 +231,26 @@ def view_profile(username):
         db.close()
         return render_template('my-account.html', current=current, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm, Items=Items)
 
+@app.route('/my-account/delete_account')
+def deleteUser():
+    db = shelve.open("storage.db", "c")
+    try:
+        usersDict = db["Users"]
+        namesDict = db["Usernames"]
+        current = db["Current User"]
+    except:
+        print("Error while retrieving usersDict")
+    current_id = current.get_user_id()
+    print(f"{usersDict[current_id].get_username()} is deleted.")
+    del usersDict[current_id]
+    db["Users"] = usersDict
+    del namesDict[current.get_username()]
+    db["Usernames"] = namesDict
+    db["Current User"] = ""
+    db.close()
+    return redirect(url_for("home"))
+
+
 # Login/Register
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -276,18 +297,23 @@ def login():
                 if len(registrationForm.password.data) < 6:
                     print('length should be at least 6')
                     secure_pwd= False
+                    break
                 if not any(char.isdigit() for char in registrationForm.password.data):
                     print('Password should have at least one numeral')
                     secure_pwd = False
+                    break
                 if not any(char.isupper() for char in registrationForm.password.data):
                     print('Password should have at least one uppercase letter')
                     secure_pwd = False
+                    break
                 if not any(char.islower() for char in registrationForm.password.data):
                     print('Password should have at least one lowercase letter')
                     secure_pwd = False
+                    break
                 if not any(char in SpecialSym for char in registrationForm.password.data):
                     print('Password should have at least one of the symbols $@#')
                     secure_pwd = False
+                    break
 
             if unique_email and valid_email_registration:
                 U = User(registrationForm.username.data, registrationForm.password.data, registrationForm.email.data)
@@ -1615,7 +1641,7 @@ def cancelAdditionOfStock():
 
     return redirect('/products/name/ascending')
 
-@app.route('/transactions')
+@app.route('/transactions', methods=['GET', 'POST'])
 def transactions():
     transactionsDict = {}
     deliveryCompleteList = []
@@ -1627,21 +1653,45 @@ def transactions():
 
     try:
         transactionsDict = db['Transactions']
-        db.close()
     except:
         print('Error in retrieving Transactions from storage.db.')
 
     for key in transactionsDict:
         if transactionsDict[key].get_type()=='delivery':
-            if transactionsDict[key].get_completion==True:
+            if transactionsDict[key].get_completion()==True:
                 deliveryCompleteList.append(transactionsDict[key])
             else:
                 deliveryNotCompleteList.append(transactionsDict[key])
         else:
-            if transactionsDict[key].get_completion==True:
+            if transactionsDict[key].get_completion()==True:
                 collectionCompleteList.append(transactionsDict[key])
             else:
                 collectionNotCompleteList.append(transactionsDict[key])
+
+    if request.method=="POST":
+        d_mark_complete_transactions = request.form.getlist("dMarkAsComplete")
+        for sn in d_mark_complete_transactions:
+            transactionsDict[int(sn)].set_completion(True)
+            print(d_mark_complete_transactions)
+
+        d_mark_incomplete_transactions = request.form.getlist("dMarkAsIncomplete")
+        for sn in d_mark_incomplete_transactions:
+            transactionsDict[int(sn)].set_completion(False)
+            print(d_mark_incomplete_transactions)
+
+        c_mark_complete_transactions = request.form.getlist("cMarkAsComplete")
+        for sn in c_mark_complete_transactions:
+            transactionsDict[int(sn)].set_completion(True)
+            print(c_mark_complete_transactions)
+
+        c_mark_incomplete_transactions = request.form.getlist("cMarkAsIncomplete")
+        for sn in c_mark_incomplete_transactions:
+            transactionsDict[int(sn)].set_completion(False)
+            print(c_mark_incomplete_transactions)
+
+        db['Transactions'] = transactionsDict
+        db.close()
+        return redirect('/transactions')
 
     return render_template('transactions.html', currentPage='Transactions'
     , deliveryCompleteList=deliveryCompleteList, deliveryNotCompleteList=deliveryNotCompleteList
