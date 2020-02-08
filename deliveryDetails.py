@@ -1,6 +1,7 @@
 import random
 class Transaction:
     def __init__(self, dateOfOrder, name, phone, email, total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv ):
+        self.__completed = False
         self.__date_of_order = dateOfOrder
         self.set_name(name)
         self.set_phone(phone)
@@ -12,6 +13,9 @@ class Transaction:
         self.set_credit_card_expiry(credit_card_expiry)
         self.set_credit_card_cvv(credit_card_cvv)
         self.__id = random.randint(100000, 999999)
+
+    def set_completion(self, status):
+        self.__completed = status
 
     def set_name(self, name):
         self.__name = name
@@ -39,6 +43,9 @@ class Transaction:
 
     def set_credit_card_cvv(self, cvv):
         self.__cvv = cvv
+
+    def get_date_of_order(self):
+        return self.__date_of_order
 
     def get_name(self):
         return self.__name
@@ -69,6 +76,9 @@ class Transaction:
 
     def get_id(self):
         return self.__id
+
+    def get_completion(self):
+        return self.__completed
 
 
 class Delivery(Transaction):
