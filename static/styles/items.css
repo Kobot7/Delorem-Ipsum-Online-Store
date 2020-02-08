@@ -354,3 +354,13 @@ article:hover {
   transform: scale(1.2);
   z-index: 99;
 }
+
+.currently_in_cart{
+  font-weight: 600;
+  color: #666;
+}
+
+.whatever{
+  font-weight: normal;
+  color: black;
+}

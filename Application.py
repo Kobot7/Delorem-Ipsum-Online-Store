@@ -451,7 +451,7 @@ def IndItem(serialNo):
     IndItem = products[serialNo]
     IndItem.increase_views()
     class QuantityForm(Form):
-        quantity = IntegerField("Quantity", [validators.NumberRange(min=0, max=IndItem.get_quantity(), message="Please select a valid quantity. There are only " + str(IndItem.get_quantity()) + " of this product currently."), validators.DataRequired()])
+        quantity = IntegerField("Quantity", [validators.NumberRange(min=1, max=IndItem.get_quantity(), message="Please select a valid quantity. There are only " + str(IndItem.get_quantity()) + " of this product currently.")])
     Quantity = QuantityForm(request.form)
     try:
         wishlist = current.get_wishlist()
@@ -465,12 +465,15 @@ def IndItem(serialNo):
     try:
         cart = current.get_shopping_cart()
         bought = False
+        amount = 0
         for serial_no in cart:
             if serial_no == serialNo:
                 bought = True
+                amount = cart[serial_no]
                 break
     except:
         bought = False
+        amount = 0
     db['Products'] = products
     db.close()
     subCategory = IndItem.get_sub_category()
@@ -495,7 +498,7 @@ def IndItem(serialNo):
     if request.method == "POST" and Quantity.validate():
         quantity = Quantity.quantity.data
         return redirect(url_for('addToCart', name = IndItem.get_product_name(), quantity = quantity))
-    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken, related=related, Items=Items, QuantityForm = Quantity, Bought = bought)
+    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken, related=related, Items=Items, QuantityForm = Quantity, Bought = bought, amount = amount)
 
 # Shopping Cart
 @app.route('/cart', methods=['GET', 'POST'])
