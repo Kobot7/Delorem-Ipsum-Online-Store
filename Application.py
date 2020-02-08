@@ -962,6 +962,9 @@ def checkout(delivery):
         products = db["Products"]
     except:
         print("Yo prods missin at checkout")
+
+    current_discount = current.get_current_discount()
+
     cart = current.get_shopping_cart()
     prodlist = []
     subtotal = 0
@@ -971,7 +974,16 @@ def checkout(delivery):
         prodlist.append(product)
         subtotal += float(product.get_price()) * int(cart[key])
     number = len(prodlist)
-    total = subtotal + 12
+    empty = not bool(current_discount)
+    if empty == False:
+        deducted = float(current_discount["deducted"])
+        discount = current_discount["discount"]
+        total = subtotal + 12 - deducted
+
+    else:
+        deducted = 0
+        discount = ''
+        total = subtotal + 12
     db.close()
     today = date.today()
     currentDate = today.strftime("%d %B %Y")
@@ -986,12 +998,13 @@ def checkout(delivery):
             products[key] = product
 
         print(deliveryForm.unit_no.data)
-        deliveryInfo = Delivery(currentDate, deliveryForm.name.data, deliveryForm.phone.data,
-                    current.get_email(),total, prodlist, deliveryForm.payment_mode.data,
+        deliveryInfo = Delivery(deliveryForm.name.data, deliveryForm.phone.data,
+                    current.get_email(),total, deducted, discount, prodlist, deliveryForm.payment_mode.data,
                      deliveryForm.credit_card_number.data, deliveryForm.credit_card_expiry.data, deliveryForm.credit_card_cvv.data,
                      deliveryForm.street_name.data,
                      deliveryForm.postal_code.data,
                      deliveryForm.unit_no.data)
+
         deliveryId = deliveryInfo.get_id()
         transactions[deliveryId] = deliveryInfo
         db["Transactions"] = transactions
@@ -1012,7 +1025,7 @@ def checkout(delivery):
             product.set_quantity(product.get_quantity() - int(cart[key]))
             products[key] = product
             print(product.get_quantity(),"prods left")
-        collection = Collection(currentDate, collectionForm.name.data, collectionForm.phone.data, current.get_email(), total, prodlist,
+        collection = Collection(collectionForm.name.data, collectionForm.phone.data, current.get_email(), total, deducted, discount, prodlist,
         collectionForm.payment_mode.data, collectionForm.credit_card_number.data, collectionForm.credit_card_expiry.data, collectionForm.credit_card_cvv.data,
         collectionForm.date.data, collectionForm.time.data)
         collectionId = collection.get_id()
@@ -1023,7 +1036,7 @@ def checkout(delivery):
         db["Products"] = products
         db.close()
         return redirect(url_for("summary",deliveryId=collectionId))
-        # current_user.set_transactions(deliveryInfo.get_id())
+         # current_user.set_transactions(deliveryInfo.get_id())
         # transactions[deliveryInfo.get_id()] = deliveryInfo
         # db["Transactions"] = transactions
     #     current_user.set_orders(deliveryInfo.get_id())
@@ -1036,9 +1049,7 @@ def checkout(delivery):
     # if request.method == "POST" and searchForm.validate():
     #     return redirect('/search/' + searchForm.search_input.data)
 
-    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal, delivery = NoCollect, Items = 0)
-
-
+    return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal, delivery = NoCollect, Items = 0, deducted=deducted, discount=discount)
 
 # Summary page
 @app.route('/summary/<deliveryId>', methods= ["GET", "POST"])
