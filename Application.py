@@ -46,26 +46,52 @@ app.config.update(
 	)
 
 # Getting valid discount codes and checking if they are expired
-db = shelve.open('storage.db','c')
-try:
-    valid_discount = db["Valid Discount"]
-except:
-    print("Either we got none or like we can't get discounts stuffy")
-AmountDiscount = valid_discount["Amount"]
-PercentageDiscount = valid_discount["Percentage"]
-amount_discount = {}
-percentage_discount = {}
-updated_discount = {}
-for code in AmountDiscount:
-    if AmountDiscount[code].get_start_date() < date.today() and AmountDiscount[code].get_expiry_date() > date.today():
-        amount_discount[code] = AmountDiscount[code]
-for code in PercentageDiscount:
-    if PercentageDiscount[code].get_start_date() < date.today() and PercentageDiscount[code].get_expiry_date() > date.today():
-        percentage_discount[code] = PercentageDiscount[code]
-updated_discount["Amount"] = amount_discount
-updated_discount["Percentage"] = percentage_discount
-db["Valid Discount"] = updated_discount
-db.close()
+# db = shelve.open('storage.db','c')
+# try:
+#     valid_discount = db["Valid Discount"]
+# except:
+#     print("Either we got none or like we can't get discounts stuffy")
+# AmountDiscount = valid_discount["Amount"]
+# PercentageDiscount = valid_discount["Percentage"]
+# amount_discount = {}
+# percentage_discount = {}
+# updated_discount = {}
+# for code in AmountDiscount:
+#     if AmountDiscount[code].get_start_date() < date.today() and AmountDiscount[code].get_expiry_date() > date.today():
+#         amount_discount[code] = AmountDiscount[code]
+# for code in PercentageDiscount:
+#     if PercentageDiscount[code].get_start_date() < date.today() and PercentageDiscount[code].get_expiry_date() > date.today():
+#         percentage_discount[code] = PercentageDiscount[code]
+# updated_discount["Amount"] = amount_discount
+# updated_discount["Percentage"] = percentage_discount
+# db["Valid Discount"] = updated_discount
+# db.close()
+def checkfordiscounts():
+    db = shelve.open('storage.db', 'c')
+    try:
+        valid_discount = db["Valid Discount"]
+    except:
+        print("bchscbweucw")
+    amount_discounts = valid_discount["Amount"]
+    percentage_discounts = valid_discount["Percentage"]
+    valid_amount_discounts = {}
+    valid_percentage_discounts =  {}
+    for code in amount_discounts:
+        if amount_discounts[code].get_start_date() < date.today() and amount_discounts[code].get_expiry_date() > date.today():
+            valid_amount_discounts[code] = amount_discounts[code]
+
+    for code in percentage_discounts:
+        if percentage_discounts[code].get_start_date() < date.today() and percentage_discounts[code].get_expiry_date() > date.today():
+            valid_percentage_discounts[code] = percentage_discounts[code]
+
+    valid_discount["Amount"] = valid_amount_discounts
+    valid_discount["Percentage"] = valid_percentage_discounts
+    db["Valid Discount"]  =valid_discount
+
+    db.close()
+    return valid_discount
+
+checkfordiscounts()
 
 mail = Mail(app)
 
