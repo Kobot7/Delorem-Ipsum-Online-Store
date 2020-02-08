@@ -31,6 +31,8 @@ import sys
 import asyncio
 from threading import Thread
 
+#Saving the transaction data temporarily before confirmation
+import pickle
 # print('MAIL_PASSWORD' in os.environ)
 
 app = Flask(__name__, static_url_path='/static')
@@ -40,7 +42,7 @@ app.config.update(
     MAIL_USE_TLS= True,
     MAIL_USE_SSL= False,
 	MAIL_USERNAME = 'deloremipsumonlinestore@outlook.com',
-	MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
+	# MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
 	MAIL_DEBUG = True,
 	MAIL_SUPPRESS_SEND = False,
     MAIL_ASCII_ATTACHMENTS = True
@@ -242,7 +244,6 @@ def deleteUser():
         print("Error while retrieving usersDict")
     current_id = current.get_user_id()
     print(f"{usersDict[current_id].get_username()} is deleted.")
-    print("\n\n\n\n")
     del usersDict[current_id]
     db["Users"] = usersDict
     del namesDict[current.get_username()]
@@ -310,13 +311,13 @@ def login():
                 if not any(char.islower() for char in registrationForm.password.data):
                     print('Password should have at least one lowercase letter')
                     secure_pwd = False
-                #     break
-                # if not any(char in SpecialSym for char in registrationForm.password.data):
-                #     print('Password should have at least one of the symbols $@#')
-                #     secure_pwd = False
+                    break
+                if not any(char in SpecialSym for char in registrationForm.password.data):
+                    print('Password should have at least one of the symbols $@#')
+                    secure_pwd = False
                     break
 
-            if unique_email and valid_email_registration and secure_pwd:
+            if unique_email and valid_email_registration:
                 U = User(registrationForm.username.data, registrationForm.password.data, registrationForm.email.data)
                 usersDict[U.get_user_id()] = U
                 namesDict[U.get_username()] = U.get_user_id()
@@ -1020,37 +1021,28 @@ def checkout(delivery):
     if request.method == "POST" and deliveryForm.validate():
         db = shelve.open('storage.db','c')
         current = db["Current User"]
-        transactions = db["Transactions"]
-
         print(deliveryForm.unit_no.data)
         deliveryInfo = Delivery(currentDate, deliveryForm.name.data, deliveryForm.phone.data,
                     current.get_email(),total, deducted, discount, prodlist, deliveryForm.payment_mode.data,
                      deliveryForm.credit_card_number.data, deliveryForm.credit_card_expiry.data, deliveryForm.credit_card_cvv.data,
-                     deliveryForm.street_name.data,
-                     deliveryForm.postal_code.data,
-                     deliveryForm.unit_no.data)
+                     deliveryForm.street_name.data,deliveryForm.postal_code.data,deliveryForm.unit_no.data)
 
-        deliveryId = deliveryInfo.get_id()
-        transactions[deliveryId] = deliveryInfo
-        db["Transactions"] = transactions
-        current.set_transactions(deliveryId)
-        db["Current User"] = current
+        pickle_out = open('temp_transaction.pickle','wb')
+        pickle.dump(deliveryInfo, pickle_out)
+        pickle_out.close()
         db.close()
-        return redirect(url_for("summary", deliveryId= deliveryId))
+        return redirect(url_for("summary"))
     if request.method == "POST" and collectionForm.validate():
         db = shelve.open('storage.db','c')
         current = db["Current User"]
-        transactions = db["Transactions"]
         collection = Collection(currentDate, collectionForm.name.data, collectionForm.phone.data, current.get_email(), total, deducted, discount, prodlist,
         collectionForm.payment_mode.data, collectionForm.credit_card_number.data, collectionForm.credit_card_expiry.data, collectionForm.credit_card_cvv.data,
         collectionForm.date.data, collectionForm.time.data)
-        collectionId = collection.get_id()
-        transactions[collectionId] = collection
-        db["Transactions"] = transactions
-        current.set_transactions(collectionId)
-        db["Current User"] = current
+        pickle_out = open('temp_transaction.pickle','wb')
+        pickle.dump(collection, pickle_out)
+        pickle_out.close()
         db.close()
-        return redirect(url_for("summary",deliveryId=collectionId))
+        return redirect(url_for("summary"))
          # current_user.set_transactions(deliveryInfo.get_id())
         # transactions[deliveryInfo.get_id()] = deliveryInfo
         # db["Transactions"] = transactions
@@ -1067,35 +1059,46 @@ def checkout(delivery):
     return render_template('checkout.html', deliveryform=deliveryForm, current=current, collectionform =collectionForm, searchForm=searchForm, cart=prodlist, total=total, number=number, subtotal =subtotal, delivery = NoCollect, Items = 0, deducted=deducted, discount=discount)
 
 # Summary page
-@app.route('/summary/<deliveryId>', methods= ["GET", "POST"])
-def summary(deliveryId):
+@app.route('/summary', methods= ["GET", "POST"])
+def summary():
     db = shelve.open('storage.db','r')
-    transactions = {}
-    D = ""
-    current = ""
-    discount=""
-    users_codes=""
-    try:
-        transactions = db["Transactions"]
-    except:
-        print("error in retrieving transaction information")
+    pickle_in = open('temp_transaction.pickle','rb')
+    transaction = pickle.load(pickle_in)
+    pickle_in.close()
+    print(transaction.get_name())
     try:
         current = db["Current User"]
     except:
         print("Error in retrieving current user from storage")
-
-    for id in transactions:
-        if str(id) == deliveryId:
-            details = transactions[id]
-            print("Got em")
-            break
-
-        else:
-            print("Cant find the below id")
-            print(id)
+        # if request.method == "POST" and searchForm.validate():
+        #     return redirect('/search/' + searchForm.search_input.data)
+    type = transaction.get_type()
+    if type == "delivery":
+        D = True
+    else:
+        D = False
     searchForm = searchBar()
+    return render_template('summary.html', searchForm=searchForm, details=transaction, Items = 0, type = D, current = current)
 
-    test = details.get_discount()
+@app.route('/confirm/<type>', methods = ["GET", "POST"])
+def confirm(type):
+    print("Velai seiyuthu")
+    db = shelve.open('storage.db','c')
+    pickle_in = open('temp_transaction.pickle', 'rb')
+    transaction = pickle.load(pickle_in)
+    pickle_in.close()
+    try:
+        current = db["Current User"]
+        products = db["Products"]
+        transactions = db["Transactions"]
+    except:
+        print("Nah man this can't be happenin")
+    transactions[transaction.get_id()] = transaction
+    db["Transactions"] = transactions
+    print("Transactions updated on admin")
+    current.set_transactions(transaction.get_id())
+    print("Transaction history updated for user")
+    test = transaction.get_discount()
     if test:
         discount = test
         users_codes = current.get_discount_codes()
@@ -1105,35 +1108,8 @@ def summary(deliveryId):
         current_discount = current.get_current_discount()
         current_discount.clear()
         current.set_current_discount(current_discount)
-        db["Current User"] = current
     else:
         print("Oop no discount used")
-
-        # if request.method == "POST" and searchForm.validate():
-        #     return redirect('/search/' + searchForm.search_input.data)
-
-    type = details.get_type()
-    if type == "delivery":
-        D = True
-    else:
-        D = False
-
-    if request.method == "POST":
-        print(str(transactions) + "\n\n\n")
-        transactions.pop(int(deliveryId))
-        return redirect(url_for("checkout", delivery = D))
-
-    return render_template('summary.html', searchForm=searchForm, details=details, Items = 0, type = D)
-
-@app.route('/confirm/<type>', methods = ["GET", "POST"])
-def confirm(type):
-    print("Velai seiyuthu")
-    db = shelve.open('storage.db','c')
-    try:
-        current = db["Current User"]
-        products = db["Products"]
-    except:
-        print("Nah man this can't be happenin")
     cart = current.get_shopping_cart()
     for key in cart:
         product = products[key]
@@ -1142,11 +1118,12 @@ def confirm(type):
         products[key] = product
         print(product.get_quantity(),"prods left")
     db["Products"] = products
+    print("Prods successfully updated")
     current.set_shopping_cart({})
     db["Current User"] = current
     print("Resetted shopping cart")
     db.close()
-    print("Prods successfully deleted")
+    print("Database closed")
     if type == "feedback":
         return redirect(url_for('feedback'))
     else:
@@ -1932,7 +1909,11 @@ def deliveryInvoice(email):
 
     # cart = current_user.get_shopping_cart()
     # order_ID = current_user.get_transactions()
-    order_ID = current_user.get_transactions()[-1]
+    list = current_user.get_transactions()
+    if len(list) <= 1:
+        order_ID = list[0]
+    else:
+        order_ID = list[-1]
     transaction = transactions[order_ID ]
     cart = current_user.get_shopping_cart()
     productList = []
@@ -1951,8 +1932,6 @@ def deliveryInvoice(email):
     # order_ID = orders[-1]
     # deliveryInfo = deliveryDetails[order_ID]
     # date = deliveryInfo.get_date()
-    total = Decimal(format(float(transaction.get_total()), '.2f'))
-    deducted = Decimal(format(float(transaction.get_deducted()), '.2f'))
 
     try:
         msg = Message("Delorem Ipsum Pharmacy",
@@ -1971,7 +1950,7 @@ def deliveryInvoice(email):
                 print("attached")
 
         msg.body = "This ur e reciept"
-        msg.html = render_template('html_in_invoice.html',  productList=productList, current_user=current_user, transaction=transaction, cart=cart, products=products, total = total, deducted = deducted )
+        msg.html = render_template('html_in_invoice.html',  productList=productList, current_user=current_user, transaction=transaction, cart=cart, products=products )
         print("testinggggggggggggggg")
         mail.send(msg)
         print("MAIL SENT")
