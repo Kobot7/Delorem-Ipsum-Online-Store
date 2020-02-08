@@ -10,18 +10,18 @@
 
   <div class="col-md-11 mt-3">
     {% for transaction in deliveryList %}
-    {% set id = '{{ transaction.get_id() }}' %}
+
     <div id="accordion">
     <div class="card">
       <div class="card-header" id="headingOne">
         <h5 class="mb-0">
-          <a data-toggle="collapse" data-target="#{{id}}" aria-expanded="true" aria-controls="collapseOne">
+          <a data-toggle="collapse" data-target="#s{{ transaction.get_id() }}" aria-expanded="true" aria-controls="collapseOne">
             {{ transaction.get_id() }}
           </a>
         </h5>
       </div>
 
-      <div id="{{id}}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+      <div id="s{{ transaction.get_id() }}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
         <div class="card-body">
           <b>Name:</b> {{ transaction.get_name() }}
           <br><br>

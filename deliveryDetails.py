@@ -1,6 +1,7 @@
 import random
 class Transaction:
-    def __init__(self, name, phone, email, total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv ):
+    def __init__(self, dateOfOrder, name, phone, email, total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv ):
+        self.__date_of_order = dateOfOrder
         self.set_name(name)
         self.set_phone(phone)
         self.set_email(email)
@@ -71,8 +72,8 @@ class Transaction:
 
 
 class Delivery(Transaction):
-    def __init__(self,name, phone, email, total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv, street_name, postal_code, unit_no):
-        super().__init__(name, phone, email, total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv)
+    def __init__(self, dateOfOrder, name, phone, email, total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv, street_name, postal_code, unit_no):
+        super().__init__(dateOfOrder, name, phone, email, total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv)
         self.__street_name = street_name
         self.__postal_code = postal_code
         self.__unit_no = unit_no
@@ -100,8 +101,8 @@ class Delivery(Transaction):
         return self.__type
 
 class Collection(Transaction):
-    def __init__(self,name, phone, email, total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv, date, time):
-        super().__init__(name, phone, email, total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv)
+    def __init__(self, dateOfOrder, name, phone, email, total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv, date, time):
+        super().__init__(dateOfOrder, name, phone, email, total, items, payment_mode, credit_card_number, credit_card_expiry, credit_card_cvv)
         self.__date = date
         self.__time = time
         self.__type = "collection"

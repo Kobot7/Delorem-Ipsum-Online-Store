@@ -7,6 +7,7 @@ from User import *
 from deliveryDetails import *
 from Discount import *
 from feedback import *
+from datetime import date
 
 # Image download
 from werkzeug.utils import secure_filename
@@ -835,6 +836,8 @@ def checkout(delivery):
     number = len(prodlist)
     total = subtotal + 12
     db.close()
+    today = date.today()
+    currentDate = today.strftime("%d %B %Y")
     if request.method == "POST" and deliveryForm.validate():
         db = shelve.open('storage.db','c')
         transactions = {}
@@ -847,7 +850,7 @@ def checkout(delivery):
         except:
             print("Can't get user")
         print(deliveryForm.unit_no.data)
-        deliveryInfo = Delivery(deliveryForm.name.data, deliveryForm.phone.data,
+        deliveryInfo = Delivery(currentDate, deliveryForm.name.data, deliveryForm.phone.data,
                     current.get_email(),total, prodlist, deliveryForm.payment_mode.data,
                      deliveryForm.credit_card_number.data, deliveryForm.credit_card_expiry.data, deliveryForm.credit_card_cvv.data,
                      deliveryForm.street_name.data,
@@ -871,7 +874,7 @@ def checkout(delivery):
             current = db["Current User"]
         except:
             print("Current dude for collection MIA")
-        collection = Collection(collectionForm.name.data, collectionForm.phone.data, current.get_email(), total, prodlist,
+        collection = Collection(currentDate, collectionForm.name.data, collectionForm.phone.data, current.get_email(), total, prodlist,
         collectionForm.payment_mode.data, collectionForm.credit_card_number.data, collectionForm.credit_card_expiry.data, collectionForm.credit_card_cvv.data,
         collectionForm.date.data, collectionForm.time.data)
         collectionId = collection.get_id()
