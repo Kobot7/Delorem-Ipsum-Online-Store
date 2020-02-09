@@ -42,7 +42,7 @@ app.config.update(
     MAIL_USE_TLS= True,
     MAIL_USE_SSL= False,
 	MAIL_USERNAME = 'deloremipsumonlinestore@outlook.com',
-	# MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
+	MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
 	MAIL_DEBUG = True,
 	MAIL_SUPPRESS_SEND = False,
     MAIL_ASCII_ATTACHMENTS = True
@@ -113,8 +113,69 @@ def testing():
     db['Products'] = productDict
     db.close()
 
+def discount_box(user):
+    amount_show = {}
+    percentage_show = {}
+    show = {}
+    amount_dont = []
+    percentage_dont = []
+    db = shelve.open('storage.db', 'r')
+    try:
+        valid_discount = db['Valid Discount']
+    except:
+        valid_discount = False
+    amount_discounts = valid_discount.get("Amount")
+    percentage_discounts = valid_discount.get("Percentage")
+    # print(amount_discounts)
+    db.close()
+
+    if user is False:
+        show["Amount"] = amount_discounts
+        show["Amount"] = amount_discounts
+    else:
+        users_codes = user.get_discount_codes()
+        print(users_codes)
+
+        if valid_discount is not False and bool(users_codes) is True:
+
+            if bool(amount_discounts) is True:
+                amount_show = amount_discounts
+                for user_code in users_codes:
+                    for stored_code in amount_discounts:
+                        if user_code.get_code() == stored_code:
+                            print("HERE BIVH")
+                            amount_dont.append(stored_code)
+                if bool(amount_dont) is True:
+                    for code in amount_dont:
+                        del amount_show[code]
+                        print(amount_show)
+
+            if bool(percentage_discounts) is True:
+                percentage_show = percentage_discounts
+                for user_code in users_codes:
+                    for stored_code in percentage_discounts:
+                        if user_code.get_code() == stored_code:
+                            # dont_show.append(user_code)
+                            percentage_dont.append(stored_code)
+                if bool(percentage_dont):
+                    for code in percentage_dont:
+                            del percentage_show[code]
+                            print(percentage_show)
+
+        elif valid_discount is not False and bool(users_codes) is False:
+            if bool(amount_discounts) is True:
+                amount_show = amount_discounts
+            if bool(percentage_discounts) is True:
+                percentage_show = percentage_discounts
+
+        show["Amount"] = amount_show
+        show["Percentage"] = percentage_show
+    return show
+
 @app.route('/search/<searchString>/<category>/<order>', methods=['GET', 'POST'])
 def search(searchString, category, order):
+    searchString = searchString.lower()
+    cart=[]
     db = shelve.open('storage.db', 'r')
     try:
         Products = db["Products"]
@@ -146,6 +207,7 @@ def search(searchString, category, order):
 # Homepage
 @app.route('/home', methods=['GET', 'POST'])
 def home():
+    checkfordiscounts()
     productDict = {}
 
     db = shelve.open('storage.db', 'c')
@@ -171,11 +233,14 @@ def home():
     purchasesList = sort_by(productList, 'purchase', 'descending')[:6]
     viewsList = sort_by(productList,'view','descending')[:6]
 
+    show = discount_box(current)
+
+
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
 
-    return render_template("home.html", current=current, searchForm=searchForm, purchasesList=purchasesList, viewsList=viewsList, Items=Items)
+    return render_template("home.html", current=current, searchForm=searchForm, purchasesList=purchasesList, viewsList=viewsList, Items=Items, show=show)
 
 # Profile/Username
 @app.route('/my-account/<username>', methods=['GET', 'POST'])
@@ -434,6 +499,7 @@ def orderHistory():
 
 @app.route('/mainCategory/<mainCategory>/<category>/<order>/', methods=['GET', 'POST'])
 def mainCategory(mainCategory, category, order):
+    checkfordiscounts()
     db = shelve.open('storage.db', 'r')
     try:
         Products = db["Products"]
@@ -446,6 +512,7 @@ def mainCategory(mainCategory, category, order):
         print("Error in retrieving current user, subcat")
         current = False
         Items = 0
+    show = discount_box(current)
 
     db.close()
 
@@ -463,11 +530,12 @@ def mainCategory(mainCategory, category, order):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('mainCategory.html', productList=products, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current, Items=Items)
+    return render_template('mainCategory.html', productList=products, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current, Items=Items, show=show)
 
 # Supplements(one of the subsections)
 @app.route('/subCategory/<subCategory>/<category>/<order>/', methods=['GET', 'POST'])
 def subCategory(subCategory, category, order):
+    checkfordiscounts
     db = shelve.open('storage.db', 'r')
     try:
         Products = db["Products"]
@@ -480,6 +548,7 @@ def subCategory(subCategory, category, order):
         print("Error in retrieving current user, subcat")
         current = False
         Items = 0
+    show = discount_box(current)
 
     db.close()
 
@@ -497,13 +566,13 @@ def subCategory(subCategory, category, order):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('subCategory.html', productList=products, subCategory=subCategory, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current, Items=Items)
+    return render_template('subCategory.html', productList=products, subCategory=subCategory, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current, Items=Items, show=show)
 
 # Ribena(one of the products)
 @app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
 def IndItem(serialNo):
+    checkfordiscounts()
     db = shelve.open('storage.db','w')
-    current = ""
     try:
         products = db['Products']
     except:
@@ -512,8 +581,12 @@ def IndItem(serialNo):
         current = db['Current User']
         Items = len(current.get_shopping_cart())
     except:
+        current = False
         print("Unable to get the current dude!")
         Items = 0
+
+    show = discount_box(current)
+
     IndItem = products[serialNo]
     IndItem.increase_views()
     class QuantityForm(Form):
@@ -564,11 +637,12 @@ def IndItem(serialNo):
     if request.method == "POST" and Quantity.validate():
         quantity = Quantity.quantity.data
         return redirect(url_for('addToCart', name = IndItem.get_product_name(), quantity = quantity))
-    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken, related=related, Items=Items, QuantityForm = Quantity, Bought = bought, amount = amount)
+    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken, related=related, Items=Items, QuantityForm = Quantity, Bought = bought, amount = amount,show=show)
 
 # Shopping Cart
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
+    checkfordiscounts()
     deducted=0
     discount= ''
     new_total = 0
@@ -583,6 +657,7 @@ def cart():
         print('Error reading Current User.')
         current = False
         products = {}
+    show = discount_box(current)
 
     cart = current.get_shopping_cart()
     db.close()
@@ -629,11 +704,12 @@ def cart():
     # return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, codes=codes, Items = Items, discount=discount)
 
     new_total = totalCost
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, Items = Items, discount=discount, new_total= new_total, current_discount=current_discount, deducted = deducted)
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, Items = Items, discount=discount, new_total= new_total, current_discount=current_discount, deducted = deducted, show=show)
 
 
 @app.route('/useDiscount',  methods=['POST'])
 def useDiscount():
+    checkfordiscounts()
     searchForm = searchBar()
     Delivery = NoCollectForm(request.form)
     Discount = DiscountForm(request.form)
@@ -657,6 +733,7 @@ def useDiscount():
         except:
             print("Error in retrieving current user from storage.db")
 
+        show = discount_box(current)
         users_codes = current.get_discount_codes()
 
         try:
@@ -698,7 +775,8 @@ def useDiscount():
                     check_used = True
                     error_msg = "You have already used " + code+ "!"
 
-                    return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount, new_total=new_total , searchForm=searchForm, current_discount = current_discount, deducted = deducted)
+                    db.close()
+                    return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount, new_total=new_total , searchForm=searchForm, current_discount = current_discount, deducted = deducted, show=show)
                     # return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, Items = Items)
 
         amount_discounts = {}
@@ -730,8 +808,9 @@ def useDiscount():
             error_msg = "Invalid discount code."
 
         if valid == False:
+            db.close()
             error_msg = "Invalid discount code."
-            return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount, new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted)
+            return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount, new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted, show=show)
 
         if valid is True and check_used==False and float(totalCost) >= condition:
             print("TRUUUUU")
@@ -765,11 +844,12 @@ def useDiscount():
                 db["Current User"] = current
                 db.close()
 
-                return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount,new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted)
+                return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount,new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted, show=show)
         else:
+            db.close()
             error_msg = code + " not applicable"
             print(error_msg)
-            return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount,new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted)
+            return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount,new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted, show=show)
 
 @app.route("/removeUseDiscount", methods=["POST"])
 def removeUseDiscount():
@@ -985,7 +1065,7 @@ def moveToCart(serialNo):
 def checkout(delivery):
 
     NoCollect = delivery
-
+    deducted = 0
     current = ""
     searchForm = searchBar()
     deliveryForm = DeliveryForm(request.form)
@@ -1081,6 +1161,7 @@ def summary():
         current = db["Current User"]
     except:
         print("Error in retrieving current user from storage")
+    db.close()
         # if request.method == "POST" and searchForm.validate():
         #     return redirect('/search/' + searchForm.search_input.data)
     creditNo = str(transaction.get_credit_card_number())
@@ -1194,10 +1275,17 @@ def dashboard(stockPage):
     except:
         print('Error in retrieving Products from storage.db.')
     try:
-        transactions = db['Transactions']
+        transactionsDict = db['Transactions']
         db.close()
     except:
         print('Error in retrieving Products from storage.db.')
+
+    transactionList = []
+
+    for id in transactionsDict:
+        if transactionsDict[id].get_completion()==False:
+            transactionList.append(transactionsDict[id])
+    transactionList.reverse()
 
     productList = []
     lowStockList = []
@@ -1259,7 +1347,7 @@ def dashboard(stockPage):
     viewsGraph = json.dumps(viewsData, cls=plotly.utils.PlotlyJSONEncoder)
 
     return render_template('dashboard.html', currentPage='Dashboard', viewsList = viewsList, purchasesGraph = purchasesGraph
-    , viewsGraph = viewsGraph, lowStockList=lowStockList, midStockList=midStockList, transactions=transactions, stockPage=stockPage, stockList=stockList)
+    , viewsGraph = viewsGraph, lowStockList=lowStockList, midStockList=midStockList, transactions=transactionList, stockPage=stockPage, stockList=stockList)
 
 @app.route('/products/<category>/<order>/', methods=['GET', 'POST'])
 def products(category, order):
@@ -1286,6 +1374,7 @@ def products(category, order):
 
 @app.route('/products/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
 def productsSearch(searchCat, searchString):
+    searchString = searchString.lower()
     productDict = {}
     db = shelve.open('storage.db', 'c')
 
@@ -1490,6 +1579,7 @@ def viewAll(category, order):
 
 @app.route('/productStats/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
 def statsSearch(searchCat, searchString):
+    searchString = searchString.lower()
     productDict = {}
     db = shelve.open('storage.db', 'r')
 
@@ -1667,6 +1757,13 @@ def transactions():
             else:
                 collectionNotCompleteList.append(transactionsDict[key])
 
+    deliveryCompleteList.reverse()
+    deliveryNotCompleteList.reverse()
+    collectionCompleteList.reverse()
+    collectionNotCompleteList.reverse()
+
+    exportForm = ExportTransaction(request.form)
+
     if request.method=="POST":
         d_mark_complete_transactions = request.form.getlist("dMarkAsComplete")
         for sn in d_mark_complete_transactions:
@@ -1690,11 +1787,13 @@ def transactions():
 
         db['Transactions'] = transactionsDict
         db.close()
+
         return redirect('/transactions')
 
     return render_template('transactions.html', currentPage='Transactions'
     , deliveryCompleteList=deliveryCompleteList, deliveryNotCompleteList=deliveryNotCompleteList
-    , collectionCompleteList=collectionCompleteList, collectionNotCompleteList=collectionNotCompleteList)
+    , collectionCompleteList=collectionCompleteList, collectionNotCompleteList=collectionNotCompleteList
+    , exportForm=exportForm)
 
 @app.route('/downloadProducts', methods=['GET'])
 def downloadProducts():
@@ -1738,51 +1837,208 @@ def downloadProducts():
 
     return excel.make_response_from_array(productArray, file_type='xls', file_name='Delorem Ipsum product records')
 
-@app.route('/downloadTransactions', methods=['GET'])
-def downloadTransactions():
-    db = shelve.open('storage.db', 'c')
+@app.route('/downloadTransactions/<delivery>/<collection>/<uncompleted>/<completed>', methods=['GET'])
+def downloadTransactions(delivery, collection, completed, uncompleted):
+    print(delivery, collection, uncompleted, completed)
+    transactionsDict = {}
+    deliveryCompleteList = []
+    deliveryNotCompleteList = []
+    collectionCompleteList = []
+    collectionNotCompleteList = []
+    finalData = []
+
+    db = shelve.open('storage.db', 'r')
 
     try:
-        transactionDict = db['Transactions']
-        db.close()
+        transactionsDict = db['Transactions']
     except:
         print('Error in retrieving Transactions from storage.db.')
 
-    transactionArray = [['Delivery Type'
-                    , 'Name'
-                    , 'Phone'
-                    , 'Email'
-                    , ''
-                    , ''
-                    , ''
-                    , ''
-                    , ''
-                    , ''
-                    , ''
-                    , '']]
-
-
-    for key in productDict:
-        product = productDict[key]
-
-        if product.get_completion():
-            activated = 'Show'
+    for key in transactionsDict:
+        if transactionsDict[key].get_type()=='delivery':
+            if transactionsDict[key].get_completion()==True:
+                deliveryCompleteList.append(transactionsDict[key])
+            else:
+                deliveryNotCompleteList.append(transactionsDict[key])
         else:
-            activated = 'Hide'
+            if transactionsDict[key].get_completion()==True:
+                collectionCompleteList.append(transactionsDict[key])
+            else:
+                collectionNotCompleteList.append(transactionsDict[key])
 
-        data = [product.get_product_name()
-                , product.get_brand()
-                , product.get_sub_category()
-                , product.get_serial_no()
-                , product.get_price()
-                , product.get_description()
-                , activated
-                , product.get_quantity()
-                , product.get_stock_threshold()]
+    deliveryCompleteList.reverse()
+    deliveryNotCompleteList.reverse()
+    collectionCompleteList.reverse()
+    collectionNotCompleteList.reverse()
 
-        transactionArray.append(data)
+    deliveryArray = ['Status'
+                    , 'Delivery Type'
+                    , 'Date of Order'
+                    , 'Name'
+                    , 'Contact No.'
+                    , 'Email'
+                    , 'Payment Mode'
+                    , 'Credit Card No.'
+                    , 'Expiry Date'
+                    , 'CVV'
+                    , 'Address'
+                    , 'Items'
+                    , 'Total']
 
-    return excel.make_response_from_array(productArray, file_type='xls', file_name='Delorem Ipsum transaction records')
+    collectionArray = ['Status'
+                        , 'Delivery Type'
+                        , 'Date of Order'
+                        , 'Name'
+                        , 'Contact No.'
+                        , 'Email'
+                        , 'Payment Mode'
+                        , 'Credit Card No.'
+                        , 'Expiry Date'
+                        , 'CVV'
+                        , 'Collection Date'
+                        , 'Collection Time'
+                        , 'Items'
+                        , 'Total']
+
+    if delivery=='true':
+        finalData.append(deliveryArray)
+
+        if completed=='true':
+            for t in deliveryCompleteList:
+                itemList = []
+                count = 1
+                for item in t.get_items():
+                    itemData = ''
+                    itemData += str(count) + '. ' + item.get_product_name() + '(' + item.get_serial_no() + '), Quantity: ' + str(item.get_quantity())
+                    itemList.append(itemData)
+                    count += 1
+
+                address = t.get_street_name() + ', #' + str(t.get_unit_no()) + ' (S' + str(t.get_postal_code()) + ')'
+                data = ['Delivered'
+                        , 'Delivery'
+                        , t.get_date_of_order()
+                        , t.get_name()
+                        , t.get_phone()
+                        , t.get_email()
+                        , t.get_payment_mode()
+                        , str(t.get_credit_card_number())
+                        , t.get_credit_card_expiry()
+                        , t.get_credit_card_cvv()
+                        , address
+                        , itemList[0]
+                        , '$' + t.get_total()]
+
+                finalData.append(data)
+
+                if len(itemList)>1:
+                    for x in range(len(itemList)-1):
+                        data = ['','','','','','','','','','','',itemList[x+1]]
+                        finalData.append(data)
+
+        if uncompleted=='true':
+            for t in deliveryNotCompleteList:
+                itemList = []
+                count = 1
+                for item in t.get_items():
+                    itemData = ''
+                    itemData += str(count) + '. ' + item.get_product_name() + '(' + item.get_serial_no() + '), Quantity: ' + str(item.get_quantity())
+                    itemList.append(itemData)
+                    count += 1
+
+                address = t.get_street_name() + ', #' + str(t.get_unit_no()) + ' (S' + str(t.get_postal_code()) + ')'
+                data = ['Not Delivered'
+                        , 'Delivery'
+                        , t.get_date_of_order()
+                        , t.get_name()
+                        , t.get_phone()
+                        , t.get_email()
+                        , t.get_payment_mode()
+                        , str(t.get_credit_card_number())
+                        , t.get_credit_card_expiry()
+                        , t.get_credit_card_cvv()
+                        , address
+                        , itemList[0]
+                        , '$' + t.get_total()]
+
+                finalData.append(data)
+
+                if len(itemList)>1:
+                    for x in range(len(itemList)-1):
+                        data = ['','','','','','','','','','','',itemList[x+1]]
+                        finalData.append(data)
+
+        if collection=='true':
+            finalData.append([])
+            finalData.append([])
+
+    if collection=='true':
+        finalData.append(collectionArray)
+
+        if completed=='true':
+            for t in collectionCompleteList:
+                itemList = []
+                count = 1
+                for item in t.get_items():
+                    itemData = ''
+                    itemData += str(count) + '. ' + item.get_product_name() + '(' + item.get_serial_no() + '), Quantity: ' + str(item.get_quantity())
+                    itemList.append(itemData)
+                    count += 1
+
+                data = ['Collected'
+                        , 'Collection'
+                        , t.get_date_of_order()
+                        , t.get_name()
+                        , t.get_phone()
+                        , t.get_email()
+                        , t.get_payment_mode()
+                        , str(t.get_credit_card_number())
+                        , t.get_credit_card_expiry()
+                        , t.get_credit_card_cvv()
+                        , t.get_date()
+                        , t.get_time()
+                        , itemList[0]
+                        , '$' + t.get_total()]
+
+                finalData.append(data)
+
+                if len(itemList)>1:
+                    for x in range(len(itemList)-1):
+                        data = ['','','','','','','','','','','','',itemList[x+1]]
+                        finalData.append(data)
+
+        if uncompleted=='true':
+            for t in collectionNotCompleteList:
+                itemList = []
+                count = 1
+                for item in t.get_items():
+                    itemData = ''
+                    itemData += str(count) + '. ' + item.get_product_name() + '(' + item.get_serial_no() + '), Quantity: ' + str(item.get_quantity())
+                    itemList.append(itemData)
+                    count += 1
+
+                data = ['Not Collected'
+                        , 'Collection'
+                        , t.get_date_of_order()
+                        , t.get_name()
+                        , t.get_phone()
+                        , t.get_email()
+                        , t.get_payment_mode()
+                        , str(t.get_credit_card_number())
+                        , t.get_credit_card_expiry()
+                        , t.get_credit_card_cvv()
+                        , t.get_date()
+                        , t.get_time()
+                        , itemList[0]
+                        , '$' + t.get_total()]
+
+                finalData.append(data)
+
+                if len(itemList)>1:
+                    for x in range(len(itemList)-1):
+                        data = ['','','','','','','','','','','','',itemList[x+1]]
+                        finalData.append(data)
+
+    return excel.make_response_from_array(finalData, file_type='xls', file_name='Delorem Ipsum transaction records')
 
 
 # Other stuff
@@ -1858,7 +2114,7 @@ def discount():
         else:
             amount_discounts = amount_discounts
 
-
+        db.close()
 
         return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage, valid_discount=valid_discount, amount_discounts=amount_discounts, percentage_discounts=percentage_discounts, code=code)
 
@@ -1899,6 +2155,7 @@ def deleteDiscount(code):
                 break
 
     db['Valid Discount'] = valid_discount
+    db.close()
 
     return redirect('/discount')
 
@@ -1922,28 +2179,15 @@ def deliveryInvoice(email):
         products = db["Products"]
     except:
         print('Error in retrieving products from storage.db.')
-    # try:
-    #     transactions = db["Transactions"]
-    # except:
-    #     print('Error in retrieving transactions from storage.db.')
 
     pickle_in = open('temp_transaction.pickle','rb')
     transaction = pickle.load(pickle_in)
     pickle_in.close()
     order_ID = transaction.get_id()
 
-
-    # cart = current_user.get_shopping_cart()
-    # order_ID = current_user.get_transactions()
-    # list = current_user.get_transactions()
-    # if len(list) <= 1:
-    #     order_ID = list[0]
-    # else:
-    #     order_ID = list[-1]
-    # transaction = transactions[order_ID ]
     cart = current_user.get_shopping_cart()
     productList = []
-    # cartList = []
+
     images = []
     for object in transaction.get_items() :
         productList.append(object)
@@ -1952,17 +2196,9 @@ def deliveryInvoice(email):
     total = transaction.get_total()
     total = Decimal(format(float(total), '.2f'))
     deducted = transaction.get_deducted()
-    deducted = Decimal(format(float(total), '.2f'))
-    # try:
-    #     deliveryDetails = db["deliveryDetails"]
-    #
-    # except:
-    #         print("error in retrieving information")
-    #
-    # orders = current_user.get_orders()
-    # order_ID = orders[-1]
-    # deliveryInfo = deliveryDetails[order_ID]
-    # date = deliveryInfo.get_date()
+    deducted = Decimal(format(float(deducted), '.2f'))
+    print(total)
+    print(deducted)
 
     try:
         msg = Message("Delorem Ipsum Pharmacy",
@@ -1976,7 +2212,6 @@ def deliveryInvoice(email):
             source = this_folder + "/static/images/" + image
             print(source)
             with app.open_resource(source) as fp:
-                # msg.attach(source, "image/png" fp.read())
                 msg.attach(source, "image/jpg", fp.read())
                 print("attached")
 
@@ -1985,10 +2220,10 @@ def deliveryInvoice(email):
         print("testinggggggggggggggg")
         mail.send(msg)
         print("MAIL SENT")
-		#return 'Mail sent!'
+
 
     except Exception as e:
-		# return("gxyaishuxa")
+
         print(e)
         print("Error:", sys.exc_info()[0])
         print("goes into except")
@@ -2002,6 +2237,7 @@ def deliveryInvoice(email):
 
 @app.route('/listOfBrands')
 def listOfBrands():
+    checkfordiscounts()
     productsDict ={}
     db = shelve.open('storage.db', 'c')
     try:
@@ -2016,6 +2252,8 @@ def listOfBrands():
         print('Error in retrieving current user from storage.db.')
         current = False
         Items = 0
+
+    show = discount_box(current)
 
     start_with_letter = []
     start_with_other = []
@@ -2034,10 +2272,11 @@ def listOfBrands():
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         print(searchForm.search_input.data)
-    return render_template('listOfBrands.html', searchForm=searchForm, brandsDict=brandsDict, current=current, Items=Items)
+    return render_template('listOfBrands.html', searchForm=searchForm, brandsDict=brandsDict, current=current, Items=Items, show=show)
 
 @app.route('/Brand/<brand>', methods=['GET', 'POST'])
 def brand(brand):
+    checkfordiscounts()
     db = shelve.open('storage.db', 'r')
     try:
         Products = db["Products"]
@@ -2053,6 +2292,8 @@ def brand(brand):
         current = False
         Items = 0
 
+    show = discount_box(current)
+
     products = []
     for id in Products:
         product = Products[id]
@@ -2063,7 +2304,7 @@ def brand(brand):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('productByBrand.html', productList=products, productCount=len(products), searchForm=searchForm, brand=brand, current=current, Items = Items)
+    return render_template('productByBrand.html', productList=products, productCount=len(products), searchForm=searchForm, brand=brand, current=current, Items = Items, user=user)
 
 app.jinja_env.filters['get_name_with_space'] = get_name_with_space
 if __name__=='__main__':

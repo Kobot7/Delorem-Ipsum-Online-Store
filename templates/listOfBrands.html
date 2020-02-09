@@ -23,6 +23,37 @@
 </ul>
 <hr>
 {%endfor%}
+{%block coupon%}
+{%if show.get("Amount") or show.get("Percentage")%}
+<div id="coupon">
+      <button data-toggle="collapse" data-target="#coupon_content">Use code at checkout</button>
+      <div class="collapse" id="coupon_content">
+        {%if show["Amount"] != ''%}
+        {%for discount in show["Amount"]%}
+        <div class="well">
+          Get ${{show["Amount"].get(discount).get_discount_amount()}} OFF min. ${{show["Amount"].get(discount).get_condition()}} spend
+          <div class="code">
+            {{discount}}
+          </div>
+          </div>
+          {%endfor%}
+          {%endif%}
+
+          {%if show["Percentage"] != ''%}
+          {%for discount in show["Percentage"]%}
+          <div class="well">
+            Get {{show["Percentage"].get(discount).get_discount_percentage()}}% OFF min. ${{show["Percentage"].get(discount).get_condition()}} spend
+            <div class="code">
+              {{discount}}
+            </div>
+            </div>
+            {%endfor%}
+            {%endif%}
+        </div>
+      </div>
+{%endif%}
+{%endblock%}
+
 
 
 

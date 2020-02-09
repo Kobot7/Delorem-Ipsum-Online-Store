@@ -27,6 +27,9 @@
           </div> <!--Row Form Group-->
         </form>
 
+        {% if newStock|length==0 %}
+        <p class="my-4">&nbsp;No Stock added yet.</p>
+        {% else %}
         <table class="table mt-2">
           <thead>
             <tr>
@@ -44,6 +47,7 @@
             {% endfor %}
           </tbody>
         </table>
+        {% endif %}
 
       <a href="/cancelAdditionOfStock" class="btn mr-2 grayButton">Cancel</a>
       <a href="/processAdditionOfStock" class="btn">Submit</a>
