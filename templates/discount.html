@@ -1,6 +1,12 @@
 {% extends "admin_base.html" %}
 {% block title %}Add Product{% endblock %}
-{% block style %}{% endblock %}
+{% block style %}
+<style>
+  table td {
+    verticle-align: middle;
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 {% from "includes/_formhelper.html" import render_field %}
@@ -10,47 +16,49 @@
     <h1 class="d-inline">Set Discount</h1>
 
     <ul class="nav nav-tabs my-4">
-      <li class="nav-item active"><a class="nav-link active" href="#percentage" data-toggle="tab">By percentage</a></li>
-      <li class="nav-item"><a class="nav-link" href="#amount" data-toggle="tab">By amount</a></li>
+      <li class="nav-item active"><a class="nav-link active" href="#percentage" data-toggle="tab">By Percentage</a></li>
+      <li class="nav-item"><a class="nav-link" href="#amount" data-toggle="tab">By Amount</a></li>
     </ul>
 
     <div class="tab-content">
       <div class="tab-pane active in" id="percentage">
-
         <form method="POST" action="">
+          <div class="col-md-4 form-group">
+              {{ render_field(AddDiscountPercentage.discount_code, class = 'form-control') }}
+          </div>
 
-        <div class="col-md-4">
-            {{ render_field(AddDiscountPercentage.discount_code, class = 'form-control') }}
-        </div>
+          <div class="col-md-4 form-group">
+              {{ render_field(AddDiscountPercentage.discount_condition, class = 'form-control') }}
+          </div>
+          <div class="col-md-4 form-group">
+              {{ render_field(AddDiscountPercentage.discount_start, class = 'form-control') }}
+          </div>
+          <div class="col-md-4 form-group">
+              {{ render_field(AddDiscountPercentage.discount_expiry, class = 'form-control') }}
+          </div>
 
-        <div class="col-md-4">
-            {{ render_field(AddDiscountPercentage.discount_condition, class = 'form-control') }}
-        </div>
-        <div class="col-md-4">
-            {{ render_field(AddDiscountPercentage.discount_start, class = 'form-control') }}
-        </div>
-        <div class="col-md-4">
-            {{ render_field(AddDiscountPercentage.discount_expiry, class = 'form-control') }}
-        </div>
+          <div class="col-md-4 form-group">
+              {{ render_field(AddDiscountPercentage.discount_percentage, class = 'form-control') }}
+          </div>
 
-        <div class="col-md-4">
-            {{ render_field(AddDiscountPercentage.discount_percentage, class = 'form-control') }}
-        </div>
-
-        <input type="submit" value="Submit" class="btn"/>
+          <div class="col-md-4">
+            <input type="submit" value="Submit" class="btn"/>
+          </div>
         </form>
+
         <div class="table">
-        <table class="table mt-4">
-          <thead>
-            <tr>
-              <th>Discount Code</th>
-              <th>Condition</th>
-              <th>Start</th>
-              <th>Expire</th>
-              <th>Percentage</th>
-              <th>Delete</th>
-            </tr>
+          <table class="table mt-4">
+            <thead>
+              <tr>
+                <th>Discount Code</th>
+                <th>Condition</th>
+                <th>Start</th>
+                <th>Expire</th>
+                <th>Percentage</th>
+                <th>Delete</th>
+              </tr>
             </thead>
+
             <tbody>
               {%for code in percentage_discounts%}
                 <tr>
@@ -66,36 +74,37 @@
 
                 {%endfor%}
             </tbody>
-            </table>
-          </div>
-      </div>
+          </table>
+        </div> <!--Table-->
 
+      </div> <!--Tab Pane Active-->
 
-        <div class="tab-pane fade pb-4" id="amount">
+      <div class="tab-pane fade pb-4" id="amount">
+        <form method="POST" action="">
 
-          <form method="POST" action="">
+        <div class="col-md-4 form-group">
+            {{ render_field(AddDiscountAmount.discount_code, class = 'form-control') }}
+        </div>
 
-          <div class="col-md-4">
-              {{ render_field(AddDiscountAmount.discount_code, class = 'form-control') }}
-          </div>
+        <div class="col-md-4 form-group">
+            {{ render_field(AddDiscountAmount.discount_condition, class = 'form-control') }}
+        </div>
+        <div class="col-md-4 form-group">
+            {{ render_field(AddDiscountAmount.discount_start, class = 'form-control') }}
+        </div>
+        <div class="col-md-4 form-group">
+            {{ render_field(AddDiscountAmount.discount_expiry, class = 'form-control') }}
+        </div>
 
-          <div class="col-md-4">
-              {{ render_field(AddDiscountAmount.discount_condition, class = 'form-control') }}
-          </div>
-          <div class="col-md-4">
-              {{ render_field(AddDiscountAmount.discount_start, class = 'form-control') }}
-          </div>
-          <div class="col-md-4">
-              {{ render_field(AddDiscountAmount.discount_expiry, class = 'form-control') }}
-          </div>
+        <div class="col-md-4 form-group">
+            {{ render_field(AddDiscountAmount.discount_amount, class = 'form-control') }}
+        </div>
 
-          <div class="col-md-4">
-              {{ render_field(AddDiscountAmount.discount_amount, class = 'form-control') }}
-          </div>
-
+        <div class="col-md-4">
           <input type="submit" value="Submit" class="btn"/>
-          </form>
-          <div class="table">
+        </div>
+        </form>
+        <div class="table">
           <table class="table mt-4">
             <thead>
               <tr>
@@ -111,27 +120,26 @@
                 {%for code in amount_discounts%}
 
                   <tr>
-                    <td>{{amount_discounts[code].get_code()}}</td>
-                    <td>{{amount_discounts[code].get_condition()}}</td>
-                    <td>{{amount_discounts[code].get_start_date()}}</td>
-                    <td>{{amount_discounts[code].get_expiry_date()}}</td>
-                    <td>{{amount_discounts[code].get_discount_amount()}}</td>
-                    <td><form action="{{url_for('deleteDiscount', code = amount_discounts[code].get_code())}}" method="post">
-                      <input type="submit" value="Delete" class="btn redButton">
-                    </form></td>
+                    <td class="align-middle">{{amount_discounts[code].get_code()}}</td>
+                    <td class="align-middle">{{amount_discounts[code].get_condition()}}</td>
+                    <td class="align-middle">{{amount_discounts[code].get_start_date()}}</td>
+                    <td class="align-middle">{{amount_discounts[code].get_expiry_date()}}</td>
+                    <td class="align-middle">{{amount_discounts[code].get_discount_amount()}}</td>
+                    <td class="align-middle">
+                      <form action="{{url_for('deleteDiscount', code = amount_discounts[code].get_code())}}" method="post">
+                        <input type="submit" value="Delete" class="btn redButton">
+                      </form>
+                    </td>
                   </tr>
 
                   {%endfor%}
               </tbody>
-              </table>
-            </div>
+          </table>
+        </div> <!--Table-->
 
-        </div>
-        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-        </div>
-        </div>
-        </div>
-
-
-  {% endblock %}
+{% endblock %}

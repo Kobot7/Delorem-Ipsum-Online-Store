@@ -1,37 +1,7 @@
-*{
-  letter-spacing: 0.031rem;
-  text-align: center;
-}
-
-header{
-  font-family: 'Josefin Sans', sans-serif;
-  text-align: center;
-  margin-top: 15px
-}
-
-h1{
-  font-size: 1.625rem;
-  font-weight: 700;
-}
-
-
 .box{
   background-color: white;
-  padding: 20px 20px;
-  margin-bottom: 1em;
-  margin-left: 450px;
-  margin-right: 450px;
-  border-radius: 10px;
 }
 
-.buttons{
-  width:auto;
-}
-
-.edit, .confirm{
-  width:200px;
-}
-
-.bold{
-  font-weight: bold;
+hr {
+  color:#84a220;
 }
