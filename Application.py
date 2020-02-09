@@ -129,7 +129,7 @@ def discount_box(user):
     # print(amount_discounts)
     db.close()
 
-    if user == False:
+    if user is False:
         show["Amount"] = amount_discounts
         show["Amount"] = amount_discounts
     else:
@@ -573,7 +573,6 @@ def subCategory(subCategory, category, order):
 def IndItem(serialNo):
     checkfordiscounts()
     db = shelve.open('storage.db','w')
-    current = ""
     try:
         products = db['Products']
     except:
@@ -582,6 +581,7 @@ def IndItem(serialNo):
         current = db['Current User']
         Items = len(current.get_shopping_cart())
     except:
+        current = False
         print("Unable to get the current dude!")
         Items = 0
 
