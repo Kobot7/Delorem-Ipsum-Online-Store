@@ -42,7 +42,7 @@ app.config.update(
     MAIL_USE_TLS= True,
     MAIL_USE_SSL= False,
 	MAIL_USERNAME = 'deloremipsumonlinestore@outlook.com',
-	MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
+	# MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
 	MAIL_DEBUG = True,
 	MAIL_SUPPRESS_SEND = False,
     MAIL_ASCII_ATTACHMENTS = True
@@ -261,9 +261,11 @@ def view_profile(username):
     if editProfileForm.address.data or editProfileForm.phone.data != "":
         activate_disabled_btn = True
 
+    invalid_phone_num_error = False
+    edit_email_valid = False
     empty_username_error = False
-    if editProfileForm.username.data == "":
-            empty_username_error = True
+    if not editProfileForm.username.data.isalnum():
+        empty_username_error = True
 
     if request.method == "POST":
         current_id = current.get_user_id()
@@ -273,7 +275,6 @@ def view_profile(username):
         else:
             current.set_username(editProfileForm.username.data)
         current.set_address(editProfileForm.address.data)
-        current.set_email(editProfileForm.email.data)
         # check for valid phone number
         try:
             number = str(editProfileForm.phone.data)
@@ -282,8 +283,23 @@ def view_profile(username):
                 current.set_phone(editProfileForm.phone.data)
             else:
                 current.set_phone("None")
+                invalid_phone_num_error = True;
         except:
             current.set_phone("None")
+        #check for valid email
+        try:
+            regexEmail = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
+            for user in usersDict.values():
+                if (re.search(regexEmail,editProfileForm.email.data)):
+                    #email is valid
+                    edit_email_valid = True
+                    current.set_email(editProfileForm.email.data)
+                else:
+                    edit_email_valid = False
+                    print("Email is incorrect format/cannot be left blank.")
+                    break
+        except:
+            current.set_email("None")
 
         if current.get_password() == editProfileForm.password.data:
             if editProfileForm.newpassword.data != "":
@@ -310,13 +326,13 @@ def view_profile(username):
         if request.method == "POST" and searchForm.validate():
             print(searchForm.search_input.data)
         db.close()
-        return render_template('my-account.html', current=current, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm, Items=Items)
+        return render_template('my-account.html', current=current, edit_email_valid=edit_email_valid, empty_username_error=empty_username_error, invalid_phone_num_error=invalid_phone_num_error, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm, Items=Items)
     else:
         searchForm = searchBar()
         if request.method == "POST" and searchForm.validate():
             print(searchForm.search_input.data)
         db.close()
-        return render_template('my-account.html', current=current, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm, Items=Items)
+        return render_template('my-account.html', current=current,edit_email_valid=edit_email_valid, empty_username_error=False, invalid_phone_num_error=False, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm, Items=Items)
 
 @app.route('/my-account/delete_account')
 def deleteUser():
@@ -369,7 +385,6 @@ def login():
             valid_email_registration = True
             secure_pwd = True
             regexEmail = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
-            SpecialSym =['$', '@', '#', '%']
 
             for user in usersDict.values():
                 #check email is correct format
@@ -418,7 +433,7 @@ def login():
                 searchForm = searchBar()
                 if request.method == "POST" and searchForm.validate():
                     print(searchForm.search_input.data)
-                return render_template("login.html", unique_email=unique_email, valid_email_registration=valid_email_registration, secure_pwd = secure_pwd, form=loginForm, form2=registrationForm, searchForm=searchForm)
+                return render_template("login.html", edit_email_valid=True, empty_username_error=False, invalid_phone_num_error=False, unique_email=unique_email, valid_email_registration=valid_email_registration, secure_pwd = secure_pwd, form=loginForm, form2=registrationForm, searchForm=searchForm)
 
         if request.method =="POST" and loginForm.validate():
             usersDict = {}
@@ -462,25 +477,25 @@ def login():
                     if request.method == "POST" and searchForm.validate():
                         print(searchForm.search_input.data)
                     print("Credentials are incorrect.")
-                    return render_template('login.html', username_correct=False,  unique_email=True, valid_email_registration=True, secure_pwd = True, form=loginForm, form2=registrationForm, searchForm=searchForm)
+                    return render_template('login.html', username_correct=False, edit_email_valid=True, empty_username_error=False, invalid_phone_num_error=False, unique_email=True, valid_email_registration=True, secure_pwd = True, form=loginForm, form2=registrationForm, searchForm=searchForm)
             else:
                 searchForm = searchBar()
                 if request.method == "POST" and searchForm.validate():
                     print(searchForm.search_input.data)
                 print("User does not exist.")
-                return render_template('login.html', username_correct=False,  unique_email=True, valid_email_registration=True, secure_pwd = True, form=loginForm, form2=registrationForm, searchForm=searchForm)
+                return render_template('login.html', username_correct=False, edit_email_valid=True, empty_username_error=False, invalid_phone_num_error=False, unique_email=True, valid_email_registration=True, secure_pwd = True, form=loginForm, form2=registrationForm, searchForm=searchForm)
 
         else:
             searchForm = searchBar()
             if request.method == "POST" and searchForm.validate():
                 print(searchForm.search_input.data)
-            return render_template('login.html', username_correct=True,  unique_email=True, valid_email_registration=True, secure_pwd = True, form=loginForm, form2=registrationForm, searchForm=searchForm)
+            return render_template('login.html', username_correct=True, edit_email_valid=True, empty_username_error=False, invalid_phone_num_error=False, unique_email=True, valid_email_registration=True, secure_pwd = True, form=loginForm, form2=registrationForm, searchForm=searchForm)
             print("Exception Error: navigating home.html to login.html")
 
         searchForm = searchBar()
         if request.method == "POST" and searchForm.validate():
             return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-        return render_template('login.html', username_correct=True,  unique_email=True, valid_email_registration=True, secure_pwd = True, form=loginForm, form2=registrationForm, searchForm=searchForm)
+        return render_template('login.html', username_correct=True, edit_email_valid=True, empty_username_error = False, invalid_phone_num_error=False, unique_email=True, valid_email_registration=True, secure_pwd = True, form=loginForm, form2=registrationForm, searchForm=searchForm)
     else:
         return redirect(url_for("home"))
 
@@ -503,6 +518,7 @@ def viewFAQ():
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
     return render_template("FAQ.html", current=current, searchForm=searchForm, Items=Items)
+
 
 @app.route('/orderHistory', methods=['GET'])
 def orderHistory():

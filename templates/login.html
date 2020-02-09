@@ -31,10 +31,11 @@
             <p style="color:#dc3545"> Your username or password was incorrect. Please try again. </p>
             {% endif %}
           </div>
-          {% if success_login %}
           <input type="submit" value="Submit" class="btn" onclick="successLogin();" />
-          {% else %}
-          <input type="submit" value="Submit" class="btn" />
+          {% if success_login %}
+          <script>
+              alert("User successfully logged in");
+          </script>
           {% endif %}
         </form>
       </div>
@@ -114,9 +115,4 @@
     {% endif %}
   </div>
 </div>
-<script>
-  function successLogin() {
-    alert("User successfully logged in");
-  }
-</script>
 {% endblock %}
