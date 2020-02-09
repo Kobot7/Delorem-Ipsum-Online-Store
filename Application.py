@@ -1072,6 +1072,16 @@ def summary():
         print("Error in retrieving current user from storage")
         # if request.method == "POST" and searchForm.validate():
         #     return redirect('/search/' + searchForm.search_input.data)
+    creditNo = str(transaction.get_credit_card_number())
+    lastThree = creditNo[-4:-1]
+    print(creditNo)
+    aterisk = len(creditNo) - 3
+    ateriskNo = aterisk * '*'
+    encryptNo = ateriskNo + lastThree
+    transaction.set_credit_card_number(encryptNo)
+
+
+
     type = transaction.get_type()
     if type == "delivery":
         D = True

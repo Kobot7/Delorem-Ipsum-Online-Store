@@ -150,7 +150,7 @@ class FeedbackForm(Form):
     name = StringField("Name:", [validators.DataRequired()], render_kw={"placeholder": "e.g. Orion Raysher Lee"})
     agenda = SelectField('What is your agenda?', choices= agendaChoices, default= "products")
     comment = TextAreaField('Add a comment :)', [validators.DataRequired()], render_kw={"rows": 5})
-    rating = RadioField('Rate our delivery service!', [validators.DataRequired()], choices= ratingChoice)
+    rating = RadioField('', [validators.DataRequired()], choices= ratingChoice)
 
 class SearchBar(Form):
     search_input = StringField('')

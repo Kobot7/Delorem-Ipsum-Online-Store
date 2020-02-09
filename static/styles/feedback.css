@@ -6,9 +6,19 @@ text-align: center;
   padding: 20px 20px;
   margin-left: 450px;
   margin-right: 450px;
-}
-
-.box{
   background-color: white;
   border-radius: 30px;
+}
+
+.feedback{
+  margin-top: 80px;
+}
+
+.form-check-inline{
+  list-style-type: none;
+  font-size:20px;
+  padding:0;
+  width: 100px;
+  height: 10px;
+  border-radius: 100%;
 }
