@@ -3,121 +3,151 @@
 {% block style %}<link rel="stylesheet" href="/static/styles/summary.css">{% endblock %}
 {% block content %}
 
-<header><h1>Overall details</h1></header>
+<h1 class="text-center mt-4 mb-3">Overall details</h1>
 
-<div class="summary content">
+<div class="row justify-content-center">
   {% if type %}
-  <div class="delivery box">
+  <div class="col-md-7 box pt-4">
+      <h4 class="font-weight-bold text-center mt-2">DELIVERY DETAILS</h4>
 
-      <h4 class = "bold">DELIVERY DETAILS</h4>
+      <table class="mx-auto">
+        <tbody>
+          <tr>
+            <th class="text-right pr-2">Street Name:</th>
+            <td class="p-2">{{details.get_street_name()}}</td>
+          </tr>
 
-      <div class = "form-group">
-        Street Name: {{details.get_street_name()}}
-      </div>
+          <tr>
+            <th class="text-right pr-2">Postal Code:</th>
+            <td class="p-2">{{details.get_postal_code()}}</td>
+          </tr>
 
-      <div class="form-group">
-        Postal Code: {{details.get_postal_code()}}
-      </div>
-
-      <div class="form-group">
-        Unit Number: {{details.get_unit_no()}}
-      </div>
-
+          <tr>
+            <th class="text-right pr-2">Unit No.:</th>
+            <td class="p-2">{{details.get_unit_no()}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr>
   </div>
-  <div class="payment box">
-    <h4 class="bold">PAYMENT DETAILS</h4>
-      <div class="form-group">
-        Name: {{details.get_name()}}
-      </div>
 
-      <div class="form-group">
-        Phone Number: {{details.get_phone()}}
-      </div>
+  <div class="col-md-7 box pt-4">
+    <h4 class="font-weight-bold text-center">PAYMENT DETAILS</h4>
 
-      <div class="form-group">
-        Email Address: {{details.get_email()}}
-      </div>
+    <table class="mx-auto">
+      <tbody>
+        <tr>
+          <th class="text-right pr-2">Name:</th>
+          <td class="p-2">{{details.get_name()}}</td>
+        </tr>
 
-      <div class="form-group">
-        Credit Card Number: {{details.get_credit_card_number()}}
-      </div>
+        <tr>
+          <th class="text-right pr-2">Contact No.:</th>
+          <td class="p-2">{{details.get_phone()}}</td>
+        </tr>
+
+        <tr>
+          <th class="text-right pr-2">Email:</th>
+          <td class="p-2">{{details.get_email()}}</td>
+        </tr>
+
+        <tr>
+          <th class="text-right pr-2">Credit Card No.:</th>
+          <td class="p-2">{{details.get_credit_card_number()}}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   {% else %}
-  <div class="payment box">
-    <h4 class="bold">PAYMENT DETAILS</h4>
-      <div class="form-group">
-        Name: {{details.get_name()}}
-      </div>
+    <div class="col-md-7 box pt-4">
+      <h4 class="font-weight-bold text-center">PAYMENT DETAILS</h4>
 
-      <div class="form-group">
-        Phone Number: {{details.get_phone()}}
-      </div>
+      <table class="mx-auto">
+        <tbody>
+          <tr>
+            <th class="text-right pr-2">Name:</th>
+            <td class="p-2">{{details.get_name()}}</td>
+          </tr>
 
-      <div class="form-group">
-        Email Address: {{details.get_email()}}
-      </div>
+          <tr>
+            <th class="text-right pr-2">Name:</th>
+            <td class="p-2">{{details.get_name()}}</td>
+          </tr>
 
-      <div class="form-group">
-        Credit Card Number: {{details.get_credit_card_number()}}
-      </div>
-  </div>
-  
-      <div class="Collection box">
-        <h4 class="bold">COLLECTION DETAILS</h4>
-          <div class="form-group">
-            Collection Date: {{details.get_date()}}
-          </div>
+          <tr>
+            <th class="text-right pr-2">Contact No.:</th>
+            <td class="p-2">{{details.get_phone()}}</td>
+          </tr>
 
-          <div class="form-group">
-            Collection Time: {{details.get_time()}}
-          </div>
-      </div>
+          <tr>
+            <th class="text-right pr-2">Email:</th>
+            <td class="p-2">{{details.get_email()}}</td>
+          </tr>
 
+          <tr>
+            <th class="text-right pr-2">Credit Card No.:</th>
+            <td class="p-2">{{details.get_credit_card_number()}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr>
+    </div>
 
+    <div class="col-md-7 box pt-4">
+      <h4 class="font-weight-bold text-center">COLLECTION DETAILS</h4>
+
+      <table class="mx-auto">
+        <tbody>
+          <tr>
+            <th class="text-right pr-2">Collection Date</th>
+            <td class="p-2">{{details.get_date()}}</td>
+          </tr>
+
+          <tr>
+            <th class="text-right pr-2">Collection Time</th>
+            <td class="p-2">{{details.get_time()}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   {% endif %}
+</div>
 
-  <div class="btn-group box">
-            <div class="edit">
-                <button type="submit" onclick="history.go(-1)"class="btn btn-secondary">Edit</button>
-            </div>
+<div class="row justify-content-center text-center">
+  <div class="col-md-7 box p-4 flex-content">
+      <button type="submit" onclick="history.go(-1)"class="btn btn-secondary mr-4">Edit</button>
 
-            <div class="confirm">
+      <a href="{{url_for('deliveryInvoice', email=details.get_email())}}" class="ml-4">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"> Confirm</button>
+      </a>
+  </div>
+</div>
 
-              <a href="{{url_for('deliveryInvoice', email=details.get_email())}}">
-                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal" > Confirm</button>
-              </a>
-            </div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Success!!</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Delivery Order has been confirmed! Do you want to fill in a feedback form?
+      </div>
+      <div class="modal-footer">
+        <form action="{{url_for('confirm', type = 'feedback')}}" method="POST">
+          <button class="btn btn-success"  value="submit">Yes</button>
+        </form>
+        <form action="{{url_for('confirm', type='home')}}" method="POST">
+          <button class="btn btn-danger" value="submit">No</button>
+        </form>
 
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Success!!</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                Delivery Order has been confirmed! Do you want to fill in a feedback form?
-              </div>
-              <div class="modal-footer">
-                <form action="{{url_for('confirm', type = 'feedback')}}" method="POST">
-                <button class="btn btn-success"  value="submit">Yes</button>
-              </form>
-              <form action="{{url_for('confirm', type='home')}}" method="POST">
-                <button class="btn btn-danger" value="submit">No</button>
-              </form>
-
-              </div>
-            </div>
-          </div>
-        </div>
+      </div>
     </div>
   </div>
-
-
 </div>
 
 {% endblock %}
