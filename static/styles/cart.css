@@ -216,6 +216,9 @@ margin-right: 0;
   background-color: white;
   border: white;
   font-size: 10px;
+  color: red;
+}
+
+.remove_discount:hover{
   text-decoration: underline;
-  color: blue;
 }
