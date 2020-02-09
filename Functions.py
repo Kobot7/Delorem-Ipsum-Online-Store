@@ -92,15 +92,42 @@ def get_name_with_space(name):
     return re.sub(r"(\w)([A-Z])", r"\1 \2", name)
 
 #for discounts
-def discount(list, category, order):
-    if order=='ascending':
-        order = False
-    elif order=='active' or order=='inactive'
+def filter_discount(list, category, order):
+    if  order == "ascending" or order =="descending":
+        if order=='ascending':
+            order = False
+        elif order=="descending":
+            order = True
+        list = sorted(list, key=keyDict[category], reverse=order)
+        return list
     else:
-        order = True
+        filtered_list=[]
+        if category == "type" and order == "amount":
+            for disount in list:
+                if type_key(discount) =="Amount":
+                    filtered_list.append(discount)
+        elif category == "type" and order =="percentage":
+            for discount in list:
+                if type_key(discount) == "Percentage":
+                    filtered_list.append(discount)
+        elif category == "status" and  order == "active":
+            for discount in list:
+                if status_key(discount) == "active":
+                    filtered_list.append(discount)
+        elif category == "status" and  order == "inactive":
+            for discount in list:
+                if status_key(discount) == "inactive":
+                    filtered_list.append(discount)
+        elif category == "status" and  order == "expired":
+            for discount in list:
+                if status_key(discount) == "expired":
+                    filtered_list.append(discount)
+        elif category == "status" and  order == "deleted":
+            for discount in list:
+                if status_key(discount) == "deleted":
+                    filtered_list.append(discount)
+        return filtered_list
 
-    list = sorted(list, key=keyDict[category], reverse=order)
-    return list
 
 def code_key(discount):
     return discount.get_code()

@@ -5,6 +5,7 @@
 {% block content %}
 {% from "includes/_formhelper.html" import render_field %}
 
+
 <div class="row justify-content-center mt-4">
   <div class="col-md-11">
     <h1 class="d-inline">Set Discount</h1>
@@ -135,8 +136,8 @@
           <table class="table mt-4">
             <thead>
               <tr>
-                <th>Types<a href="/discount/type/asceding">Amount</a>
-                          <a href="/discount/type/descending">Percentage</a></th>
+                <th>Types<a href="/discount/type/amount">Amount</a>
+                          <a href="/discount/type/percentage">Percentage</a></th>
                 <th>Discount Code<a href="/discount/name/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
                                   <a href="/discount/name/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
                 <th>Condition<a href="/discount/condition/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
@@ -161,17 +162,21 @@
               </tr>
               </thead>
               <tbody>
-                {%for code in amount_discounts%}
-
+                {%for code in show_master%}
                   <tr>
-                    <td>{{amount_discounts[code].get_code()}}</td>
-                    <td>{{amount_discounts[code].get_condition()}}</td>
-                    <td>{{amount_discounts[code].get_start_date()}}</td>
-                    <td>{{amount_discounts[code].get_expiry_date()}}</td>
-                    <td>{{amount_discounts[code].get_discount_amount()}}</td>
-                    <td><form action="{{url_for('deleteDiscount', code = amount_discounts[code].get_code())}}" method="post">
+                    <td>{{code.get_code()}}</td>
+                    <td>{{code.get_condition()}}</td>
+                    <td>{{code.get_start_date()}}</td>
+                    <td>{{code.get_expiry_date()}}</td>
+                    {%if type_key(code) == "Amount"%}
+                    <td>{{code.get_discount_amount()}}</td>
+                    {%else%}
+                    <td>{{code.get_discount_percentage()}}</td>
+                    {%endif%}
+                    <td>code.get_status()</td>
+                    <!-- <td><form action="{{url_for('deleteDiscount', code = amount_discounts[code].get_code())}}" method="post">
                       <input type="submit" value="Delete" class="btn redButton">
-                    </form></td>
+                    </form></td> -->
                   </tr>
 
                   {%endfor%}
@@ -184,7 +189,7 @@
 
         </div>
         </div>
-        </div>
+
 
 
   {% endblock %}
