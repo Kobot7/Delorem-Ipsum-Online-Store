@@ -37,6 +37,10 @@
         <button class="btn btn-success my-2" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
       </form>
       {% else %}
+      {% if product.get_quantity() < 1 %}
+      <p class="text-danger">Item currently out of stock</p>
+        <button class="btn btn-success my-2" value="submit" disabled><i class="icon-shopping-cart"> Add to Cart</i></button>
+      {% else %}
       {% if Bought %}
       <p class="currently_in_cart">Currently in cart:<span class="whatever"> {{amount}}</span></p>
       <form action="{{url_for('IndItem', serialNo = product.get_serial_no())}}" method="POST" class="form-inline">
@@ -48,6 +52,7 @@
         {{ render_field(QuantityForm.quantity, class="form-control ml-2") }}
         <button class="btn btn-success my-2" value="submit"><i class="icon-shopping-cart"> Add to Cart</i></button>
       </form>
+      {% endif %}
       {% endif %}
       {% endif %}
       {% if current == ''%}
