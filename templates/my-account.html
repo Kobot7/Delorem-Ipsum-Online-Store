@@ -33,9 +33,10 @@
       </div>
 
       <input type="submit" class="register" value="Update" onclick=alertchanges();>
+    </form>
 
-      <hr>
-
+    <hr>
+    <form action="#" method="post">
       <input value="Change Password" class="changePassword" onclick=openChangePwd();>
       <div id="changePassModal" class="pwdModal">
         <div class="pwdModalcontent">
@@ -55,7 +56,7 @@
             </div>
             <p>
             </p>
-            <input type="submit" value="Update" style="background-color: #84a220; width: 20%; height: 30px; border: none;" onclick=alertchanges();>
+            <input type="submit" value="Update" style="background-color: #84a220; width: 20%; height: 30px; border: none;" onclick=newPwd();>
           </div>
         </div>
       </div>
@@ -64,8 +65,8 @@
       <div id="deleteAcctModal" class="acctModal">
         <div class="acctModalcontent">
           <div class="acctmodaltext">
-          <p> Are you sure you would like to close your account? </p>
-          <p> All your user data will be erased and you will not be able to recover your account. </p>
+            <p> Are you sure you would like to close your account? </p>
+            <p> All your user data will be erased and you will not be able to recover your account. </p>
           </div>
           <input type="submit" value="No, keep it" onclick="closeDeleteAcct()" style="cursor: pointer; background-color: #84a220; width: 20%; height: 30px; border: none;">
           <a href="{{url_for('deleteUser')}}"><input value="Yes, delete it" style="text-align:center; cursor: pointer; background-color: #BF594D; width: 20%; height: 30px; border: none;"></a>
@@ -95,6 +96,10 @@
 
       function alertchanges() {
         alert("Changes added successfully!");
+      }
+
+      function newPwd() {
+        alert("Your password has been changed.");
       }
 
       function openChangePwd() {

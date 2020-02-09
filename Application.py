@@ -312,12 +312,12 @@ def login():
                     print('Password should have at least one lowercase letter')
                     secure_pwd = False
                     break
-                if not any(char in SpecialSym for char in registrationForm.password.data):
-                    print('Password should have at least one of the symbols $@#')
-                    secure_pwd = False
+                # if not any(char in SpecialSym for char in registrationForm.password.data):
+                #     print('Password should have at least one of the symbols $@#')
+                #     secure_pwd = False
                     break
 
-            if unique_email and valid_email_registration:
+            if unique_email and valid_email_registration and secure_pwd:
                 U = User(registrationForm.username.data, registrationForm.password.data, registrationForm.email.data)
                 usersDict[U.get_user_id()] = U
                 namesDict[U.get_username()] = U.get_user_id()
@@ -405,6 +405,17 @@ def logout():
     print("User logged out successfully")
     return redirect(url_for('home'))
 # return render_template("home.html", current="", logged_out=True)
+
+@app.route('/FAQ')
+def viewFAQ():
+    db = shelve.open("storage.db", "r")
+    current = db["Current User"]
+    cart = current.get_shopping_cart()
+    Items = len(cart)
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
+    return render_template("FAQ.html", current=current, searchForm=searchForm, Items=Items)
 
 @app.route('/orderHistory')
 def orderHistory():
