@@ -7,41 +7,43 @@
 
 <div class="row justify-content-center">
     <div class="col-lg-10 dashboard-block p-4 mx-2 mt-3">
-        <h2 class="d-inline">Low Stock</h2>
-        <a class="btn d-inline float-right" href="/productStats/name/ascending">View All</a>
+        <div class="d-flex justify-content-between">
+          <h2>Low Stock</h2>
+          <a class="btn" href="/productStats/name/ascending">View All</a>
+        </div>
 
         {% if stockList|length==0 %}
-          <p class="mt-4">&nbsp;&nbsp;None. All products have sufficient stock.</p>
+          <p class="mt-2">&nbsp;&nbsp;None. All products have sufficient stock.</p>
         {% else %}
-        <table class="w-100 products mt-4 mb-2">
-            <thead>
-                <tr>
-                    <th colspan="2">&nbsp;&nbsp;Product</th>
-                    <th>No. of Purchases</th>
-                    <th>Stock</th>
-                    <th>Threshold</th>
-                </tr>
-            </thead>
+          <table class="w-100 products mt-2 mb-2">
+              <thead>
+                  <tr>
+                      <th colspan="2">&nbsp;&nbsp;Product</th>
+                      <th>No. of Purchases</th>
+                      <th>Stock</th>
+                      <th>Threshold</th>
+                  </tr>
+              </thead>
 
-            <tbody>
-              {% for product in stockList %}
-                <tr
-                {% if product in lowStockList %}
-                class="lowStock"
-                {% else %}
-                class="midStock"
-                {% endif %}
-                >
-                  <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
-                  <td class="name">{{ product.get_product_name() }}</td>
-                  <td class="serial-no">{{ product.get_serial_no() }}</td>
-                  <td class="quantity">{{ product.get_quantity() }}</td>
-                  <td class="threshold">{{ product.get_stock_threshold() }}</td>
-                </tr>
+              <tbody>
+                {% for product in stockList %}
+                  <tr
+                  {% if product in lowStockList %}
+                  class="lowStock"
+                  {% else %}
+                  class="midStock"
+                  {% endif %}
+                  >
+                    <td><img class="thumbnail" src="/static/images/{{ product.get_thumbnail() }}" alt="thumbnail"></td>
+                    <td class="name">{{ product.get_product_name() }}</td>
+                    <td class="serial-no">{{ product.get_serial_no() }}</td>
+                    <td class="quantity">{{ product.get_quantity() }}</td>
+                    <td class="threshold">{{ product.get_stock_threshold() }}</td>
+                  </tr>
 
-              {% endfor %}
-            </tbody>
-        </table>
+                {% endfor %}
+              </tbody>
+          </table>
         {% endif %}
 
         <a class="btn d-inline float-right" href="javascript:nextPage()" id="stock-page-next">Next  <i class="fa fa-angle-right "></i></a>
@@ -51,41 +53,48 @@
 
 <div class="row justify-content-center mt-2">
     <div class="col-lg-10 dashboard-block p-4 mx-2 my-2">
-        <h2 class="d-inline">Pending Transactions</h2>
-        <a class="btn d-inline float-right mb-2" href="/transactions">View All</a>
+      <div class="d-flex justify-content-between">
+        <h2>Pending Transactions</h2>
+        <a class="btn" href="/transactions">View All</a>
+      </div>
 
         {% if transactions|length==0 %}
-          <p class="mt-4">&nbsp;&nbsp;There are no pending Transactions.</p>
+          <p class="mt-2">&nbsp;&nbsp;There are no pending Transactions.</p>
         {% else %}
-        <table class="w-100" id="transactions">
-            <thead>
-                <tr>
-                    <th>Collection Type</th>
-                    <th>Customer</th>
-                    <th>No. of Items</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
+          <table class="w-100 mt-2" id="transactions">
+              <thead>
+                  <tr>
+                      <th>Date of Order</th>
+                      <th>Collection Type</th>
+                      <th>Customer</th>
+                      <th>No. of Items</th>
+                      <th>Total</th>
+                  </tr>
+              </thead>
 
-            <tbody>
-              {% for id in transactions %}
-                <tr>
-                  <td>{{ transactions[id].get_type() }}</td>
-                  <td>{{ transactions[id].get_name() }}</td>
-                  <td>{{ transactions[id].get_items()|length }}</td>
-                  <td>${{ transactions[id].get_total() }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-        </table>
+              <tbody>
+                {% for t in transactions %}
+                  <tr>
+                    <td>{{ t.get_date_of_order() }}</td>
+                    <td>{{ t.get_type() }}</td>
+                    <td>{{ t.get_name() }}</td>
+                    <td>{{ t.get_items()|length }}</td>
+                    <td>${{ t.get_total() }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+          </table>
         {% endif %}
     </div>
 </div> <!--Row 3, Transactions-->
 
 <div class="row justify-content-center">
     <div class="col-lg-5 dashboard-block p-4 my-2 small-block-1">
-        <h2 class="d-inline">Best-Sellers</h2>
-        <a class="btn d-inline float-right mb-2" href="/productStats/purchase/descending">View All</a>
+        <div class="d-flex justify-content-between">
+          <h2>Best-Sellers</h2>
+          <a class="btn" href="/productStats/purchase/descending">View All</a>
+        </div>
+
         <div class="col mt-4" id="purchasesGraph"></div>
         <script>
           var purchasesData = {{purchasesGraph | safe}};
@@ -95,8 +104,11 @@
     </div>
 
     <div class="col-lg-5 dashboard-block p-4 my-2 small-block-2">
-        <h2 class="d-inline">Most-Viewed Items</h2>
-        <a class="btn d-inline float-right mb-2" href="/productStats/view/descending">View All</a>
+        <div class="d-flex justify-content-between">
+          <h2>Most-Viewed Items</h2>
+          <a class="btn" href="/productStats/view/descending">View All</a>
+        </div>
+
         <div class="col mt-4" id="viewsGraph"></div>
         <script>
           var viewsData = {{viewsGraph | safe}};

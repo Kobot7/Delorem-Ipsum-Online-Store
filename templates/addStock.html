@@ -2,6 +2,15 @@
 {% block title %}Edit Product{% endblock %}
 {% block style %}
 <link rel="stylesheet" href="/static/styles/productSettings.css">
+<style>
+  .fa-times {
+    color: black;
+  }
+
+  .fa-times:hover {
+    color: #dc3545;
+  }
+</style>
 {% endblock %}
 
 {% block headScript %}
@@ -27,11 +36,15 @@
           </div> <!--Row Form Group-->
         </form>
 
+        {% if newStock|length==0 %}
+        <p class="my-4">&nbsp;No Stock added yet.</p>
+        {% else %}
         <table class="table mt-2">
           <thead>
             <tr>
               <th>Product Name</th>
               <th>Quantity</th>
+              <th></th>
             </tr>
           </thead>
 
@@ -40,10 +53,12 @@
               <tr>
                 <td>{{ productDict[product].get_serial_no() }} - {{ productDict[product].get_product_name() }}</td>
                 <td>{{ newStock[product] }}</td>
+                <td><a href="/deleteStockChoice/{{ productDict[product].get_serial_no() }}"><i class="fa fa-times"></i></a></td>
               </tr>
             {% endfor %}
           </tbody>
         </table>
+        {% endif %}
 
       <a href="/cancelAdditionOfStock" class="btn mr-2 grayButton">Cancel</a>
       <a href="/processAdditionOfStock" class="btn">Submit</a>

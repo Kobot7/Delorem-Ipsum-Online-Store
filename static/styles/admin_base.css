@@ -76,14 +76,25 @@ body {
     color: #ffffff;
 }
 
-a.grayButton {
+.grayButton {
   border-color: #AAAAAA;
   border-width: 3px;
   color: #888888;
 }
 
-a.grayButton:hover {
+.grayButton:hover {
     background-color: #AAAAAA;
+    color: #ffffff;
+}
+
+.redButton {
+  border-color: #dc3545;
+  border-width: 3px;
+  color: #dc3545;
+}
+
+.redButton:hover {
+    background-color: #dc3545;
     color: #ffffff;
 }
 

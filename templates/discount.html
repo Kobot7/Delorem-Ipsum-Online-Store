@@ -117,7 +117,7 @@
                     <td>{{amount_discounts[code].get_expiry_date()}}</td>
                     <td>{{amount_discounts[code].get_discount_amount()}}</td>
                     <td><form action="{{url_for('deleteDiscount', code = amount_discounts[code].get_code())}}" method="post">
-                      <input type="submit" value="Delete" class="btn btn-danger">
+                      <input type="submit" value="Delete" class="btn redButton">
                     </form></td>
                   </tr>
 

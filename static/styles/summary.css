@@ -1,5 +1,6 @@
 *{
   letter-spacing: 0.031rem;
+  text-align: center;
 }
 
 header{
@@ -20,6 +21,7 @@ h1{
   margin-bottom: 1em;
   margin-left: 450px;
   margin-right: 450px;
+  border-radius: 10px;
 }
 
 .buttons{
