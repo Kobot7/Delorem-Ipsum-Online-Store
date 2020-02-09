@@ -17,6 +17,10 @@
     min-height: 700px;
 }
 
+hr{
+  border-color:#84a220;
+}
+
 .image{
   height: 100px;
   width: 100px;
