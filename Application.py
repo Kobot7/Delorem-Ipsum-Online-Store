@@ -1172,8 +1172,6 @@ def summary():
     encryptNo = ateriskNo + lastThree
     transaction.set_credit_card_number(encryptNo)
 
-
-
     type = transaction.get_type()
     if type == "delivery":
         D = True
@@ -1217,6 +1215,7 @@ def confirm(type):
         product = products[key]
         print(product.get_quantity())
         product.set_quantity(product.get_quantity() - int(cart[key]))
+        product.increase_purchases(int(cart[key]))
         products[key] = product
         print(product.get_quantity(),"prods left")
     db["Products"] = products
