@@ -174,6 +174,7 @@ def discount_box(user):
 
 @app.route('/search/<searchString>/<category>/<order>', methods=['GET', 'POST'])
 def search(searchString, category, order):
+    searchString = searchString.lower()
     cart=[]
     db = shelve.open('storage.db', 'r')
     try:
@@ -1373,6 +1374,7 @@ def products(category, order):
 
 @app.route('/products/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
 def productsSearch(searchCat, searchString):
+    searchString = searchString.lower()
     productDict = {}
     db = shelve.open('storage.db', 'c')
 
@@ -1577,6 +1579,7 @@ def viewAll(category, order):
 
 @app.route('/productStats/search/<searchCat>/<searchString>', methods=['GET', 'POST'])
 def statsSearch(searchCat, searchString):
+    searchString = searchString.lower()
     productDict = {}
     db = shelve.open('storage.db', 'r')
 

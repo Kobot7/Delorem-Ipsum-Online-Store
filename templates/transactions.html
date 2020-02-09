@@ -469,6 +469,7 @@
 
         <div class="modal-body">
           <div class="form-group">
+            <p class="font-weight-bold">Receiving method:</p>
             <div class="form-check form-check-inline">
               <input type="checkbox" name="exportCheck" value="delivery" class="form-check-input">
               <label class="form-check-label" for="inlineCheckbox1">Delivery&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
@@ -482,7 +483,10 @@
             </div>
           </div> <!--Form group-->
 
+          <br>
+
           <div class="form-group">
+            <p class="font-weight-bold">Transaction Status:</p>
             <div class="form-check form-check-inline">
               <input type="checkbox" name="exportCheck" value="uncompleted" class="form-check-input">
               <label class="form-check-label" for="inlineCheckbox1">Undelivered/Uncollected&nbsp;&nbsp;</label>
@@ -521,6 +525,13 @@
 </script>
 
 <script>
+  window.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('input[value="delivery"]').checked = true;
+    document.querySelector('input[value="collection"]').checked = true;
+    document.querySelector('input[value="uncompleted"]').checked = true;
+    document.querySelector('input[value="completed"]').checked = true;
+  });
+
   function checkExportChoices() {
     delivery = document.querySelector('input[value="delivery"]').checked;
     collection = document.querySelector('input[value="collection"]').checked;
