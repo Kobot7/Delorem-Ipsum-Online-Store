@@ -2354,7 +2354,7 @@ def brand(brand):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('productByBrand.html', productList=products, productCount=len(products), searchForm=searchForm, brand=brand, current=current, Items = Items, user=user)
+    return render_template('productByBrand.html', productList=products, productCount=len(products), searchForm=searchForm, brand=brand, current=current, Items = Items, show=show)
 
 app.jinja_env.filters['get_name_with_space'] = get_name_with_space
 if __name__=='__main__':
