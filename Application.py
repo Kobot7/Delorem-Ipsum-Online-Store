@@ -1776,11 +1776,23 @@ def transactions():
 
         db['Transactions'] = transactionsDict
         db.close()
-        return redirect('/transactions')
+
+        if exportForm.validate():
+            delivery = str(exportForm.delivery.data)
+            collection = str(exportForm.collection.data)
+            uncompleted = str(exportForm.uncompleted.data)
+            completed = str(exportForm.completed.data)
+
+            print('/downloadTransactions/' + delivery + '/' + collection + '/'+ uncompleted + '/' + completed)
+            return redirect('/downloadTransactions/' + delivery + '/' + collection + '/'+ uncompleted + '/' + completed)
+
+        else:
+            return redirect('/transactions')
 
     return render_template('transactions.html', currentPage='Transactions'
     , deliveryCompleteList=deliveryCompleteList, deliveryNotCompleteList=deliveryNotCompleteList
-    , collectionCompleteList=collectionCompleteList, collectionNotCompleteList=collectionNotCompleteList)
+    , collectionCompleteList=collectionCompleteList, collectionNotCompleteList=collectionNotCompleteList
+    , exportForm=exportForm)
 
 @app.route('/downloadProducts', methods=['GET'])
 def downloadProducts():
@@ -1824,47 +1836,34 @@ def downloadProducts():
 
     return excel.make_response_from_array(productArray, file_type='xls', file_name='Delorem Ipsum product records')
 
-@app.route('/downloadTransactions', methods=['GET'])
-def downloadTransactions():
-    db = shelve.open('storage.db', 'c')
+@app.route('/downloadTransactions/<delivery>/<collection>/<uncompleted>/<completed>', methods=['GET'])
+def downloadTransactions(delivery, collection, completed, uncompleted):
+    print(delivery, collection, uncompleted, completed)
+    transactionsDict = {}
+    deliveryCompleteList = []
+    deliveryNotCompleteList = []
+    collectionCompleteList = []
+    collectionNotCompleteList = []
+    finalData = []
+
+    db = shelve.open('storage.db', 'r')
 
     try:
-        transactionDict = db['Transactions']
-        db.close()
+        transactionsDict = db['Transactions']
     except:
         print('Error in retrieving Transactions from storage.db.')
 
-    transactionArray = [['Delivery Type'
-                    , 'Name'
-                    , 'Phone'
-                    , 'Email'
-                    , ''
-                    , ''
-                    , ''
-                    , ''
-                    , ''
-                    , ''
-                    , ''
-                    , '']]
-
-
-    for key in productDict:
-        product = productDict[key]
-
-        if product.get_completion():
-            activated = 'Show'
+    for key in transactionsDict:
+        if transactionsDict[key].get_type()=='delivery':
+            if transactionsDict[key].get_completion()==True:
+                deliveryCompleteList.append(transactionsDict[key])
+            else:
+                deliveryNotCompleteList.append(transactionsDict[key])
         else:
-            activated = 'Hide'
-
-        data = [product.get_product_name()
-                , product.get_brand()
-                , product.get_sub_category()
-                , product.get_serial_no()
-                , product.get_price()
-                , product.get_description()
-                , activated
-                , product.get_quantity()
-                , product.get_stock_threshold()]
+            if transactionsDict[key].get_completion()==True:
+                collectionCompleteList.append(transactionsDict[key])
+            else:
+                collectionNotCompleteList.append(transactionsDict[key])
 
     deliveryCompleteList.reverse()
     deliveryNotCompleteList.reverse()
