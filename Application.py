@@ -1743,6 +1743,11 @@ def transactions():
             else:
                 collectionNotCompleteList.append(transactionsDict[key])
 
+    deliveryCompleteList.reverse()
+    deliveryNotCompleteList.reverse()
+    collectionCompleteList.reverse()
+    collectionNotCompleteList.reverse()
+
     exportForm = ExportTransaction(request.form)
 
     if request.method=="POST":
@@ -1857,22 +1862,28 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
             else:
                 collectionNotCompleteList.append(transactionsDict[key])
 
+    deliveryCompleteList.reverse()
+    deliveryNotCompleteList.reverse()
+    collectionCompleteList.reverse()
+    collectionNotCompleteList.reverse()
 
     deliveryArray = ['Status'
-                        , 'Delivery Type'
-                        , 'Name'
-                        , 'Contact No.'
-                        , 'Email'
-                        , 'Payment Mode'
-                        , 'Credit Card No.'
-                        , 'Expiry Date'
-                        , 'CVV'
-                        , 'Address'
-                        , 'Items'
-                        , 'Total']
+                    , 'Delivery Type'
+                    , 'Date of Order'
+                    , 'Name'
+                    , 'Contact No.'
+                    , 'Email'
+                    , 'Payment Mode'
+                    , 'Credit Card No.'
+                    , 'Expiry Date'
+                    , 'CVV'
+                    , 'Address'
+                    , 'Items'
+                    , 'Total']
 
     collectionArray = ['Status'
                         , 'Delivery Type'
+                        , 'Date of Order'
                         , 'Name'
                         , 'Contact No.'
                         , 'Email'
@@ -1890,9 +1901,18 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
 
         if completed=='True':
             for t in deliveryCompleteList:
+                itemList = []
+                count = 1
+                for item in t.get_items():
+                    itemData = ''
+                    itemData += str(count) + '. ' + item.get_product_name() + '(' + item.get_serial_no() + '), Quantity: ' + str(item.get_quantity())
+                    itemList.append(itemData)
+                    count += 1
+
                 address = t.get_street_name() + ', #' + str(t.get_unit_no()) + ' (S' + str(t.get_postal_code()) + ')'
                 data = ['Delivered'
                         , 'Delivery'
+                        , t.get_date_of_order()
                         , t.get_name()
                         , t.get_phone()
                         , t.get_email()
@@ -1901,16 +1921,30 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
                         , t.get_credit_card_expiry()
                         , t.get_credit_card_cvv()
                         , address
-                        , 'test'
-                        , t.get_total()]
+                        , itemList[0]
+                        , '$' + t.get_total()]
 
                 finalData.append(data)
+
+                if len(itemList)>1:
+                    for x in range(len(itemList)-1):
+                        data = ['','','','','','','','','','','',itemList[x+1]]
+                        finalData.append(data)
 
         if uncompleted=='True':
             for t in deliveryNotCompleteList:
+                itemList = []
+                count = 1
+                for item in t.get_items():
+                    itemData = ''
+                    itemData += str(count) + '. ' + item.get_product_name() + '(' + item.get_serial_no() + '), Quantity: ' + str(item.get_quantity())
+                    itemList.append(itemData)
+                    count += 1
+
                 address = t.get_street_name() + ', #' + str(t.get_unit_no()) + ' (S' + str(t.get_postal_code()) + ')'
                 data = ['Not Delivered'
                         , 'Delivery'
+                        , t.get_date_of_order()
                         , t.get_name()
                         , t.get_phone()
                         , t.get_email()
@@ -1919,21 +1953,35 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
                         , t.get_credit_card_expiry()
                         , t.get_credit_card_cvv()
                         , address
-                        , 'test'
-                        , t.get_total()]
+                        , itemList[0]
+                        , '$' + t.get_total()]
 
                 finalData.append(data)
+
+                if len(itemList)>1:
+                    for x in range(len(itemList)-1):
+                        data = ['','','','','','','','','','','',itemList[x+1]]
+                        finalData.append(data)
 
         if collection=='True':
             finalData.append([])
 
     if collection=='True':
-        finalData.append(deliveryArray)
+        finalData.append(collectionArray)
 
         if completed=='True':
             for t in collectionCompleteList:
+                itemList = []
+                count = 1
+                for item in t.get_items():
+                    itemData = ''
+                    itemData += str(count) + '. ' + item.get_product_name() + '(' + item.get_serial_no() + '), Quantity: ' + str(item.get_quantity())
+                    itemList.append(itemData)
+                    count += 1
+
                 data = ['Collected'
                         , 'Collection'
+                        , t.get_date_of_order()
                         , t.get_name()
                         , t.get_phone()
                         , t.get_email()
@@ -1943,15 +1991,29 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
                         , t.get_credit_card_cvv()
                         , t.get_date()
                         , t.get_time()
-                        , 'test'
-                        , t.get_total()]
+                        , itemList[0]
+                        , '$' + t.get_total()]
 
                 finalData.append(data)
+
+                if len(itemList)>1:
+                    for x in range(len(itemList)-1):
+                        data = ['','','','','','','','','','','','',itemList[x+1]]
+                        finalData.append(data)
 
         if uncompleted=='True':
-            for t in collectionCompleteList:
+            for t in collectionNotCompleteList:
+                itemList = []
+                count = 1
+                for item in t.get_items():
+                    itemData = ''
+                    itemData += str(count) + '. ' + item.get_product_name() + '(' + item.get_serial_no() + '), Quantity: ' + str(item.get_quantity())
+                    itemList.append(itemData)
+                    count += 1
+
                 data = ['Not Collected'
                         , 'Collection'
+                        , t.get_date_of_order()
                         , t.get_name()
                         , t.get_phone()
                         , t.get_email()
@@ -1961,10 +2023,15 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
                         , t.get_credit_card_cvv()
                         , t.get_date()
                         , t.get_time()
-                        , 'test'
-                        , t.get_total()]
+                        , itemList[0]
+                        , '$' + t.get_total()]
 
                 finalData.append(data)
+
+                if len(itemList)>1:
+                    for x in range(len(itemList)-1):
+                        data = ['','','','','','','','','','','','',itemList[x+1]]
+                        finalData.append(data)
 
     return excel.make_response_from_array(finalData, file_type='xls', file_name='Delorem Ipsum transaction records')
 
