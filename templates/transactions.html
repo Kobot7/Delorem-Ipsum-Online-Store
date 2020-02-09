@@ -15,6 +15,10 @@
     background-color: inherit;
   }
 
+  #dcAlert, #ucAlert {
+    display: none;
+    color: Red;
+  }
 </style>
 {% endblock %}
 
@@ -466,31 +470,36 @@
         <div class="modal-body">
           <div class="form-group">
             <div class="form-check form-check-inline">
-              {{ render_field(exportForm.delivery, class="form-check-input") }}
+              <input type="checkbox" name="exportCheck" value="delivery" class="form-check-input">
               <label class="form-check-label" for="inlineCheckbox1">Delivery&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
             </div>
             <div class="form-check form-check-inline">
-              {{ render_field(exportForm.collection, class="form-check-input") }}
+              <input type="checkbox" name="exportCheck" value="collection" class="form-check-input">
               <label class="form-check-label" for="inlineCheckbox2">Collection</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <p id="dcAlert">Please select at least 1 option.</p>
             </div>
           </div> <!--Form group-->
 
           <div class="form-group">
             <div class="form-check form-check-inline">
-              {{ render_field(exportForm.uncompleted, class="form-check-input") }}
-              <label class="form-check-label" for="inlineCheckbox1">Uncompleted&nbsp;&nbsp;</label>
+              <input type="checkbox" name="exportCheck" value="uncompleted" class="form-check-input">
+              <label class="form-check-label" for="inlineCheckbox1">Undelivered/Uncollected&nbsp;&nbsp;</label>
             </div>
             <div class="form-check form-check-inline">
-              {{ render_field(exportForm.completed, class="form-check-input") }}
-              <label class="form-check-label" for="inlineCheckbox2">Completed</label>
+              <input type="checkbox" name="exportCheck" value="completed" class="form-check-input">
+              <label class="form-check-label" for="inlineCheckbox2">Delivered/Collected</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <p id="ucAlert">Please select at least 1 option.</p>
             </div>
           </div> <!--Form group-->
-
         </div> <!--Modal body-->
 
         <div class="modal-footer">
           <button type="button" class="btn grayButton" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn">Export</button>
+          <a class="btn" href="javascript:checkExportChoices()">Export</a>
         </div>
       </form>
     </div> <!--Modal footer-->
@@ -509,5 +518,33 @@
     ev.stopImmediatePropagation();
     console.log("clicked!");
   });
+</script>
+
+<script>
+  function checkExportChoices() {
+    delivery = document.querySelector('input[value="delivery"]').checked;
+    collection = document.querySelector('input[value="collection"]').checked;
+    uncompleted = document.querySelector('input[value="uncompleted"]').checked;
+    completed = document.querySelector('input[value="completed"]').checked;
+
+    if(delivery==false && collection==false) {
+      console.log('ff');
+      document.getElementById('dcAlert').style.display = 'inline';
+    }
+
+    else {
+      if(uncompleted==false && completed==false) {
+        console.log('ff');
+        document.getElementById('dcAlert').style.display = 'none';
+        document.getElementById('ucAlert').style.display = 'inline';
+      }
+      else {
+        document.getElementById('dcAlert').style.display = 'none';
+        document.getElementById('ucAlert').style.display = 'none';
+        window.location.href = '/downloadTransactions/' + delivery + '/' + collection + '/'+ uncompleted + '/' + completed;
+      }
+    }
+
+  }
 </script>
 {% endblock %}

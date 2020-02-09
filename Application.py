@@ -1273,10 +1273,17 @@ def dashboard(stockPage):
     except:
         print('Error in retrieving Products from storage.db.')
     try:
-        transactions = db['Transactions']
+        transactionsDict = db['Transactions']
         db.close()
     except:
         print('Error in retrieving Products from storage.db.')
+
+    transactionList = []
+
+    for id in transactionsDict:
+        if transactionsDict[id].get_completion()==False:
+            transactionList.append(transactionsDict[id])
+    transactionList.reverse()
 
     productList = []
     lowStockList = []
@@ -1338,7 +1345,7 @@ def dashboard(stockPage):
     viewsGraph = json.dumps(viewsData, cls=plotly.utils.PlotlyJSONEncoder)
 
     return render_template('dashboard.html', currentPage='Dashboard', viewsList = viewsList, purchasesGraph = purchasesGraph
-    , viewsGraph = viewsGraph, lowStockList=lowStockList, midStockList=midStockList, transactions=transactions, stockPage=stockPage, stockList=stockList)
+    , viewsGraph = viewsGraph, lowStockList=lowStockList, midStockList=midStockList, transactions=transactionList, stockPage=stockPage, stockList=stockList)
 
 @app.route('/products/<category>/<order>/', methods=['GET', 'POST'])
 def products(category, order):
@@ -1777,17 +1784,7 @@ def transactions():
         db['Transactions'] = transactionsDict
         db.close()
 
-        if exportForm.validate():
-            delivery = str(exportForm.delivery.data)
-            collection = str(exportForm.collection.data)
-            uncompleted = str(exportForm.uncompleted.data)
-            completed = str(exportForm.completed.data)
-
-            print('/downloadTransactions/' + delivery + '/' + collection + '/'+ uncompleted + '/' + completed)
-            return redirect('/downloadTransactions/' + delivery + '/' + collection + '/'+ uncompleted + '/' + completed)
-
-        else:
-            return redirect('/transactions')
+        return redirect('/transactions')
 
     return render_template('transactions.html', currentPage='Transactions'
     , deliveryCompleteList=deliveryCompleteList, deliveryNotCompleteList=deliveryNotCompleteList
@@ -1899,10 +1896,10 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
                         , 'Items'
                         , 'Total']
 
-    if delivery=='True':
+    if delivery=='true':
         finalData.append(deliveryArray)
 
-        if completed=='True':
+        if completed=='true':
             for t in deliveryCompleteList:
                 itemList = []
                 count = 1
@@ -1934,7 +1931,7 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
                         data = ['','','','','','','','','','','',itemList[x+1]]
                         finalData.append(data)
 
-        if uncompleted=='True':
+        if uncompleted=='true':
             for t in deliveryNotCompleteList:
                 itemList = []
                 count = 1
@@ -1966,13 +1963,14 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
                         data = ['','','','','','','','','','','',itemList[x+1]]
                         finalData.append(data)
 
-        if collection=='True':
+        if collection=='true':
+            finalData.append([])
             finalData.append([])
 
-    if collection=='True':
+    if collection=='true':
         finalData.append(collectionArray)
 
-        if completed=='True':
+        if completed=='true':
             for t in collectionCompleteList:
                 itemList = []
                 count = 1
@@ -2004,7 +2002,7 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
                         data = ['','','','','','','','','','','','',itemList[x+1]]
                         finalData.append(data)
 
-        if uncompleted=='True':
+        if uncompleted=='true':
             for t in collectionNotCompleteList:
                 itemList = []
                 count = 1

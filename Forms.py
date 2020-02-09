@@ -166,7 +166,7 @@ class AdminSearch(Form):
     # search_subcat = SelectField('', choices=subCatList, default='Select')
 
 class ExportTransaction(Form):
-    delivery = BooleanField('', [validators.DataRequired()])
+    delivery = BooleanField('')
     collection = BooleanField('')
     completed = BooleanField('')
     uncompleted = BooleanField('')

@@ -64,6 +64,7 @@
           <table class="w-100 mt-2" id="transactions">
               <thead>
                   <tr>
+                      <th>Date of Order</th>
                       <th>Collection Type</th>
                       <th>Customer</th>
                       <th>No. of Items</th>
@@ -72,12 +73,13 @@
               </thead>
 
               <tbody>
-                {% for id in transactions %}
+                {% for t in transactions %}
                   <tr>
-                    <td>{{ transactions[id].get_type() }}</td>
-                    <td>{{ transactions[id].get_name() }}</td>
-                    <td>{{ transactions[id].get_items()|length }}</td>
-                    <td>${{ transactions[id].get_total() }}</td>
+                    <td>{{ t.get_date_of_order() }}</td>
+                    <td>{{ t.get_type() }}</td>
+                    <td>{{ t.get_name() }}</td>
+                    <td>{{ t.get_items()|length }}</td>
+                    <td>${{ t.get_total() }}</td>
                   </tr>
                 {% endfor %}
               </tbody>
