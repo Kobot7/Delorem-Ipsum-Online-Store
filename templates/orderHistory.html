@@ -9,36 +9,36 @@
 <div class="signup-w3ls">
   <div class="signup-agile1">
     <form action="#" method="post">
-
-      <!-- <div class="form-control-user">
-        <label class="header">Profile Photo:</label>
-        <img style="margin-left:25px;" src="{{pic}}" alt="default-profile-picture" width="200" height="200" />
-        <input id="image" style="margin-left:255px;" type="file" name="profile_photo" capture>
-      </div> -->
       <h2> Order History </h2>
       <p> INSERT PRODUCTS HERE </p>
-        {% for transaction in transactionList %}
-          <!-- <a href="{{url_for('IndItem', serialNo=product.get_serial_no())}}" class="item-link">
-            <div class="item-img">
-              <img src="/static/images/{{product.get_thumbnail()}}">
-            </div>
-            <div class="item-caption-box">
-              <div class="item-caption">
-                <div>
-                  <p class="item-description">{{product.get_product_name()}}</p>
+      <div class="item-wrapper">
+        <ul id="items">
+          {% for trans in current_transaction_list %}
+          <article class="item">
+            <a href="{{url_for('IndItem', serialNo=trans.get_serial_no())}}" class="item-link">
+              <div class="item-img">
+                <img src="/static/images/{{trans.get_thumbnail()}}">
+              </div>
+              <div class="item-caption-box">
+                <div class="item-caption">
+                  <div>
+                    <p class="item-description">{{trans.get_product_name()}}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <p class="price-box">
-              <span class="price-small">${{product.get_price()}}</span>
-            </p>
-          </a> -->
-        {% endfor %}
+              <p class="price-box">
+                <span class="price-small">${{trans.get_price()}}</span>
+              </p>
+            </a>
+          </article>
+          {% endfor %}
+        </ul>
+        </div>
+
+    </form>
     <div id="mySidebar" class="sidebar">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
-      <a href="#">Check Current Deliveries</a>
       <a href="/orderHistory">Order History</a>
-      <a href="#">User Data</a>
     </div>
     <script>
       function openNav() {

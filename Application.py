@@ -289,15 +289,13 @@ def view_profile(username):
         #check for valid email
         try:
             regexEmail = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
-            for user in usersDict.values():
-                if (re.search(regexEmail,editProfileForm.email.data)):
-                    #email is valid
-                    edit_email_valid = True
-                    current.set_email(editProfileForm.email.data)
-                else:
-                    edit_email_valid = False
-                    print("Email is incorrect format/cannot be left blank.")
-                    break
+            if (re.search(regexEmail,editProfileForm.email.data)):
+                #email is valid
+                edit_email_valid = True
+                current.set_email(editProfileForm.email.data)
+            else:
+                edit_email_valid = False
+                print("Email is incorrect format/cannot be left blank.")
         except:
             current.set_email("None")
 
@@ -332,7 +330,7 @@ def view_profile(username):
         if request.method == "POST" and searchForm.validate():
             print(searchForm.search_input.data)
         db.close()
-        return render_template('my-account.html', current=current,edit_email_valid=edit_email_valid, empty_username_error=False, invalid_phone_num_error=False, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm, Items=Items)
+        return render_template('my-account.html', current=current,edit_email_valid=True, empty_username_error=False, invalid_phone_num_error=False, name=current.get_username(), address=current.get_address(), phone=current.get_phone(), email=current.get_email(), searchForm=searchForm, Items=Items)
 
 @app.route('/my-account/delete_account')
 def deleteUser():
@@ -523,28 +521,44 @@ def viewFAQ():
 @app.route('/orderHistory', methods=['GET'])
 def orderHistory():
     db = shelve.open("storage.db", "r")
-    try:
-        current = db["Current User"]
-        cart = current.get_shopping_cart()
-        Items = len(cart)
-    except:
-        current = False
-        Items = 0
-    db.close()
-    # bought = False
-    # amount = 0
-    # for serial_no in cart:
-    #     if serial_no == serialNo:
-    #         bought = True
-    #         amount = cart[serial_no]
-    #         break
+    transactions ={}
+    # try:
+    current = db["Current User"]
+    cart = current.get_shopping_cart()
+    Items = len(cart)
+    transactions = db["Transactions"]
+    current_transac_list = current.get_transactions()
+    for transaction in current_transac_list:
+        print(transaction) #prints order ID?
+        obj = transactions[transaction]
+        print(obj) #prints object
+        # print(obj.get_products())
+        for transac in current_transac_list:
+            # order_ID = transac.get_id()
+            # images = []
+            # for object in transac.get_items() :
+            #     productList.append(object)
+            #     images.append(object.get_thumbnail())
+            pass
 
 
+
+
+        # current_transaction_list = current.get_transactions()
+        # print(current_transaction_list)
+        # for transaction in current_transaction_list:
+        #     print(transactions[transaction])
+
+        # for transaction in current_transaction_list:
+        #     id = current_transaction_list.get_id()
+        #     print(id)
+
+    print("\n\n\n")
+    # except:
+    #     current = False
+    #     Items = 0
     searchForm = searchBar()
-
-
-    #METHOD GET - history of order transaction
-    return render_template('orderHistory.html', searchForm = searchForm, Items=Items, current = current)
+    return render_template('orderHistory.html', searchForm=searchForm, Items=Items, current=current)
 
 @app.route('/mainCategory/<mainCategory>/<category>/<order>/', methods=['GET', 'POST'])
 def mainCategory(mainCategory, category, order):
@@ -2272,7 +2286,7 @@ def deliveryInvoice(email):
         recipients=[email])
 
         for image in images:
-            print("Goes into images")
+            print("\n\n\nGoes into images")
             this_folder = os.path.dirname(os.path.abspath(__file__))
             print("This_folder")
             source = this_folder + "/static/images/" + image
@@ -2285,7 +2299,7 @@ def deliveryInvoice(email):
         msg.html = render_template('html_in_invoice.html',  productList=productList, current_user=current_user, transaction=transaction, cart=cart, products=products, order_ID=order_ID, total=total, deducted=deducted )
         print("testinggggggggggggggg")
         mail.send(msg)
-        print("MAIL SENT")
+        print("\n\n\nMAIL SENT\n\n\n")
 
 
     except Exception as e:
