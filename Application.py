@@ -312,12 +312,12 @@ def login():
                     print('Password should have at least one lowercase letter')
                     secure_pwd = False
                     break
-                if not any(char in SpecialSym for char in registrationForm.password.data):
-                    print('Password should have at least one of the symbols $@#')
-                    secure_pwd = False
+                # if not any(char in SpecialSym for char in registrationForm.password.data):
+                #     print('Password should have at least one of the symbols $@#')
+                #     secure_pwd = False
                     break
 
-            if unique_email and valid_email_registration:
+            if unique_email and valid_email_registration and secure_pwd:
                 U = User(registrationForm.username.data, registrationForm.password.data, registrationForm.email.data)
                 usersDict[U.get_user_id()] = U
                 namesDict[U.get_username()] = U.get_user_id()
@@ -405,6 +405,17 @@ def logout():
     print("User logged out successfully")
     return redirect(url_for('home'))
 # return render_template("home.html", current="", logged_out=True)
+
+@app.route('/FAQ')
+def viewFAQ():
+    db = shelve.open("storage.db", "r")
+    current = db["Current User"]
+    cart = current.get_shopping_cart()
+    Items = len(cart)
+    searchForm = searchBar()
+    if request.method == "POST" and searchForm.validate():
+        return redirect('/search/' + searchForm.search_input.data + '/view/descending')
+    return render_template("FAQ.html", current=current, searchForm=searchForm, Items=Items)
 
 @app.route('/orderHistory')
 def orderHistory():
@@ -1911,20 +1922,25 @@ def deliveryInvoice(email):
         products = db["Products"]
     except:
         print('Error in retrieving products from storage.db.')
-    try:
-        transactions = db["Transactions"]
-    except:
-        print('Error in retrieving transactions from storage.db.')
+    # try:
+    #     transactions = db["Transactions"]
+    # except:
+    #     print('Error in retrieving transactions from storage.db.')
+
+    pickle_in = open('temp_transaction.pickle','rb')
+    transaction = pickle.load(pickle_in)
+    pickle_in.close()
+    order_ID = transaction.get_id()
 
 
     # cart = current_user.get_shopping_cart()
     # order_ID = current_user.get_transactions()
-    list = current_user.get_transactions()
-    if len(list) <= 1:
-        order_ID = list[0]
-    else:
-        order_ID = list[-1]
-    transaction = transactions[order_ID ]
+    # list = current_user.get_transactions()
+    # if len(list) <= 1:
+    #     order_ID = list[0]
+    # else:
+    #     order_ID = list[-1]
+    # transaction = transactions[order_ID ]
     cart = current_user.get_shopping_cart()
     productList = []
     # cartList = []
@@ -1932,6 +1948,11 @@ def deliveryInvoice(email):
     for object in transaction.get_items() :
         productList.append(object)
         images.append(object.get_thumbnail())
+
+    total = transaction.get_total()
+    total = Decimal(format(float(total), '.2f'))
+    deducted = transaction.get_deducted()
+    deducted = Decimal(format(float(total), '.2f'))
     # try:
     #     deliveryDetails = db["deliveryDetails"]
     #
@@ -1960,7 +1981,7 @@ def deliveryInvoice(email):
                 print("attached")
 
         msg.body = "This ur e reciept"
-        msg.html = render_template('html_in_invoice.html',  productList=productList, current_user=current_user, transaction=transaction, cart=cart, products=products )
+        msg.html = render_template('html_in_invoice.html',  productList=productList, current_user=current_user, transaction=transaction, cart=cart, products=products, order_ID=order_ID, total=total, deducted=deducted )
         print("testinggggggggggggggg")
         mail.send(msg)
         print("MAIL SENT")
