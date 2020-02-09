@@ -12,6 +12,7 @@
     <ul class="nav nav-tabs my-4">
       <li class="nav-item active"><a class="nav-link active" href="#percentage" data-toggle="tab">By percentage</a></li>
       <li class="nav-item"><a class="nav-link" href="#amount" data-toggle="tab">By amount</a></li>
+      <li class="nav-item"><a class="nav-link"href="#expired" data-toggle="tab">Expired</a></li>
     </ul>
 
     <div class="tab-content">
@@ -105,6 +106,41 @@
                 <th>Expire</th>
                 <th>Amount</th>
                 <th>Delete</th>
+              </tr>
+              </thead>
+              <tbody>
+                {%for code in amount_discounts%}
+
+                  <tr>
+                    <td>{{amount_discounts[code].get_code()}}</td>
+                    <td>{{amount_discounts[code].get_condition()}}</td>
+                    <td>{{amount_discounts[code].get_start_date()}}</td>
+                    <td>{{amount_discounts[code].get_expiry_date()}}</td>
+                    <td>{{amount_discounts[code].get_discount_amount()}}</td>
+                    <td><form action="{{url_for('deleteDiscount', code = amount_discounts[code].get_code())}}" method="post">
+                      <input type="submit" value="Delete" class="btn redButton">
+                    </form></td>
+                  </tr>
+
+                  {%endfor%}
+              </tbody>
+              </table>
+            </div>
+
+        </div>
+
+        <div class="tab-pane fade pb-4" id="expired">
+
+          <div class="table">
+          <table class="table mt-4">
+            <thead>
+              <tr>
+                <th>Discount Code</th>
+                <th>Condition</th>
+                <th>Start</th>
+                <th>Expire</th>
+                <th>Amount</th>
+                <th>Times Used</th>
               </tr>
               </thead>
               <tbody>
