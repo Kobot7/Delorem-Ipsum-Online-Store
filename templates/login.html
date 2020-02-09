@@ -18,6 +18,7 @@
       {% endif %}
     </ul>
     {% if unique_email %}
+    <!-- Login Tab -->
     <div class="tab-content">
       <div class="tab-pane active in" id="login">
         <form method="POST" action="">
@@ -25,19 +26,19 @@
             {{ render_field(form.username, class="form-control") }}
           </div>
           <div class="form-group">
-              {{ render_field(form.password, class="form-control") }}
-              {% if not username_correct %}
-              <p style="color:#dc3545"> Your username or password was incorrect. Please try again. </p>
-              {% endif %}
+            {{ render_field(form.password, class="form-control") }}
+            {% if not username_correct %}
+            <p style="color:#dc3545"> Your username or password was incorrect. Please try again. </p>
+            {% endif %}
           </div>
           {% if success_login %}
-          <input type="submit" value="Submit" class="btn" onclick="successLogin();"/>
+          <input type="submit" value="Submit" class="btn" onclick="successLogin();" />
           {% else %}
-          <input type="submit" value="Submit" class="btn"/>
+          <input type="submit" value="Submit" class="btn" />
           {% endif %}
         </form>
       </div>
-
+      <!-- Registration Tab -->
       <div class="tab-pane fade" id="signUp">
         <form method="POST" action="{{url_for('login')}}">
           <div class="form-group">
@@ -52,7 +53,7 @@
           <div class="form-group">
             {{ render_field(form2.password, class="form-control") }}
             {% if not secure_pwd %}
-              <p style="color:#dc3545"> Please enter a password containing at least 6 letters, 1 numeral, and 1 uppercase letter. </p>
+            <p style="color:#dc3545"> Please enter a password containing at least 6 letters, 1 numeral, and 1 uppercase letter. </p>
             {% endif %}
           </div>
           <div class="form-group">
@@ -62,7 +63,9 @@
         </form>
       </div>
     </div>
+
     {% else %}
+    <!-- Login Tab -->
     <div class="tab-content">
       <div class="tab-pane fade" id="login">
         <form method="POST" action="">
@@ -70,19 +73,19 @@
             {{ render_field(form.username, class="form-control") }}
           </div>
           <div class="form-group">
-              {{ render_field(form.password, class="form-control") }}
-              {% if not username_correct %}
-              <p style="color:#dc3545"> Your username or password was incorrect. Please try again. </p>
-              {% endif %}
+            {{ render_field(form.password, class="form-control") }}
+            {% if not username_correct %}
+            <p style="color:#dc3545"> Your username or password was incorrect. Please try again. </p>
+            {% endif %}
           </div>
           {% if success_login %}
-          <input type="submit" value="Submit" class="btn" onclick="successLogin();"/>
+          <input type="submit" value="Submit" class="btn" onclick="successLogin();" />
           {% else %}
-          <input type="submit" value="Submit" class="btn"/>
+          <input type="submit" value="Submit" class="btn" />
           {% endif %}
         </form>
       </div>
-
+      <!-- Registration Tab -->
       <div class="tab-pane active in" id="signUp">
         <form method="POST" action="{{url_for('login')}}">
           <div class="form-group">
@@ -98,7 +101,7 @@
           <div class="form-group">
             {{ render_field(form2.password, class="form-control") }}
             {% if not secure_pwd %}
-              <p style="color:#dc3545"> Please enter a password containing at least 6 letters, 1 numeral, and 1 uppercase letter. </p>
+            <p style="color:#dc3545"> Please enter a password containing at least 6 letters, 1 numeral, and 1 uppercase letter. </p>
             {% endif %}
           </div>
           <div class="form-group">
@@ -112,8 +115,8 @@
   </div>
 </div>
 <script>
-function successLogin() {
-  alert("User successfully logged in");
-}
+  function successLogin() {
+    alert("User successfully logged in");
+  }
 </script>
 {% endblock %}
