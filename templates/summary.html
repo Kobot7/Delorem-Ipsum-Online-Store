@@ -79,9 +79,7 @@
 
   <div class="btn-group box">
             <div class="edit">
-              <form action="{{url_for('summary', deliveryId = details.get_id() )}}" method="post" >
-                <button type="submit" class="btn btn-secondary">Edit</button>
-              </form>
+                <button type="submit" onclick="history.go(-1)"class="btn btn-secondary">Edit</button>
             </div>
 
             <div class="confirm">
@@ -89,6 +87,7 @@
               <a href="{{url_for('deliveryInvoice', email=details.get_email())}}">
                 <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal" > Confirm</button>
               </a>
+            </div>
 
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
