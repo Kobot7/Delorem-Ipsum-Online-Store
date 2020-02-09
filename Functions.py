@@ -1,4 +1,5 @@
 import re
+from Discount import *
 
 def sort_by(list, category, order):
     if order=='ascending':
@@ -75,9 +76,6 @@ def get_main_category(subCategory):
 
 # For wish list
 def filter_function(list, filter):
-    #if order == "recent":
-    #elif order =="expiring":
-    #elif order =="discount":
     filtered_list=[]
     if filter =="hightolow":
         filtered_list = sorted(list, key=keyDict['price'], reverse=True)
@@ -87,10 +85,59 @@ def filter_function(list, filter):
         filtered_list = sorted(list, key=keyDict['name'], reverse=False)
     elif filter =="z-a":
         filtered_list = sorted(list, key=keyDict['name'], reverse=True)
-    #elif order =="stock":
     return filtered_list
-
 
 def get_name_with_space(name):
     name = name.replace('&', ' & ')
     return re.sub(r"(\w)([A-Z])", r"\1 \2", name)
+
+#for discounts
+def discount(list, category, order):
+    if order=='ascending':
+        order = False
+    elif order=='active' or order=='inactive'
+    else:
+        order = True
+
+    list = sorted(list, key=keyDict[category], reverse=order)
+    return list
+
+def code_key(discount):
+    return discount.get_code()
+
+def type_key(discount):
+    if isinstance(discount, AmountDiscount):
+        return "Amount"
+    else:
+        return "Percentage"
+
+def condition_key(discount):
+    return discount.get_condition()
+
+def start_key(disount):
+    return discount.get_start_date()
+
+def end_key(disount):
+    return discount.get_expiry_date()
+
+def discount_key(discount):
+    if isinstance(discount, AmountDiscount):
+        return discount.get_discount_amount()
+    else:
+        return discount.get_discount_percentage()
+
+def used_key(discount):
+    return discount.get_used()
+
+def status_key(discount):
+    return discount.get_status()
+
+discountKey = {}
+discountKey['code'] = code_key
+discountKey['type'] = type_key
+discountKey['condition'] = condition_key
+discountKey['start'] = start_key
+discountKey['end'] = end_key
+discountKey['discount'] = discount_key
+discountKey['used'] = used_key
+discountKey['status'] = status_key

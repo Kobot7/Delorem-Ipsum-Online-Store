@@ -12,7 +12,7 @@
     <ul class="nav nav-tabs my-4">
       <li class="nav-item active"><a class="nav-link active" href="#percentage" data-toggle="tab">By percentage</a></li>
       <li class="nav-item"><a class="nav-link" href="#amount" data-toggle="tab">By amount</a></li>
-      <li class="nav-item"><a class="nav-link"href="#expired" data-toggle="tab">Expired</a></li>
+      <li class="nav-item"><a class="nav-link"href="#all" data-toggle="tab">View All</a></li>
     </ul>
 
     <div class="tab-content">
@@ -129,18 +129,35 @@
 
         </div>
 
-        <div class="tab-pane fade pb-4" id="expired">
+        <div class="tab-pane fade pb-4" id="all">
 
           <div class="table">
           <table class="table mt-4">
             <thead>
               <tr>
-                <th>Discount Code</th>
-                <th>Condition</th>
-                <th>Start</th>
-                <th>Expire</th>
-                <th>Amount</th>
-                <th>Times Used</th>
+                <th>Types<a href="/discount/type/asceding">Amount</a>
+                          <a href="/discount/type/descending">Percentage</a></th>
+                <th>Discount Code<a href="/discount/name/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                                  <a href="/discount/name/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
+                <th>Condition<a href="/discount/condition/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                              <a href="/discount/condition/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
+                <th>Valid Start<a href="/discount/start/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                                <a href="/discount/start/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
+                <th>Valid End<a href="/discount/end/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                              <a href="/discount/end/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
+                <th>Discount<a href="/discount/amount/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                            <a href="/discount/amount/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
+                <th>Times Used<a href="/discount/used/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                              <a href="/discount/used/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a</th>
+                <th><form action="" class="form-inline">
+                    <label for="filterSelect" class="float-left">Status</label>
+                    <select id="filterSelect" class="form-control d-inline">
+                        <option value="/status/active">Active</option>
+                        <option value="/status/inactive">Inactive</option>
+                        <option value="/status/expired">Expired</option>
+                        <option value="/status/deleted">Deleted</option>
+                    </select>
+                </form></th>
               </tr>
               </thead>
               <tbody>

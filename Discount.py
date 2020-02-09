@@ -39,8 +39,8 @@ class Discount:
 
     def get_status(self):
         return self.__status
-     def get_used(self):
-         return self.__status
+    def get_used(self):
+        return self.__used
 
 class AmountDiscount(Discount):
     def __init__(self, code, condition, start_date, expiry_date, status, used, discount_amount):
