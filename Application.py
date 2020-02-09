@@ -113,6 +113,65 @@ def testing():
     db['Products'] = productDict
     db.close()
 
+def discount_box(user):
+    amount_show = {}
+    percentage_show = {}
+    show = {}
+    amount_dont = []
+    percentage_dont = []
+    db = shelve.open('storage.db', 'r')
+    try:
+        valid_discount = db['Valid Discount']
+    except:
+        valid_discount = False
+    amount_discounts = valid_discount.get("Amount")
+    percentage_discounts = valid_discount.get("Percentage")
+    # print(amount_discounts)
+    db.close()
+
+    if user == False:
+        show["Amount"] = amount_discounts
+        show["Amount"] = amount_discounts
+    else:
+        users_codes = user.get_discount_codes()
+        print(users_codes)
+
+        if valid_discount is not False and bool(users_codes) is True:
+
+            if bool(amount_discounts) is True:
+                amount_show = amount_discounts
+                for user_code in users_codes:
+                    for stored_code in amount_discounts:
+                        if user_code.get_code() == stored_code:
+                            print("HERE BIVH")
+                            amount_dont.append(stored_code)
+                if bool(amount_dont) is True:
+                    for code in amount_dont:
+                        del amount_show[code]
+                        print(amount_show)
+
+            if bool(percentage_discounts) is True:
+                percentage_show = percentage_discounts
+                for user_code in users_codes:
+                    for stored_code in percentage_discounts:
+                        if user_code.get_code() == stored_code:
+                            # dont_show.append(user_code)
+                            percentage_dont.append(stored_code)
+                if bool(percentage_dont):
+                    for code in percentage_dont:
+                            del percentage_show[code]
+                            print(percentage_show)
+
+        elif valid_discount is not False and bool(users_codes) is False:
+            if bool(amount_discounts) is True:
+                amount_show = amount_discounts
+            if bool(percentage_discounts) is True:
+                percentage_show = percentage_discounts
+
+        show["Amount"] = amount_show
+        show["Percentage"] = percentage_show
+    return show
+
 @app.route('/search/<searchString>/<category>/<order>', methods=['GET', 'POST'])
 def search(searchString, category, order):
     db = shelve.open('storage.db', 'r')
@@ -146,6 +205,7 @@ def search(searchString, category, order):
 # Homepage
 @app.route('/home', methods=['GET', 'POST'])
 def home():
+    checkfordiscounts()
     productDict = {}
 
     db = shelve.open('storage.db', 'c')
@@ -171,11 +231,15 @@ def home():
     purchasesList = sort_by(productList, 'purchase', 'descending')[:6]
     viewsList = sort_by(productList,'view','descending')[:6]
 
+    show = discount_box(current)
+    print(show["Amount"])
+    print(show["Percentage"])
+
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
 
-    return render_template("home.html", current=current, searchForm=searchForm, purchasesList=purchasesList, viewsList=viewsList, Items=Items)
+    return render_template("home.html", current=current, searchForm=searchForm, purchasesList=purchasesList, viewsList=viewsList, Items=Items, show=show)
 
 # Profile/Username
 @app.route('/my-account/<username>', methods=['GET', 'POST'])
