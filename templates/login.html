@@ -17,7 +17,6 @@
       <li class="nav-item"><a class="nav-link active" href="#signUp" data-toggle="tab">Sign Up</a></li>
       {% endif %}
     </ul>
-
     {% if unique_email %}
     <div class="tab-content">
       <div class="tab-pane active in" id="login">
@@ -31,7 +30,11 @@
               <p style="color:#dc3545"> Your username or password was incorrect. Please try again. </p>
               {% endif %}
           </div>
-          <input type="submit" value="Submit" class="btn" />
+          {% if success_login %}
+          <input type="submit" value="Submit" class="btn" onclick="successLogin();"/>
+          {% else %}
+          <input type="submit" value="Submit" class="btn"/>
+          {% endif %}
         </form>
       </div>
 
@@ -48,6 +51,9 @@
           </div>
           <div class="form-group">
             {{ render_field(form2.password, class="form-control") }}
+            {% if not secure_pwd %}
+              <p style="color:#dc3545"> Please enter a password containing at least 6 letters, 1 numeral, and 1 uppercase letter. </p>
+            {% endif %}
           </div>
           <div class="form-group">
             {{ render_field(form2.confirm, class="form-control") }}
@@ -69,7 +75,11 @@
               <p style="color:#dc3545"> Your username or password was incorrect. Please try again. </p>
               {% endif %}
           </div>
-          <input type="submit" value="Submit" class="btn" />
+          {% if success_login %}
+          <input type="submit" value="Submit" class="btn" onclick="successLogin();"/>
+          {% else %}
+          <input type="submit" value="Submit" class="btn"/>
+          {% endif %}
         </form>
       </div>
 
@@ -88,7 +98,7 @@
           <div class="form-group">
             {{ render_field(form2.password, class="form-control") }}
             {% if not secure_pwd %}
-              <p style="color:#dc3545"> Please enter a password containing at least 6 letters, 1 numeral, an 1 uppercase letter. </p>
+              <p style="color:#dc3545"> Please enter a password containing at least 6 letters, 1 numeral, and 1 uppercase letter. </p>
             {% endif %}
           </div>
           <div class="form-group">
@@ -99,8 +109,11 @@
       </div>
     </div>
     {% endif %}
-    <!--Tab Content-->
   </div>
 </div>
-<!--Row 1-->
+<script>
+function successLogin() {
+  alert("User successfully logged in");
+}
+</script>
 {% endblock %}

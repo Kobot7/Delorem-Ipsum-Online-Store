@@ -23,11 +23,15 @@
     <div class="form-group rating">
       <h2>Rating</h2>
       <div class="star-rating">
+        <p>Rate our delivery service!</p>
         {{render_field(feedbackForm.rating, class= "form-check, form-check-inline")}}
       </div>
+    </div >
+
+    <div class="form-group">
+      <input type="submit" class="btn btn-secondary" onclick="alert('Your feedback has been submitted!!')">
     </div>
 
-      <input type="submit" class="btn btn-secondary" onclick="alert('Your feedback has been submitted!!')">
   </div>
 </form>
 
