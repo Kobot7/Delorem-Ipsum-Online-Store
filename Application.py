@@ -1700,6 +1700,7 @@ def addStock():
         newStock[addStockForm.product.data] = addStockForm.quantity.data
         db['New Stock'] = newStock
         db.close()
+        return redirect('/addStock')
 
     return render_template('addStock.html', form=addStockForm, currentPage='Catalog', newStock=newStock, productDict=productDict)
 
@@ -1734,6 +1735,20 @@ def cancelAdditionOfStock():
     db.close()
 
     return redirect('/products/name/ascending')
+
+@app.route('/deleteStockChoice/<serialNo>')
+def deleteStockChoice(serialNo):
+    newStock = {}
+    db = shelve.open('storage.db', 'r')
+    try:
+        newStock = db['New Stock']
+    except:
+        print('Error in retrieving New Stock from storage.db.')
+    print(newStock)
+    newStock.pop(serialNo)
+    db['New Stock'] = newStock
+    db.close()
+    return redirect('/addStock')
 
 @app.route('/transactions', methods=['GET', 'POST'])
 def transactions():
@@ -1900,8 +1915,7 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
                         , 'Credit Card No.'
                         , 'Expiry Date'
                         , 'CVV'
-                        , 'Collection Date'
-                        , 'Collection Time'
+                        , 'Collection Date/Time'
                         , 'Items'
                         , 'Total']
 
@@ -1999,8 +2013,7 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
                         , str(t.get_credit_card_number())
                         , t.get_credit_card_expiry()
                         , t.get_credit_card_cvv()
-                        , t.get_date()
-                        , t.get_time()
+                        , str(t.get_date()) + ', ' + str(t.get_time())
                         , itemList[0]
                         , '$' + t.get_total()]
 
@@ -2008,7 +2021,7 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
 
                 if len(itemList)>1:
                     for x in range(len(itemList)-1):
-                        data = ['','','','','','','','','','','','',itemList[x+1]]
+                        data = ['','','','','','','','','','','',itemList[x+1]]
                         finalData.append(data)
 
         if uncompleted=='true':
@@ -2031,8 +2044,7 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
                         , str(t.get_credit_card_number())
                         , t.get_credit_card_expiry()
                         , t.get_credit_card_cvv()
-                        , t.get_date()
-                        , t.get_time()
+                        , str(t.get_date()) + ', ' + str(t.get_time())
                         , itemList[0]
                         , '$' + t.get_total()]
 
@@ -2040,7 +2052,7 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
 
                 if len(itemList)>1:
                     for x in range(len(itemList)-1):
-                        data = ['','','','','','','','','','','','',itemList[x+1]]
+                        data = ['','','','','','','','','','','',itemList[x+1]]
                         finalData.append(data)
 
     return excel.make_response_from_array(finalData, file_type='xls', file_name='Delorem Ipsum transaction records')
