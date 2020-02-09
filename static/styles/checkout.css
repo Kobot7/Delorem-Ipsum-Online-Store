@@ -11,13 +11,16 @@ header{
     margin-top: 15px;
 }
 
+hr{
+  border-color: #84a220;
+}
 h1{
   font-size: 1.625rem;
   font-weight: 700;
 }
 
 .box, #right-sticky{
-    background-color: rgba(46, 139, 87, 0.35);
+    background-color: white;
 }
 
 #content{
@@ -160,7 +163,7 @@ section{
 }
 
 #sum hr{
-  background-color: black;
+  background-color: #84a220;
   border:none;
   height:1px;
   margin:.25rem 0 1.563rem
@@ -359,7 +362,6 @@ tbody .l-ltc{
 
 .item-list{
   overflow: auto;
-  background-color: lightgray;
 }
 
 .item-wrapper{
@@ -369,6 +371,6 @@ tbody .l-ltc{
 }
 
 #header-line{
-  background-color: black;
+  background-color: #84a220;
   margin:0;
 }

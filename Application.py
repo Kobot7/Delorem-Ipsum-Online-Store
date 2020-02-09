@@ -257,16 +257,36 @@ def view_profile(username):
         return redirect(url_for("home"))
 
     editProfileForm = EditProfileForm(request.form)
+
+    if editProfileForm.address.data or editProfileForm.phone.data != "":
+        activate_disabled_btn = True
+
+    empty_username_error = False
+    if editProfileForm.username.data == "":
+            empty_username_error = True
+
     if request.method == "POST":
         current_id = current.get_user_id()
         del namesDict[current.get_username()]
-        current.set_username(editProfileForm.username.data)
+        if empty_username_error:
+            print("Username cannot be left blank.")
+        else:
+            current.set_username(editProfileForm.username.data)
         current.set_address(editProfileForm.address.data)
-        current.set_phone(editProfileForm.phone.data)
         current.set_email(editProfileForm.email.data)
+        # check for valid phone number
+        try:
+            number = str(editProfileForm.phone.data)
+            print("\n\n\n\n\n")
+            if number[0] == "6" or number[0] == "8" or number[0] == "9":
+                current.set_phone(editProfileForm.phone.data)
+            else:
+                current.set_phone("None")
+        except:
+            current.set_phone("None")
+
         if current.get_password() == editProfileForm.password.data:
             if editProfileForm.newpassword.data != "":
-                current.set_password(editProfileForm.newpassword.data)
                 print("New password set for user " + current.get_username() + ", " + current.get_password() + ".")
             elif editProfileForm.newpassword.data == "":
                 print("New password field was left empty.")
@@ -308,7 +328,9 @@ def deleteUser():
     except:
         print("Error while retrieving usersDict")
     current_id = current.get_user_id()
+    print("\n\n\n")
     print(f"{usersDict[current_id].get_username()} is deleted.")
+    print("\n\n\n")
     del usersDict[current_id]
     db["Users"] = usersDict
     del namesDict[current.get_username()]
@@ -346,12 +368,12 @@ def login():
             unique_email = True
             valid_email_registration = True
             secure_pwd = True
-            regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
+            regexEmail = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
             SpecialSym =['$', '@', '#', '%']
 
             for user in usersDict.values():
                 #check email is correct format
-                if not(re.search(regex, registrationForm.email.data)):
+                if not(re.search(regexEmail, registrationForm.email.data)):
                     print("Invalid Email")
                     valid_email_registration = False
                     break
@@ -482,7 +504,7 @@ def viewFAQ():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
     return render_template("FAQ.html", current=current, searchForm=searchForm, Items=Items)
 
-@app.route('/orderHistory')
+@app.route('/orderHistory', methods=['GET'])
 def orderHistory():
     db = shelve.open("storage.db", "r")
     try:
@@ -493,7 +515,18 @@ def orderHistory():
         current = False
         Items = 0
     db.close()
+    # bought = False
+    # amount = 0
+    # for serial_no in cart:
+    #     if serial_no == serialNo:
+    #         bought = True
+    #         amount = cart[serial_no]
+    #         break
+
+
     searchForm = searchBar()
+
+
     #METHOD GET - history of order transaction
     return render_template('orderHistory.html', searchForm = searchForm, Items=Items, current = current)
 
