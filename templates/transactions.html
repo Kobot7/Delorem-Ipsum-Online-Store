@@ -19,9 +19,13 @@
 {% endblock %}
 
 {% block content %}
+{% from "includes/_admin_formhelper.html" import render_field %}
 <div class="row justify-content-center">
-  <div class="col-md-11 mt-3">
-    <h1 class="d-inline">Transactions</h1>
+  <div class="col-md-11 d-flex justify-content-between mt-4">
+    <h1>Transactions</h1>
+    <button type="button" class="btn" data-toggle="modal" data-target="#exportModal">
+      <i class="fa fa-download"></i> Export
+    </button>
   </div>
 
   <div class="col-md-11 mt-3">
@@ -446,6 +450,52 @@
       <div>
   </div>
 </div>
+
+
+<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form method="POST" action="">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Select Transactions to Export</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div> <!--Modal header-->
+
+        <div class="modal-body">
+          <div class="form-group">
+            <div class="form-check form-check-inline">
+              {{ render_field(exportForm.delivery, class="form-check-input") }}
+              <label class="form-check-label" for="inlineCheckbox1">Delivery&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+            </div>
+            <div class="form-check form-check-inline">
+              {{ render_field(exportForm.collection, class="form-check-input") }}
+              <label class="form-check-label" for="inlineCheckbox2">Collection</label>
+            </div>
+          </div> <!--Form group-->
+
+          <div class="form-group">
+            <div class="form-check form-check-inline">
+              {{ render_field(exportForm.uncompleted, class="form-check-input") }}
+              <label class="form-check-label" for="inlineCheckbox1">Uncompleted&nbsp;&nbsp;</label>
+            </div>
+            <div class="form-check form-check-inline">
+              {{ render_field(exportForm.completed, class="form-check-input") }}
+              <label class="form-check-label" for="inlineCheckbox2">Completed</label>
+            </div>
+          </div> <!--Form group-->
+
+        </div> <!--Modal body-->
+
+        <div class="modal-footer">
+          <button type="button" class="btn grayButton" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn">Export</button>
+        </div>
+      </form>
+    </div> <!--Modal footer-->
+  </div>
+</div> <!--Modal-->
 {% endblock %}
 
 {% block scripts %}

@@ -165,6 +165,12 @@ class AdminSearch(Form):
     search_input = StringField('', [validators.DataRequired()])
     # search_subcat = SelectField('', choices=subCatList, default='Select')
 
+class ExportTransaction(Form):
+    delivery = BooleanField('', [validators.DataRequired()])
+    collection = BooleanField('')
+    completed = BooleanField('')
+    uncompleted = BooleanField('')
+
 class DiscountForm(Form):
     discount_code = StringField('Discount code')
 

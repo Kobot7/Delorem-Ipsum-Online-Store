@@ -1646,6 +1646,8 @@ def transactions():
             else:
                 collectionNotCompleteList.append(transactionsDict[key])
 
+    exportForm = ExportTransaction(request.form)
+
     if request.method=="POST":
         d_mark_complete_transactions = request.form.getlist("dMarkAsComplete")
         for sn in d_mark_complete_transactions:
@@ -1669,11 +1671,23 @@ def transactions():
 
         db['Transactions'] = transactionsDict
         db.close()
-        return redirect('/transactions')
+
+        if exportForm.validate():
+            delivery = str(exportForm.delivery.data)
+            collection = str(exportForm.collection.data)
+            uncompleted = str(exportForm.uncompleted.data)
+            completed = str(exportForm.completed.data)
+
+            print('/downloadTransactions/' + delivery + '/' + collection + '/'+ uncompleted + '/' + completed)
+            return redirect('/downloadTransactions/' + delivery + '/' + collection + '/'+ uncompleted + '/' + completed)
+
+        else:
+            return redirect('/transactions')
 
     return render_template('transactions.html', currentPage='Transactions'
     , deliveryCompleteList=deliveryCompleteList, deliveryNotCompleteList=deliveryNotCompleteList
-    , collectionCompleteList=collectionCompleteList, collectionNotCompleteList=collectionNotCompleteList)
+    , collectionCompleteList=collectionCompleteList, collectionNotCompleteList=collectionNotCompleteList
+    , exportForm=exportForm)
 
 @app.route('/downloadProducts', methods=['GET'])
 def downloadProducts():
@@ -1717,51 +1731,145 @@ def downloadProducts():
 
     return excel.make_response_from_array(productArray, file_type='xls', file_name='Delorem Ipsum product records')
 
-@app.route('/downloadTransactions', methods=['GET'])
-def downloadTransactions():
-    db = shelve.open('storage.db', 'c')
+@app.route('/downloadTransactions/<delivery>/<collection>/<uncompleted>/<completed>', methods=['GET'])
+def downloadTransactions(delivery, collection, completed, uncompleted):
+    print(delivery, collection, uncompleted, completed)
+    transactionsDict = {}
+    deliveryCompleteList = []
+    deliveryNotCompleteList = []
+    collectionCompleteList = []
+    collectionNotCompleteList = []
+    finalData = []
+
+    db = shelve.open('storage.db', 'r')
 
     try:
-        transactionDict = db['Transactions']
-        db.close()
+        transactionsDict = db['Transactions']
     except:
         print('Error in retrieving Transactions from storage.db.')
 
-    transactionArray = [['Delivery Type'
-                    , 'Name'
-                    , 'Phone'
-                    , 'Email'
-                    , ''
-                    , ''
-                    , ''
-                    , ''
-                    , ''
-                    , ''
-                    , ''
-                    , '']]
-
-
-    for key in productDict:
-        product = productDict[key]
-
-        if product.get_completion():
-            activated = 'Show'
+    for key in transactionsDict:
+        if transactionsDict[key].get_type()=='delivery':
+            if transactionsDict[key].get_completion()==True:
+                deliveryCompleteList.append(transactionsDict[key])
+            else:
+                deliveryNotCompleteList.append(transactionsDict[key])
         else:
-            activated = 'Hide'
+            if transactionsDict[key].get_completion()==True:
+                collectionCompleteList.append(transactionsDict[key])
+            else:
+                collectionNotCompleteList.append(transactionsDict[key])
 
-        data = [product.get_product_name()
-                , product.get_brand()
-                , product.get_sub_category()
-                , product.get_serial_no()
-                , product.get_price()
-                , product.get_description()
-                , activated
-                , product.get_quantity()
-                , product.get_stock_threshold()]
 
-        transactionArray.append(data)
+    deliveryArray = ['Status'
+                        , 'Delivery Type'
+                        , 'Name'
+                        , 'Contact No.'
+                        , 'Email'
+                        , 'Payment Mode'
+                        , 'Credit Card No.'
+                        , 'Expiry Date'
+                        , 'CVV'
+                        , 'Address'
+                        , 'Items'
+                        , 'Total']
 
-    return excel.make_response_from_array(productArray, file_type='xls', file_name='Delorem Ipsum transaction records')
+    collectionArray = ['Status'
+                        , 'Delivery Type'
+                        , 'Name'
+                        , 'Contact No.'
+                        , 'Email'
+                        , 'Payment Mode'
+                        , 'Credit Card No.'
+                        , 'Expiry Date'
+                        , 'CVV'
+                        , 'Collection Date'
+                        , 'Collection Time'
+                        , 'Items'
+                        , 'Total']
+
+    if delivery=='True':
+        finalData.append(deliveryArray)
+
+        if completed=='True':
+            for t in deliveryCompleteList:
+                address = t.get_street_name() + ', #' + str(t.get_unit_no()) + ' (S' + str(t.get_postal_code()) + ')'
+                data = ['Delivered'
+                        , 'Delivery'
+                        , t.get_name()
+                        , t.get_phone()
+                        , t.get_email()
+                        , t.get_payment_mode()
+                        , str(t.get_credit_card_number())
+                        , t.get_credit_card_expiry()
+                        , t.get_credit_card_cvv()
+                        , address
+                        , 'test'
+                        , t.get_total()]
+
+                finalData.append(data)
+
+        if uncompleted=='True':
+            for t in deliveryNotCompleteList:
+                address = t.get_street_name() + ', #' + str(t.get_unit_no()) + ' (S' + str(t.get_postal_code()) + ')'
+                data = ['Not Delivered'
+                        , 'Delivery'
+                        , t.get_name()
+                        , t.get_phone()
+                        , t.get_email()
+                        , t.get_payment_mode()
+                        , str(t.get_credit_card_number())
+                        , t.get_credit_card_expiry()
+                        , t.get_credit_card_cvv()
+                        , address
+                        , 'test'
+                        , t.get_total()]
+
+                finalData.append(data)
+
+        if collection=='True':
+            finalData.append([])
+
+    if collection=='True':
+        finalData.append(deliveryArray)
+
+        if completed=='True':
+            for t in collectionCompleteList:
+                data = ['Collected'
+                        , 'Collection'
+                        , t.get_name()
+                        , t.get_phone()
+                        , t.get_email()
+                        , t.get_payment_mode()
+                        , str(t.get_credit_card_number())
+                        , t.get_credit_card_expiry()
+                        , t.get_credit_card_cvv()
+                        , t.get_date()
+                        , t.get_time()
+                        , 'test'
+                        , t.get_total()]
+
+                finalData.append(data)
+
+        if uncompleted=='True':
+            for t in collectionCompleteList:
+                data = ['Not Collected'
+                        , 'Collection'
+                        , t.get_name()
+                        , t.get_phone()
+                        , t.get_email()
+                        , t.get_payment_mode()
+                        , str(t.get_credit_card_number())
+                        , t.get_credit_card_expiry()
+                        , t.get_credit_card_cvv()
+                        , t.get_date()
+                        , t.get_time()
+                        , 'test'
+                        , t.get_total()]
+
+                finalData.append(data)
+
+    return excel.make_response_from_array(finalData, file_type='xls', file_name='Delorem Ipsum transaction records')
 
 
 # Other stuff
