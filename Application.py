@@ -42,7 +42,7 @@ app.config.update(
     MAIL_USE_TLS= True,
     MAIL_USE_SSL= False,
 	MAIL_USERNAME = 'deloremipsumonlinestore@outlook.com',
-	# MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
+	MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
 	MAIL_DEBUG = True,
 	MAIL_SUPPRESS_SEND = False,
     MAIL_ASCII_ATTACHMENTS = True
@@ -113,6 +113,65 @@ def testing():
     db['Products'] = productDict
     db.close()
 
+def discount_box(user):
+    amount_show = {}
+    percentage_show = {}
+    show = {}
+    amount_dont = []
+    percentage_dont = []
+    db = shelve.open('storage.db', 'r')
+    try:
+        valid_discount = db['Valid Discount']
+    except:
+        valid_discount = False
+    amount_discounts = valid_discount.get("Amount")
+    percentage_discounts = valid_discount.get("Percentage")
+    # print(amount_discounts)
+    db.close()
+
+    if user == False:
+        show["Amount"] = amount_discounts
+        show["Amount"] = amount_discounts
+    else:
+        users_codes = user.get_discount_codes()
+        print(users_codes)
+
+        if valid_discount is not False and bool(users_codes) is True:
+
+            if bool(amount_discounts) is True:
+                amount_show = amount_discounts
+                for user_code in users_codes:
+                    for stored_code in amount_discounts:
+                        if user_code.get_code() == stored_code:
+                            print("HERE BIVH")
+                            amount_dont.append(stored_code)
+                if bool(amount_dont) is True:
+                    for code in amount_dont:
+                        del amount_show[code]
+                        print(amount_show)
+
+            if bool(percentage_discounts) is True:
+                percentage_show = percentage_discounts
+                for user_code in users_codes:
+                    for stored_code in percentage_discounts:
+                        if user_code.get_code() == stored_code:
+                            # dont_show.append(user_code)
+                            percentage_dont.append(stored_code)
+                if bool(percentage_dont):
+                    for code in percentage_dont:
+                            del percentage_show[code]
+                            print(percentage_show)
+
+        elif valid_discount is not False and bool(users_codes) is False:
+            if bool(amount_discounts) is True:
+                amount_show = amount_discounts
+            if bool(percentage_discounts) is True:
+                percentage_show = percentage_discounts
+
+        show["Amount"] = amount_show
+        show["Percentage"] = percentage_show
+    return show
+
 @app.route('/search/<searchString>/<category>/<order>', methods=['GET', 'POST'])
 def search(searchString, category, order):
     db = shelve.open('storage.db', 'r')
@@ -146,6 +205,7 @@ def search(searchString, category, order):
 # Homepage
 @app.route('/home', methods=['GET', 'POST'])
 def home():
+    checkfordiscounts()
     productDict = {}
 
     db = shelve.open('storage.db', 'c')
@@ -171,11 +231,15 @@ def home():
     purchasesList = sort_by(productList, 'purchase', 'descending')[:6]
     viewsList = sort_by(productList,'view','descending')[:6]
 
+    show = discount_box(current)
+    print(show["Amount"])
+    print(show["Percentage"])
+
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
 
-    return render_template("home.html", current=current, searchForm=searchForm, purchasesList=purchasesList, viewsList=viewsList, Items=Items)
+    return render_template("home.html", current=current, searchForm=searchForm, purchasesList=purchasesList, viewsList=viewsList, Items=Items, show=show)
 
 # Profile/Username
 @app.route('/my-account/<username>', methods=['GET', 'POST'])
@@ -434,6 +498,7 @@ def orderHistory():
 
 @app.route('/mainCategory/<mainCategory>/<category>/<order>/', methods=['GET', 'POST'])
 def mainCategory(mainCategory, category, order):
+    checkfordiscounts()
     db = shelve.open('storage.db', 'r')
     try:
         Products = db["Products"]
@@ -446,6 +511,7 @@ def mainCategory(mainCategory, category, order):
         print("Error in retrieving current user, subcat")
         current = False
         Items = 0
+    show = discount_box(current)
 
     db.close()
 
@@ -463,11 +529,12 @@ def mainCategory(mainCategory, category, order):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('mainCategory.html', productList=products, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current, Items=Items)
+    return render_template('mainCategory.html', productList=products, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current, Items=Items, show=show)
 
 # Supplements(one of the subsections)
 @app.route('/subCategory/<subCategory>/<category>/<order>/', methods=['GET', 'POST'])
 def subCategory(subCategory, category, order):
+    checkfordiscounts
     db = shelve.open('storage.db', 'r')
     try:
         Products = db["Products"]
@@ -480,6 +547,7 @@ def subCategory(subCategory, category, order):
         print("Error in retrieving current user, subcat")
         current = False
         Items = 0
+    show = discount_box(current)
 
     db.close()
 
@@ -497,11 +565,12 @@ def subCategory(subCategory, category, order):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('subCategory.html', productList=products, subCategory=subCategory, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current, Items=Items)
+    return render_template('subCategory.html', productList=products, subCategory=subCategory, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current, Items=Items, show=show)
 
 # Ribena(one of the products)
 @app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
 def IndItem(serialNo):
+    checkfordiscounts()
     db = shelve.open('storage.db','w')
     current = ""
     try:
@@ -514,6 +583,9 @@ def IndItem(serialNo):
     except:
         print("Unable to get the current dude!")
         Items = 0
+
+    show = discount_box(current)
+
     IndItem = products[serialNo]
     IndItem.increase_views()
     class QuantityForm(Form):
@@ -564,11 +636,12 @@ def IndItem(serialNo):
     if request.method == "POST" and Quantity.validate():
         quantity = Quantity.quantity.data
         return redirect(url_for('addToCart', name = IndItem.get_product_name(), quantity = quantity))
-    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken, related=related, Items=Items, QuantityForm = Quantity, Bought = bought, amount = amount)
+    return render_template('IndItem.html', product=IndItem, mainCategory=mainCategory, searchForm=searchForm, current=current, taken=taken, related=related, Items=Items, QuantityForm = Quantity, Bought = bought, amount = amount,show=show)
 
 # Shopping Cart
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
+    checkfordiscounts()
     deducted=0
     discount= ''
     new_total = 0
@@ -583,6 +656,7 @@ def cart():
         print('Error reading Current User.')
         current = False
         products = {}
+    show = discount_box(current)
 
     cart = current.get_shopping_cart()
     db.close()
@@ -629,11 +703,12 @@ def cart():
     # return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, codes=codes, Items = Items, discount=discount)
 
     new_total = totalCost
-    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, Items = Items, discount=discount, new_total= new_total, current_discount=current_discount, deducted = deducted)
+    return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, Items = Items, discount=discount, new_total= new_total, current_discount=current_discount, deducted = deducted, show=show)
 
 
 @app.route('/useDiscount',  methods=['POST'])
 def useDiscount():
+    checkfordiscounts()
     searchForm = searchBar()
     Delivery = NoCollectForm(request.form)
     Discount = DiscountForm(request.form)
@@ -657,6 +732,7 @@ def useDiscount():
         except:
             print("Error in retrieving current user from storage.db")
 
+        show = discount_box(current)
         users_codes = current.get_discount_codes()
 
         try:
@@ -698,7 +774,7 @@ def useDiscount():
                     check_used = True
                     error_msg = "You have already used " + code+ "!"
 
-                    return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount, new_total=new_total , searchForm=searchForm, current_discount = current_discount, deducted = deducted)
+                    return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount, new_total=new_total , searchForm=searchForm, current_discount = current_discount, deducted = deducted, show=show)
                     # return render_template('cart.html', cartList=cartList, totalCost=totalCost, searchForm=searchForm, current=current, NoCollectForm = Delivery, Discount=Discount, Items = Items)
 
         amount_discounts = {}
@@ -731,7 +807,7 @@ def useDiscount():
 
         if valid == False:
             error_msg = "Invalid discount code."
-            return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount, new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted)
+            return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount, new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted, show=show)
 
         if valid is True and check_used==False and float(totalCost) >= condition:
             print("TRUUUUU")
@@ -765,11 +841,11 @@ def useDiscount():
                 db["Current User"] = current
                 db.close()
 
-                return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount,new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted)
+                return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount,new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted, show=show)
         else:
             error_msg = code + " not applicable"
             print(error_msg)
-            return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount,new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted)
+            return render_template('cart.html', cartList=cartList, totalCost=totalCost, current=current, NoCollectForm = Delivery, Discount=Discount, Items=Items, error_msg=error_msg, discount=discount,new_total=new_total, searchForm=searchForm, current_discount=current_discount, deducted = deducted, show=show)
 
 @app.route("/removeUseDiscount", methods=["POST"])
 def removeUseDiscount():
@@ -985,7 +1061,7 @@ def moveToCart(serialNo):
 def checkout(delivery):
 
     NoCollect = delivery
-
+    deducted = 0
     current = ""
     searchForm = searchBar()
     deliveryForm = DeliveryForm(request.form)
@@ -1922,10 +1998,6 @@ def deliveryInvoice(email):
         products = db["Products"]
     except:
         print('Error in retrieving products from storage.db.')
-    # try:
-    #     transactions = db["Transactions"]
-    # except:
-    #     print('Error in retrieving transactions from storage.db.')
 
     pickle_in = open('temp_transaction.pickle','rb')
     transaction = pickle.load(pickle_in)
@@ -1953,6 +2025,8 @@ def deliveryInvoice(email):
     total = Decimal(format(float(total), '.2f'))
     deducted = transaction.get_deducted()
     deducted = Decimal(format(float(total), '.2f'))
+    print(total)
+    print(deducted)
     # try:
     #     deliveryDetails = db["deliveryDetails"]
     #
@@ -2002,6 +2076,7 @@ def deliveryInvoice(email):
 
 @app.route('/listOfBrands')
 def listOfBrands():
+    checkfordiscounts()
     productsDict ={}
     db = shelve.open('storage.db', 'c')
     try:
@@ -2016,6 +2091,8 @@ def listOfBrands():
         print('Error in retrieving current user from storage.db.')
         current = False
         Items = 0
+
+    show = discount_box(current)
 
     start_with_letter = []
     start_with_other = []
@@ -2034,10 +2111,11 @@ def listOfBrands():
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         print(searchForm.search_input.data)
-    return render_template('listOfBrands.html', searchForm=searchForm, brandsDict=brandsDict, current=current, Items=Items)
+    return render_template('listOfBrands.html', searchForm=searchForm, brandsDict=brandsDict, current=current, Items=Items, show=show)
 
 @app.route('/Brand/<brand>', methods=['GET', 'POST'])
 def brand(brand):
+    checkfordiscounts()
     db = shelve.open('storage.db', 'r')
     try:
         Products = db["Products"]
@@ -2053,6 +2131,8 @@ def brand(brand):
         current = False
         Items = 0
 
+    show = discount_box(current)
+
     products = []
     for id in Products:
         product = Products[id]
@@ -2063,7 +2143,7 @@ def brand(brand):
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data)
-    return render_template('productByBrand.html', productList=products, productCount=len(products), searchForm=searchForm, brand=brand, current=current, Items = Items)
+    return render_template('productByBrand.html', productList=products, productCount=len(products), searchForm=searchForm, brand=brand, current=current, Items = Items, user=user)
 
 app.jinja_env.filters['get_name_with_space'] = get_name_with_space
 if __name__=='__main__':
