@@ -174,6 +174,7 @@ def discount_box(user):
 
 @app.route('/search/<searchString>/<category>/<order>', methods=['GET', 'POST'])
 def search(searchString, category, order):
+    cart=[]
     db = shelve.open('storage.db', 'r')
     try:
         Products = db["Products"]
