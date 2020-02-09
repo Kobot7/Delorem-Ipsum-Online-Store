@@ -1235,6 +1235,12 @@ def feedback():
     feedbackForm = FeedbackForm(request.form)
     searchForm = searchBar()
 
+    try:
+        db = shelve.open('storage.db', 'r')
+        current = db["Current User"]
+    except:
+        print("Error in retrieving current user for feedback")
+
     if request.method == "POST" and feedbackForm.validate():
         db = shelve.open('db', 'c')
         feedbacks = []
@@ -1250,7 +1256,7 @@ def feedback():
 
         return redirect('/home')
 
-    return render_template('feedback.html', searchForm=searchForm, feedbackForm=feedbackForm)
+    return render_template('feedback.html', searchForm=searchForm, feedbackForm=feedbackForm, current=current, Items = 0)
 
 @app.route('/displayFeedback')
 def displayFeedback():
