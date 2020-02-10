@@ -264,8 +264,10 @@ def view_profile(username):
     invalid_phone_num_error = False
     edit_email_valid = False
     empty_username_error = False
+
     if not editProfileForm.username.data.isalnum():
-        empty_username_error = True
+        if editProfileForm.username.data == "":
+            empty_username_error = True
 
     if request.method == "POST":
         current_id = current.get_user_id()
@@ -325,10 +327,9 @@ def view_profile(username):
         db["Usernames"] = namesDict
         db["Current User"] = current
 
-        edit_email_valid = True
-        empty_username_error = False
-        invalid_phone_num_error = False
-
+        # edit_email_valid = True
+        # empty_username_error = True
+        # invalid_phone_num_error = True
 
         searchForm = searchBar()
         if request.method == "POST" and searchForm.validate():
