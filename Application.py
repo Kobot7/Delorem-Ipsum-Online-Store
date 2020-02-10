@@ -42,7 +42,7 @@ app.config.update(
     MAIL_USE_TLS= True,
     MAIL_USE_SSL= False,
 	MAIL_USERNAME = 'deloremipsumonlinestore@outlook.com',
-	# MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
+	MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
 	MAIL_DEBUG = True,
 	MAIL_SUPPRESS_SEND = False,
     MAIL_ASCII_ATTACHMENTS = True
@@ -620,13 +620,14 @@ def subCategory(subCategory, category, order):
                 products.append(product)
 
     mainCategory = get_main_category(subCategory)
+    bmainCat = mainCategory.replace(' ', '')
     products = sort_by(products, category, order)
 
     subCategory = get_name_with_space(subCategory)
     searchForm = searchBar()
     if request.method == "POST" and searchForm.validate():
         return redirect('/search/' + searchForm.search_input.data + '/view/descending')
-    return render_template('subCategory.html', productList=products, subCategory=subCategory, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current, Items=Items, show=show)
+    return render_template('subCategory.html', bmainCat=bmainCat, productList=products, subCategory=subCategory, productCount=len(products), mainCategory=mainCategory, searchForm=searchForm, current=current, Items=Items, show=show)
 
 # Ribena(one of the products)
 @app.route('/IndItem/<serialNo>', methods=['GET', 'POST'])
