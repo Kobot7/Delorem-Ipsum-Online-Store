@@ -43,7 +43,7 @@ app.config.update(
     MAIL_USE_TLS= True,
     MAIL_USE_SSL= False,
 	MAIL_USERNAME = 'deloremipsumonlinestore@outlook.com',
-	MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
+	# MAIL_PASSWORD = os.environ["MAIL_PASSWORD"],
 	MAIL_DEBUG = True,
 	MAIL_SUPPRESS_SEND = False,
     MAIL_ASCII_ATTACHMENTS = True
@@ -607,7 +607,7 @@ def orderHistory():
 
     print("\n\n\n")
     searchForm = searchBar()
-    return render_template('orderHistory.html', date_of_order=date_of_order, transaction=obj, current_transac_list=current_transac_list, searchForm=searchForm, Items=Items, current=current, items=items)
+    return render_template('orderHistory.html', date_of_order=date_of_order, transaction=obj, current_transac_list=current_transac_list, searchForm=searchForm, Items=Items, current=current, items=transactions)
 @app.route('/mainCategory/<mainCategory>/<category>/<order>/', methods=['GET', 'POST'])
 def mainCategory(mainCategory, category, order):
     checkfordiscounts()

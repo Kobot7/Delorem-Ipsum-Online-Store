@@ -12,7 +12,7 @@
     <form action="#" method="post">
       <h2> Order History </h2>
       {% for transaction in current_transac_list %}
-      {% for item in items%}
+      {% for item in items[transaction].get_items() %}
       <div class=items-block>
         <ul id="items">
           <article class="item">
