@@ -1,5 +1,6 @@
 from wtforms import Form, StringField, SelectField, validators, BooleanField, PasswordField, FileField, DecimalField, IntegerField, TextAreaField, RadioField
 from wtforms.fields.html5 import DateField
+from wtforms.validators import ValidationError
 from wtforms_components import TimeField, DateRange, TimeRange
 from datetime import datetime,date
 import re
@@ -182,6 +183,10 @@ class AddDiscountAmountForm(Form):
     discount_expiry  = DateField('Date expiry', format = "%Y-%m-%d")
     discount_amount = DecimalField('Discount Amount', [validators.DataRequired(message='This is a required field.')
                                 , validators.NumberRange(min=0, message='Value has to be more than 0')], places=2)
+
+    def validate_expiry_field(form, field):
+        if field.data < form.discount_start.data:
+            raise ValidationError("End date must not be earlier than start date.")
 
 class AddDiscountPercentageForm(Form):
     discount_code = StringField('Discount code')

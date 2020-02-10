@@ -35,6 +35,7 @@ from threading import Thread
 import pickle
 # print('MAIL_PASSWORD' in os.environ)
 
+
 app = Flask(__name__, static_url_path='/static')
 app.config.update(
     MAIL_SERVER= 'smtp.office365.com',
@@ -69,12 +70,41 @@ app.config.update(
 # updated_discount["Percentage"] = percentage_discount
 # db["Valid Discount"] = updated_discount
 # db.close()
+# def checkfordiscounts():
+#     db = shelve.open('storage.db', 'c')
+#     try:
+#         valid_discount = db["Valid Discount"]
+#     except:
+#         print("bchscbweucw")
+#     amount_discounts = valid_discount["Amount"]
+#     percentage_discounts = valid_discount["Percentage"]
+#     valid_amount_discounts = {}
+#     valid_percentage_discounts =  {}
+#     for code in amount_discounts:
+#         if amount_discounts[code].get_start_date() < date.today() and amount_discounts[code].get_expiry_date() > date.today():
+#             valid_amount_discounts[code] = amount_discounts[code]
+#
+#     for code in percentage_discounts:
+#         if percentage_discounts[code].get_start_date() < date.today() and percentage_discounts[code].get_expiry_date() > date.today():
+#             valid_percentage_discounts[code] = percentage_discounts[code]
+#
+#     valid_discount["Amount"] = valid_amount_discounts
+#     valid_discount["Percentage"] = valid_percentage_discounts
+#     db["Valid Discount"]  =valid_discount
+#
+#     db.close()
+#     return valid_discount
 def checkfordiscounts():
     db = shelve.open('storage.db', 'c')
+    valid_discount = {}
+    discount_master =[]
     try:
         valid_discount = db["Valid Discount"]
+        # expired_discount = db["Expired"]
+        discount_master = db["Discount Master"]
     except:
         print("bchscbweucw")
+
     amount_discounts = valid_discount["Amount"]
     percentage_discounts = valid_discount["Percentage"]
     valid_amount_discounts = {}
@@ -82,18 +112,39 @@ def checkfordiscounts():
     for code in amount_discounts:
         if amount_discounts[code].get_start_date() < date.today() and amount_discounts[code].get_expiry_date() > date.today():
             valid_amount_discounts[code] = amount_discounts[code]
+            status = "active"
+        elif amount_discounts[code].get_start_date() < date.today() and amount_discounts[code].get_expiry_date() <date.today():
+            status = "expired"
+        else:
+            status = "inactive"
+
+        for discount in discount_master:
+            if discount == amount_discounts[code]:
+                discount.set_status(status)
+                break
+        amount_discounts[code].set_status(status)
+
 
     for code in percentage_discounts:
         if percentage_discounts[code].get_start_date() < date.today() and percentage_discounts[code].get_expiry_date() > date.today():
             valid_percentage_discounts[code] = percentage_discounts[code]
+            status = "active"
+        elif percentage_discounts[code].get_start_date() < date.today() and percentage_discounts[code].get_expiry_date() <date.today():
+            status = "expired"
+        else:
+            status = "inactive"
+        for discount in discount_master:
+            if discount == percentage_discounts[code]:
+                discount.set_status(status)
+        percentage_discounts[code].set_status(status)
 
     valid_discount["Amount"] = valid_amount_discounts
     valid_discount["Percentage"] = valid_percentage_discounts
-    db["Valid Discount"]  =valid_discount
+    db["Valid Discount"] = valid_discount
+    db["Discount Master"] = discount_master
 
     db.close()
     return valid_discount
-
 checkfordiscounts()
 
 mail = Mail(app)
@@ -1252,6 +1303,7 @@ def confirm(type):
         current = db["Current User"]
         products = db["Products"]
         transactions = db["Transactions"]
+        discount_master = db["Discount Master"]
     except:
         print("Nah man this can't be happenin")
     transactions[transaction.get_id()] = transaction
@@ -1269,6 +1321,11 @@ def confirm(type):
         current_discount = current.get_current_discount()
         current_discount.clear()
         current.set_current_discount(current_discount)
+        for thing in discount_master:
+            if thing == discount:
+                used = thing.get_used()
+                used += 1
+                thing.set_used(used)
     else:
         print("Oop no discount used")
     cart = current.get_shopping_cart()
@@ -2120,16 +2177,22 @@ def downloadTransactions(delivery, collection, completed, uncompleted):
 
     return excel.make_response_from_array(finalData, file_type='xls', file_name='Delorem Ipsum transaction records')
 
-
 # Other stuff
-@app.route('/discount', methods=['GET', 'POST'])
-def discount():
+@app.route('/discount/<category>/<order>/', methods=['GET', 'POST'])
+def discount(category, order):
     AddDiscountAmount = AddDiscountAmountForm(request.form)
     AddDiscountPercentage = AddDiscountPercentageForm(request.form)
     db = shelve.open('storage.db', 'c')
     amount_discounts = {}
     percentage_discounts = {}
     valid_discount = {}
+    discount_master = []
+    show_master = []
+    try:
+        discount_master = db['Discount Master']
+    except:
+        print("Error in retrieving discount master from storage.")
+
     try:
         valid_discount = db['Valid Discount']
 
@@ -2148,23 +2211,51 @@ def discount():
     else:
         valid_discount['Percentage'] = percentage_discounts
 
-    print(valid_discount)
+    if bool(discount_master) is True:
+        # print("discount maser is true")
+        show_master = discount_master
+        # for thing in discount_master:
+        #     show_master.append(thing)
+            # show_master = filter_discount(show_master, category, order)
+    amt_show_master = []
+    pct_show_master= []
+    for thing in show_master:
+        if type_key(thing) == "Amount":
+            amt_show_master.append(thing)
+            amt_show_master = filter_discount(amt_show_master, category, order)
+        else:
+            pct_show_master.append(thing)
+            pct_show_master = filter_discount(pct_show_master, category, order)
+
+    print("hellllllllooooooooooo", show_master)
 
     if request.method == "POST" and AddDiscountAmount.validate():
+        start = AddDiscountAmount.discount_start.data
+        expire = AddDiscountAmount.discount_expiry.data
+        if start <= date.today() and expire >= date.today():
+            status = "active"
+        elif start > date.today() and expire > start:
+            status = "inactive"
+        elif start < date.today() and expire <date.today():
+            status = "expired"
+        used = 0
         code=AddDiscountAmount.discount_code.data
-        discount = AmountDiscount(AddDiscountAmount.discount_code.data, AddDiscountAmount.discount_condition.data, AddDiscountAmount.discount_start.data, AddDiscountAmount.discount_expiry.data, AddDiscountAmount.discount_amount.data)
+        discount = AmountDiscount(AddDiscountAmount.discount_code.data, AddDiscountAmount.discount_condition.data, AddDiscountAmount.discount_start.data, AddDiscountAmount.discount_expiry.data, status, used,AddDiscountAmount.discount_amount.data)
             # empty = bool(valid_discount['Amount'])
+        discount_master.append(discount)
+        db["Discount Master"] = discount_master
         test = valid_discount.get('Amount')
-        if test:
-            amount_discounts = valid_discount['Amount']
-            amount_discounts[AddDiscountAmount.discount_code.data] = discount
-            valid_discount['Amount'] = amount_discounts
-            db['Valid Discount'] = valid_discount
-        else:
-            valid_discount['Amount'] = amount_discounts
-            amount_discounts[AddDiscountAmount.discount_code.data] = discount
-            valid_discount['Amount'] = amount_discounts
-            db['Valid Discount'] = valid_discount
+        if status == "active":
+            if test:
+                amount_discounts = valid_discount['Amount']
+                amount_discounts[AddDiscountAmount.discount_code.data] = discount
+                valid_discount['Amount'] = amount_discounts
+                db['Valid Discount'] = valid_discount
+            else:
+                valid_discount['Amount'] = amount_discounts
+                amount_discounts[AddDiscountAmount.discount_code.data] = discount
+                valid_discount['Amount'] = amount_discounts
+                db['Valid Discount'] = valid_discount
 
         test = valid_discount.get('Percentage')
         if test:
@@ -2174,32 +2265,48 @@ def discount():
             percentage_discounts = percentage_discounts
 
     if request.method == "POST" and AddDiscountPercentage.validate():
+        start = AddDiscountPercentage.discount_start.data
+        expire = AddDiscountPercentage.discount_expiry.data
+        if start <= date.today() and expire >= date.today():
+            status = "active"
+        elif start > date.today() and expire > start:
+            status = "inactive"
+        elif start < date.today() and expire <date.today():
+            status = "expired"
+        used = 0
         code=AddDiscountPercentage.discount_code.data
-        discount = PercentageDiscount(AddDiscountPercentage.discount_code.data, AddDiscountPercentage.discount_condition.data, AddDiscountPercentage.discount_start.data,AddDiscountPercentage.discount_expiry.data, AddDiscountPercentage.discount_percentage.data)
+        discount = PercentageDiscount(AddDiscountPercentage.discount_code.data, AddDiscountPercentage.discount_condition.data, AddDiscountPercentage.discount_start.data,AddDiscountPercentage.discount_expiry.data, status, used, AddDiscountPercentage.discount_percentage.data)
+        discount_master.append(discount)
+        db["Discount Master"] = discount_master
         test = valid_discount.get('Percentage')
-        if test:
-            percentage_discounts = valid_discount['Percentage']
-            percentage_discounts[AddDiscountPercentage.discount_code.data] = discount
-            valid_discount['Percentage'] = percentage_discounts
-            db['Valid Discount'] = valid_discount
-        else:
-            valid_discount['Percentage'] = percentage_discounts
-            percentage_discounts[AddDiscountPercentage.discount_code.data] = discount
-            valid_discount['Percentage'] = percentage_discounts
-            db['Valid Discount'] = valid_discount
-        test = valid_discount.get('Amount')
+        print(status)
+        if status == "active":
 
+            if test:
+                percentage_discounts = valid_discount['Percentage']
+                percentage_discounts[AddDiscountPercentage.discount_code.data] = discount
+                valid_discount['Percentage'] = percentage_discounts
+                db['Valid Discount'] = valid_discount
+            else:
+                print('elseeeee')
+                valid_discount['Percentage'] = percentage_discounts
+                percentage_discounts[AddDiscountPercentage.discount_code.data] = discount
+                valid_discount['Percentage'] = percentage_discounts
+                db['Valid Discount'] = valid_discount
+
+        test = valid_discount.get('Amount')
         if test:
             amount_discounts = valid_discount['Amount']
         else:
             amount_discounts = amount_discounts
 
-        db.close()
-
-        return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage, valid_discount=valid_discount, amount_discounts=amount_discounts, percentage_discounts=percentage_discounts, code=code)
-
+        # db.close()
+        #
+        # return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage, valid_discount=valid_discount, amount_discounts=amount_discounts, percentage_discounts=percentage_discounts, code=code)
+    print(percentage_discounts)
+    print(amount_discounts)
     db.close()
-    return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage, valid_discount=valid_discount, amount_discounts=amount_discounts, percentage_discounts=percentage_discounts)
+    return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage, valid_discount=valid_discount, amount_discounts=amount_discounts, percentage_discounts=percentage_discounts, show_master=show_master, pct_show_master=pct_show_master, amt_show_master=amt_show_master)
 
 
 @app.route('/deleteDiscount/<code>', methods=['POST'])
@@ -2237,7 +2344,7 @@ def deleteDiscount(code):
     db['Valid Discount'] = valid_discount
     db.close()
 
-    return redirect('/discount')
+    return redirect('/discount/status/active')
 
 
 @app.route('/categories')
