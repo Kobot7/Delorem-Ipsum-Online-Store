@@ -1,20 +1,6 @@
 {% extends "admin_base.html" %}
 {% block title %}Display Feedback{% endblock %}
-{% block style %}
-<style>
-  .box{
-    background-color: white;
-  }
-
-  table tbody {
-    background-color: white;
-  }
-
-  hr {
-    color:#84a220;
-  }
-</style>
-{% endblock %}
+{% block style %}<link rel="stylesheet" href="/static/styles/adminFeedback.css">{% endblock %}
 {% block headScript %}
 
 {% endblock %}
@@ -43,7 +29,7 @@
         </tr>
 
         <tr>
-          <th class="text-right pr-2">Rating:</th>
+          <th class="text-right pr-2">Delivery Rating:</th>
           <td class="p-2">{{i.get_rating()}}</td>
         </tr>
       </tbody>
