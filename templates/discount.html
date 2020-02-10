@@ -138,16 +138,16 @@
               <tr>
                 <th>Types<a href="/discount/type/amount">Amount</a>
                           <a href="/discount/type/percentage">Percentage</a></th>
-                <th>Discount Code<a href="/discount/name/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                                  <a href="/discount/name/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
+                <th>Discount Code<a href="/discount/code/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                                  <a href="/discount/code/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
                 <th>Condition<a href="/discount/condition/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
                               <a href="/discount/condition/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
                 <th>Valid Start<a href="/discount/start/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
                                 <a href="/discount/start/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
                 <th>Valid End<a href="/discount/end/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
                               <a href="/discount/end/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
-                <th>Discount<a href="/discount/amount/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                            <a href="/discount/amount/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
+                <th>Discount<a href="/discount/discount/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                            <a href="/discount/discount/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
                 <th>Times Used<a href="/discount/used/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
                               <a href="/discount/used/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a</th>
                 <th><form action="" class="form-inline">
@@ -162,24 +162,35 @@
               </tr>
               </thead>
               <tbody>
-                {%for code in show_master%}
+                {%for code in amt_show_master%}
                   <tr>
+                    <td>Amount</td>
                     <td>{{code.get_code()}}</td>
-                    <td>{{code.get_condition()}}</td>
+                    <td>${{code.get_condition()}}</td>
                     <td>{{code.get_start_date()}}</td>
                     <td>{{code.get_expiry_date()}}</td>
-                    {%if type_key(code) == "Amount"%}
-                    <td>{{code.get_discount_amount()}}</td>
-                    {%else%}
-                    <td>{{code.get_discount_percentage()}}</td>
-                    {%endif%}
-                    <td>code.get_status()</td>
-                    <!-- <td><form action="{{url_for('deleteDiscount', code = amount_discounts[code].get_code())}}" method="post">
-                      <input type="submit" value="Delete" class="btn redButton">
-                    </form></td> -->
+                    <td>${{code.get_discount_amount()}}</td>
+                    <td>{{code.get_used()}}</td>
+                    <td>{{code.get_status()}}</td>
+
                   </tr>
 
                   {%endfor%}
+                  {%for code in pct_show_master%}
+                    <tr>
+                      <td>Percentage</td>
+                      <td>{{code.get_code()}}</td>
+                      <td>${{code.get_condition()}}</td>
+                      <td>{{code.get_start_date()}}</td>
+                      <td>{{code.get_expiry_date()}}</td>
+                      <td>{{code.get_discount_percentage()}}%</td>
+                      <td>{{code.get_used()}}</td>
+
+                      <td>{{code.get_status()}}</td>
+
+                    </tr>
+
+                    {%endfor%}
               </tbody>
               </table>
             </div>

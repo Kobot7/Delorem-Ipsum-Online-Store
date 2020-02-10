@@ -2123,14 +2123,22 @@ def discount(category, order):
     else:
         valid_discount['Percentage'] = percentage_discounts
 
-    print(valid_discount)
-    print("DISCOUNT MASTER" , discount_master)
-
-    if bool(discount_master) is True:
+    if discount_master!=[]:
+        # print("discount maser is true")
         for thing in discount_master:
             show_master.append(thing)
-            show_master = filter_discount(show_master, category, order)
-    print(show_master)
+            # show_master = filter_discount(show_master, category, order)
+    amt_show_master = []
+    pct_show_master= []
+    for thing in show_master:
+        if type_key(thing) == "Amount":
+            amt_show_master.append(thing)
+            amt_show_master = filter_discount(amt_show_master, category, order)
+        else:
+            pct_show_master.append(thing)
+            pct_show_master = filter_discount(pct_show_master, category, order)
+
+    print("hellllllllooooooooooo", show_master)
 
     if request.method == "POST" and AddDiscountAmount.validate():
         start = AddDiscountAmount.discount_start.data
@@ -2182,13 +2190,16 @@ def discount(category, order):
         discount_master.append(discount)
         db["Discount Master"] = discount_master
         test = valid_discount.get('Percentage')
+        print(status)
         if status == "active":
+
             if test:
                 percentage_discounts = valid_discount['Percentage']
                 percentage_discounts[AddDiscountPercentage.discount_code.data] = discount
                 valid_discount['Percentage'] = percentage_discounts
                 db['Valid Discount'] = valid_discount
             else:
+                print('elseeeee')
                 valid_discount['Percentage'] = percentage_discounts
                 percentage_discounts[AddDiscountPercentage.discount_code.data] = discount
                 valid_discount['Percentage'] = percentage_discounts
@@ -2203,9 +2214,10 @@ def discount(category, order):
         # db.close()
         #
         # return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage, valid_discount=valid_discount, amount_discounts=amount_discounts, percentage_discounts=percentage_discounts, code=code)
-
+    print(percentage_discounts)
+    print(amount_discounts)
     db.close()
-    return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage, valid_discount=valid_discount, amount_discounts=amount_discounts, percentage_discounts=percentage_discounts, show_master=show_master)
+    return render_template('discount.html', currentPage="Discount", AddDiscountAmount=AddDiscountAmount, AddDiscountPercentage=AddDiscountPercentage, valid_discount=valid_discount, amount_discounts=amount_discounts, percentage_discounts=percentage_discounts, show_master=show_master, pct_show_master=pct_show_master, amt_show_master=amt_show_master)
 
 
 @app.route('/deleteDiscount/<code>', methods=['POST'])

@@ -98,7 +98,7 @@ def filter_discount(list, category, order):
             order = False
         elif order=="descending":
             order = True
-        list = sorted(list, key=keyDict[category], reverse=order)
+        list = sorted(list, key=discountKey[category], reverse=order)
         return list
     else:
         filtered_list=[]

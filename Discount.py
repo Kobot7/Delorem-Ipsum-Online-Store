@@ -55,7 +55,7 @@ class AmountDiscount(Discount):
 
 class PercentageDiscount(Discount):
     def __init__(self, code, condition, start_date, expiry_date,status, used, discount_percentage):
-        super().__init__(code, condition, start_date, expiry_date), status, used
+        super().__init__(code, condition, start_date, expiry_date, status, used)
         self.set_discount_percentage(discount_percentage)
 
     def set_discount_percentage(self, discount_percentage):
