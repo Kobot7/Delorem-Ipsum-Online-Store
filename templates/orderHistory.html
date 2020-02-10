@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %} My Account {% endblock %}
-{% block style %}<link rel="stylesheet" type = "text/css" href = "/static/styles/items.css">{% endblock %}
+{% block style %}
+<link rel="stylesheet" type="text/css" href="/static/styles/items.css">{% endblock %}
 
 {% block content %}
 <div id="main">
@@ -10,123 +11,124 @@
   <div class="signup-agile1">
     <form action="#" method="post">
       <h2> Order History </h2>
-      <p> INSERT PRODUCTS HERE </p>
-      <div class="item-wrapper">
+      {% for transaction in current_transac_list %}
+      {% for item in items %}
+      <div class=items-block>
         <ul id="items">
-          {% for trans in current_transaction_list %}
           <article class="item">
-            <a href="{{url_for('IndItem', serialNo=trans.get_serial_no())}}" class="item-link">
-              <div class="item-img">
-                <img src="/static/images/{{trans.get_thumbnail()}}">
-              </div>
-              <div class="item-caption-box">
-                <div class="item-caption">
-                  <div>
-                    <p class="item-description">{{trans.get_product_name()}}</p>
-                  </div>
+            <!-- <a href="{{url_for('IndItem', serialNo=item.get_serial_no)}}" class="item-link"> -->
+            <div class="item-img">
+              <img src="/static/images/{{product_thumbnail}}">
+            </div>
+            <div class="item-caption-box">
+              <div class="item-caption">
+                <div>
+                  <p class="item-description">{{product_name}}</p>
                 </div>
               </div>
-              <p class="price-box">
-                <span class="price-small">${{trans.get_price()}}</span>
-              </p>
-            </a>
+            </div>
+            <p class="price-box">
+              <span class="price-small">${{product_price}}</span>
+            </p>
+            <p> You bought this on: {{date_of_order}}</p>
+            <!-- </a> -->
           </article>
-          {% endfor %}
         </ul>
-        </div>
+      </div>
+      {% endfor %}
+      {% endfor %}
+  </div>
+  <div id="mySidebar" class="sidebar">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+    <a href="/orderHistory">Order History</a>
+  </div>
+  <script>
+    function openNav() {
+      document.getElementById("mySidebar").style.width = "250px";
+      document.getElementById("main").style.marginLeft = "250px";
+    }
 
-    </form>
-    <div id="mySidebar" class="sidebar">
-      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
-      <a href="/orderHistory">Order History</a>
-    </div>
-    <script>
-      function openNav() {
-        document.getElementById("mySidebar").style.width = "250px";
-        document.getElementById("main").style.marginLeft = "250px";
-      }
+    function closeNav() {
+      document.getElementById("mySidebar").style.width = "0";
+      document.getElementById("main").style.marginLeft = "0";
+    }
 
-      function closeNav() {
-        document.getElementById("mySidebar").style.width = "0";
-        document.getElementById("main").style.marginLeft = "0";
-      }
+    function alertchanges() {
+      alert("Changes added!");
+    }
+  </script>
+  <style>
+    body {
+      /* font-family: "Lato", sans-serif; */
+    }
 
-      function alertchanges() {
-        alert("Changes added!");
-      }
-    </script>
-    <style>
-      body {
-        /* font-family: "Lato", sans-serif; */
-      }
+    .sidebar {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1021;
+      /* z-index must be above navbar (1020) */
+      top: 0;
+      left: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+    }
 
+    .sidebar a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #818181;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      color: #f1f1f1;
+    }
+
+    .sidebar .closebtn {
+      position: absolute;
+      top: 0;
+      right: 25px;
+      font-size: 36px;
+      margin-left: 50px;
+    }
+
+    .openbtn {
+      background-color: #84a220;
+      color: white;
+      border: #84a220;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 10px 15px;
+      border-radius: 5px;
+      margin: 16px;
+    }
+
+    .openbtn:hover {
+      background-color: #36b051;
+    }
+
+    #main {
+      transition: margin-left .5s;
+    }
+
+    /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+    @media screen and (max-height: 450px) {
       .sidebar {
-        height: 100%;
-        width: 0;
-        position: fixed;
-        z-index: 1021;
-        /* z-index must be above navbar (1020) */
-        top: 0;
-        left: 0;
-        background-color: #111;
-        overflow-x: hidden;
-        transition: 0.5s;
-        padding-top: 60px;
+        padding-top: 15px;
       }
 
       .sidebar a {
-        padding: 8px 8px 8px 32px;
-        text-decoration: none;
-        font-size: 25px;
-        color: #818181;
-        display: block;
-        transition: 0.3s;
+        font-size: 18px;
       }
+    }
+  </style>
 
-      .sidebar a:hover {
-        color: #f1f1f1;
-      }
-
-      .sidebar .closebtn {
-        position: absolute;
-        top: 0;
-        right: 25px;
-        font-size: 36px;
-        margin-left: 50px;
-      }
-
-      .openbtn {
-        background-color: #84a220;
-        color: white;
-        border: #84a220;
-        font-size: 20px;
-        cursor: pointer;
-        padding: 10px 15px;
-        border-radius: 5px;
-        margin: 16px;
-      }
-
-      .openbtn:hover {
-        background-color: #36b051;
-      }
-
-      #main {
-        transition: margin-left .5s;
-      }
-
-      /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
-      @media screen and (max-height: 450px) {
-        .sidebar {
-          padding-top: 15px;
-        }
-
-        .sidebar a {
-          font-size: 18px;
-        }
-      }
-    </style>
-
-  </div>
+</div>
 </div>
 
 <style>
