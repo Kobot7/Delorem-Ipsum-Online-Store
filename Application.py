@@ -1242,6 +1242,7 @@ def confirm(type):
         current = db["Current User"]
         products = db["Products"]
         transactions = db["Transactions"]
+        discount_master = db["Discount Master"]
     except:
         print("Nah man this can't be happenin")
     transactions[transaction.get_id()] = transaction
@@ -1259,6 +1260,11 @@ def confirm(type):
         current_discount = current.get_current_discount()
         current_discount.clear()
         current.set_current_discount(current_discount)
+        for thing in discount_master:
+            if thing == discount:
+                used = thing.get_used()
+                used += 1
+                thing.set_used(used)
     else:
         print("Oop no discount used")
     cart = current.get_shopping_cart()
@@ -2123,10 +2129,11 @@ def discount(category, order):
     else:
         valid_discount['Percentage'] = percentage_discounts
 
-    if discount_master!=[]:
+    if bool(discount_master) is True:
         # print("discount maser is true")
-        for thing in discount_master:
-            show_master.append(thing)
+        show_master = discount_master
+        # for thing in discount_master:
+        #     show_master.append(thing)
             # show_master = filter_discount(show_master, category, order)
     amt_show_master = []
     pct_show_master= []
