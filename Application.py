@@ -1305,7 +1305,7 @@ def feedback():
         print("Error in retrieving current user for feedback")
 
     if request.method == "POST" and feedbackForm.validate():
-        db = shelve.open('db', 'c')
+        db = shelve.open('storage.db', 'c')
         feedbacks = []
         try:
             feedbacks = db["Feedback"]
@@ -1323,13 +1323,15 @@ def feedback():
 
 @app.route('/displayFeedback')
 def displayFeedback():
-    db = shelve.open('db', 'c')
+    feedbacks = {}
+    db = shelve.open('storage.db', 'r')
     try:
         feedbacks = db["Feedback"]
+        print(feedbacks)
     except:
         print("error")
 
-    return render_template('adminFeedback.html', feedbackList = feedbacks)
+    return render_template('adminFeedback.html', feedbackList = feedbacks, currentPage='Feedback')
 
 # Admin Side
 @app.route('/dashboard/<int:stockPage>')

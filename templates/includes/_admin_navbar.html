@@ -36,13 +36,22 @@
           <a class="nav-link" href="/transactions">Transactions</a>
         {% endif %}
       </li> <!--Transactions-->
+
       <li class="nav-item">
         {% if currentPage=='Discounts' %}
           <a class="nav-link active" href="/disount">Discounts</a>
         {% else %}
           <a class="nav-link" href="/discount">Discounts</a>
         {% endif %}
-      </li>
+      </li> <!--Discounts-->
+
+      <li class="nav-item">
+        {% if currentPage=='Feedback' %}
+          <a class="nav-link active" href="/displayFeedback">Feedback</a>
+        {% else %}
+          <a class="nav-link" href="/displayFeedback">Feedback</a>
+        {% endif %}
+      </li> <!--Discounts-->
     </ul>
   </div>
 
