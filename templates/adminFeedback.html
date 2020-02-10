@@ -7,24 +7,37 @@
 
 {% block content %}
 {% from "includes/_formhelper.html" import render_field %}
-{% for i in feedbackList %}
-<div class="displayFeedback box">
-  <div class="form-group">
-    <h1>{{i.get_name()}}</h1>
-  </div>
 
-  <div class="form-group">
-    Agenda: {{i.get_agenda()}}
-  </div>
+<h1 class="text-center mt-4 mb-3">Feedback</h1>
 
-  <div class="form-group">
-    Comments: {{i.get_comment()}}
-  </div>
 
-  <div class="form-group">
-    Rating: {{i.get_rating()}}
+<div class="row justify-content-center">
+  <div class="col-md-9 box pt-4">
+    {% for i in feedbackList %}
+    <h4 class="font-weight-bold text-center">{{i.get_name()}}</h4>
+
+    <table class="mx-auto">
+      <tbody>
+        <tr>
+          <th class="text-right pr-2">Agenda:</th>
+          <td class="p-2">{{i.get_agenda()}}</td>
+        </tr>
+
+        <tr>
+          <th class="text-right pr-2">Comments:</th>
+          <td class="p-2">{{i.get_comment()}}</td>
+        </tr>
+
+        <tr>
+          <th class="text-right pr-2">Delivery Rating:</th>
+          <td class="p-2">{{i.get_rating()}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    {% endfor %}
   </div>
 </div>
-
-{% endfor %}
 {% endblock %}
