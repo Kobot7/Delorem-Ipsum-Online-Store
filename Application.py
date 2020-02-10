@@ -280,7 +280,11 @@ def view_profile(username):
             number = str(editProfileForm.phone.data)
             print("\n\n\n\n\n")
             if number[0] == "6" or number[0] == "8" or number[0] == "9":
-                current.set_phone(editProfileForm.phone.data)
+                if (len(number) == 8):
+                    current.set_phone(editProfileForm.phone.data)
+                else:
+                    current.set_phone("None")
+                    invalid_phone_num_error = True;
             else:
                 current.set_phone("None")
                 invalid_phone_num_error = True;
@@ -548,20 +552,10 @@ def orderHistory():
         date_of_order = obj.get_date_of_order()
         print(obj) #prints object
         items = obj.get_items()
-        for item in items:
-            product_name = item.get_product_name()
-            product_price = item.get_price()
-            product_thumbnail = item.get_thumbnail()
-            product_serial_no = item.get_serial_no()
-            print(product_price)
-            print(product_name)
-            print(product_thumbnail)
-            print(product_serial_no)
-            print("\n")
 
     print("\n\n\n")
     searchForm = searchBar()
-    return render_template('orderHistory.html', date_of_order=date_of_order, transaction=transaction, current_transac_list=current_transac_list, item=item, items=items, product_price=product_price, product_name=product_name, product_thumbnail=product_thumbnail, product_serial_no=product_serial_no, searchForm=searchForm, Items=Items, current=current)
+    return render_template('orderHistory.html', date_of_order=date_of_order, transaction=obj, current_transac_list=current_transac_list, searchForm=searchForm, Items=Items, current=current, items=items)
 @app.route('/mainCategory/<mainCategory>/<category>/<order>/', methods=['GET', 'POST'])
 def mainCategory(mainCategory, category, order):
     checkfordiscounts()

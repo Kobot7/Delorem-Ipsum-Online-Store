@@ -12,23 +12,24 @@
     <form action="#" method="post">
       <h2> Order History </h2>
       {% for transaction in current_transac_list %}
-      {% for item in items %}
+      {% for item in items%}
       <div class=items-block>
         <ul id="items">
           <article class="item">
             <!-- <a href="{{url_for('IndItem', serialNo=item.get_serial_no)}}" class="item-link"> -->
             <div class="item-img">
-              <img src="/static/images/{{product_thumbnail}}">
+              <img src="/static/images/{{item.get_thumbnail()}}">
             </div>
             <div class="item-caption-box">
               <div class="item-caption">
                 <div>
-                  <p class="item-description">{{product_name}}</p>
+                  <p class="item-description">{{item.get_description()}}</p>
                 </div>
               </div>
             </div>
+            <p> Quantity: {{item.get_quantity()}}</p>
             <p class="price-box">
-              <span class="price-small">${{product_price}}</span>
+              <span class="price-small">${{item.get_price()}}</span>
             </p>
             <p> You bought this on: {{date_of_order}}</p>
             <!-- </a> -->
