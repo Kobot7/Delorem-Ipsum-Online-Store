@@ -5,6 +5,11 @@
 
 
 {% block content %}
+{% if success_login %}
+<script>
+    alert("User successfully logged in. hOI I'm tEMMIE!")
+</script>
+{% endif %}
 <div class="row justify-content-center">
   <div class="col-md-12">
     <div id="carousel-ads" class="carousel slide" data-ride="carousel">
