@@ -1,17 +1,12 @@
 {% extends "admin_base.html" %}
-<<<<<<< HEAD
-{% block title %}Add Product{% endblock %}
+{% block title %}Discounts{% endblock %}
 {% block style %}
 <style>
   table td {
     verticle-align: middle;
   }
-</style>
-{% endblock %}
-=======
-{% block title %}Discounts{% endblock %}
-{% block style %}{% endblock %}
->>>>>>> imlisteningtoharrystyles
+</style>{% endblock %}
+
 
 {% block content %}
 {% from "includes/_formhelper.html" import render_field %}
@@ -22,14 +17,10 @@
     <h1 class="d-inline">Set Discount</h1>
 
     <ul class="nav nav-tabs my-4">
-<<<<<<< HEAD
+
       <li class="nav-item active"><a class="nav-link active" href="#percentage" data-toggle="tab">By Percentage</a></li>
       <li class="nav-item"><a class="nav-link" href="#amount" data-toggle="tab">By Amount</a></li>
-=======
-      <li class="nav-item active"><a class="nav-link active" href="#percentage" data-toggle="tab">By percentage</a></li>
-      <li class="nav-item"><a class="nav-link" href="#amount" data-toggle="tab">By amount</a></li>
-      <li class="nav-item"><a class="nav-link"href="#all" data-toggle="tab">View All</a></li>
->>>>>>> imlisteningtoharrystyles
+
     </ul>
 
     <div class="tab-content">
@@ -146,95 +137,20 @@
 
                   {%endfor%}
               </tbody>
-<<<<<<< HEAD
+
           </table>
         </div> <!--Table-->
-=======
-              </table>
+
+
             </div>
 
         </div>
 
-        <div class="tab-pane fade pb-4" id="all">
 
-          <div class="table">
-          <table class="table mt-4">
-            <thead>
-              <tr>
-                <th>Types<a href="/discount/type/amount">Amount</a>
-                          <a href="/discount/type/percentage">Percentage</a></th>
-                <th>Discount Code<a href="/discount/code/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                                  <a href="/discount/code/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
-                <th>Condition<a href="/discount/condition/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                              <a href="/discount/condition/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
-                <th>Valid Start<a href="/discount/start/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                                <a href="/discount/start/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
-                <th>Valid End<a href="/discount/end/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                              <a href="/discount/end/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
-                <th>Discount<a href="/discount/discount/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                            <a href="/discount/discount/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a></th>
-                <th>Times Used<a href="/discount/used/ascending"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                              <a href="/discount/used/descending"><i class="fa fa-caret-down" aria-hidden="true"></i></a</th>
-                <th><form action="" class="form-inline">
-                    <label for="filterSelect" class="float-left">Status</label>
-                    <select id="filterSelect" class="form-control d-inline">
-                        <option value="/status/active">Active</option>
-                        <option value="/status/inactive">Inactive</option>
-                        <option value="/status/expired">Expired</option>
-                        <option value="/status/deleted">Deleted</option>
-                    </select>
-                </form></th>
-              </tr>
-              </thead>
-              <tbody>
-                {%for code in amt_show_master%}
-                  <tr>
-                    <td>Amount</td>
-                    <td>{{code.get_code()}}</td>
-                    <td>${{code.get_condition()}}</td>
-                    <td>{{code.get_start_date()}}</td>
-                    <td>{{code.get_expiry_date()}}</td>
-                    <td>${{code.get_discount_amount()}}</td>
-                    <td>{{code.get_used()}}</td>
-                    <td>{{code.get_status()}}</td>
-
-                  </tr>
-
-                  {%endfor%}
-                  {%for code in pct_show_master%}
-                    <tr>
-                      <td>Percentage</td>
-                      <td>{{code.get_code()}}</td>
-                      <td>${{code.get_condition()}}</td>
-                      <td>{{code.get_start_date()}}</td>
-                      <td>{{code.get_expiry_date()}}</td>
-                      <td>{{code.get_discount_percentage()}}%</td>
-                      <td>{{code.get_used()}}</td>
-
-                      <td>{{code.get_status()}}</td>
-
-                    </tr>
-
-                    {%endfor%}
-              </tbody>
-              </table>
-            </div>
 
         </div>
         </div>
 
-        </div>
-        </div>
->>>>>>> imlisteningtoharrystyles
 
-      </div>
-    </div>
-  </div>
-</div>
 
-<<<<<<< HEAD
 {% endblock %}
-=======
-
-  {% endblock %}
->>>>>>> imlisteningtoharrystyles
