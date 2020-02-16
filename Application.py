@@ -728,7 +728,7 @@ def IndItem(serialNo):
     db['Products'] = products
     db.close()
     subCategory = IndItem.get_sub_category()
-    mainCategory = get_main_category(subCategory)
+    mainCategory = get_main_category(subCategory).replace(' ','')
     relatedProducts = []
     for serial_no in products:
         if get_main_category(products[serial_no].get_sub_category()) == mainCategory:
